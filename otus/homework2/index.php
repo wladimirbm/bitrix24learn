@@ -1,6 +1,6 @@
 <?require($_SERVER["DOCUMENT_ROOT"]."/bitrix/header.php");?>
 <?php 
-    $APPLICATION->SetTitle("Домашняя работа 1");
+    $APPLICATION->SetTitle("Домашняя работа 2 (Отладка и логирование // ДЗ)");
 ?>
 <H1><?$APPLICATION->ShowTitle()?></H1>
 <?php
