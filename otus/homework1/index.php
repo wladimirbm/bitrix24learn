@@ -5,6 +5,7 @@
 <H1><?$APPLICATION->ShowTitle()?></H1>
 <h2>Github на хостинге</h2>
 <img src="img1-2.png" class="">
+<img src="img1-21.png" class="">
 <h2>VMBitrix</h2>
 <img src="img1-11.png" class="">
 <img src="img1-12.png" class="">
