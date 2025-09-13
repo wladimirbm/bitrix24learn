@@ -1,4 +1,4 @@
-/bitrix/
+/bitrix/*
 /vendor/
 /upload/
-!bitrix/.settings_extra.php
+!/bitrix/.settings_extra.php
