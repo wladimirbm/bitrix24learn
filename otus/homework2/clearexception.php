@@ -1,4 +1,4 @@
 <?php
-App\Diag\Mylog::ClearDefException();
+App\Debug\Mylog::ClearDefException();
 LocalRedirect('/otus/homework2/index.php');
 ?>
