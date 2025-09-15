@@ -12,7 +12,7 @@ $APPLICATION->SetTitle("Список Домашних работ");
         border-radius: 16px;
         margin-left: 20px;
         background-repeat: no-repeat;
-
+        display: inline-block;
     }
 
     .done {
