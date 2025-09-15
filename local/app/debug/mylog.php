@@ -37,7 +37,7 @@ class Mylog extends FileExceptionHandlerLog
         $log .= print_r($data, true) . "\n\n";
 
         if (!file_exists($_SERVER['DOCUMENT_ROOT'] . "/logs/")) {
-            @mkdir($_SERVER['DOCUMENT_ROOT'] . "/logs/", BX_DIR_PERMISSIONS, true);
+            mkdir($_SERVER['DOCUMENT_ROOT'] . "/logs/", BX_DIR_PERMISSIONS, true);
         }
 
         file_put_contents($_SERVER['DOCUMENT_ROOT'] . "/logs/" . $logfile, $log, FILE_APPEND);
