@@ -29,7 +29,7 @@ class Mylog extends FileExceptionHandlerLog
 
         $log .= print_r($data, true) . "\n\n";
 
-        file_put_contents("/logs/" . $logfile, $log, FILE_APPEND );
+        file_put_contents($_SERVER['DOCUMENT_ROOT'] . "/logs/" . $logfile, $log, FILE_APPEND);
 
         return;
     }
@@ -37,14 +37,14 @@ class Mylog extends FileExceptionHandlerLog
     public static function ClearDefLog()
     {
         $logfile = "mylog_" . date('Y-m-d') . ".log";
-        file_put_contents("/logs/" . $logfile, '');
+        file_put_contents($_SERVER['DOCUMENT_ROOT'] . "/logs/" . $logfile, '');
         return;
     }
-    
+
     public static function ClearDefException()
     {
         $logfile = "exception_" . date('Y-m-d') . ".log";
-        file_put_contents("/logs/" . $logfile, '');
+        file_put_contents($_SERVER['DOCUMENT_ROOT'] . "/logs/" . $logfile, '');
         return;
     }
-} 
+}
