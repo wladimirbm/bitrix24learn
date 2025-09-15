@@ -36,6 +36,11 @@ $APPLICATION->SetTitle("Список Домашних работ");
 </div>
 <div>
     <h2><a href="homework2/">Домашняя работа 2 (Отладка и логирование // ДЗ)</a>
+        <div class="prog done"></div>
+    </h2>
+</div>
+<div>
+    <h2><a href="homework3/">Домашняя работа 3 (Связывание моделей // ДЗ)</a>
         <div class="prog proc"></div>
     </h2>
 </div>
