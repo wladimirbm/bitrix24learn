@@ -12,7 +12,7 @@ return array(
             'assertion_throws_exception' => true,
             'assertion_error_type' => 256,
             'log' => array(
-                'required_file' => '/local/php_interface/src/diag/fileexceptionhandlerlogcustom.php',
+                'required_file' => 'local/php_interface/src/diag/fileexceptionhandlerlogcustom.php',
                 'settings' => array(
                     'file' => 'logs/exception_' . date('Y-m-d') . ".log",
                     'log_size' => 1000000,
