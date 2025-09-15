@@ -38,11 +38,13 @@ class Mylog extends FileExceptionHandlerLog
     {
         $logfile = "mylog_" . date('Y-m-d') . ".log";
         file_put_contents("/logs/" . $logfile, '');
+        return;
     }
     
     public static function ClearDefException()
     {
         $logfile = "exception_" . date('Y-m-d') . ".log";
         file_put_contents("/logs/" . $logfile, '');
+        return;
     }
 } 
