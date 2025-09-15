@@ -2,5 +2,5 @@
 <?php 
 use App\Diag\Mylog;
 App\Diag\Mylog::ClearDefLog();
-LocalRedirect('/otus/omework2/index.php');
+LocalRedirect('/otus/homework2/index.php');
 ?>
