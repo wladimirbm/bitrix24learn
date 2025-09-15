@@ -1,7 +1,6 @@
 <? require($_SERVER["DOCUMENT_ROOT"] . "/bitrix/header.php"); ?>
 <?php
 \App\Debug\Mylog::addLog($_SERVER, '$_SERVER', '', __FILE__, __LINE__);
-\App\Debug\Mylog::addLog($_SERVER, '$_SERVER', '', '__FILE__', '__LINE__');
 echo "\App\Debug\Mylog::addLog(_SERVER, '_SERVER', '', ".__FILE__.", ".__LINE__.");";
 ?>
 <h3>В лог добавлена информация: <a href='/logs/mylog_<?php echo date('Y-m-d'); ?>.log' target="_blank">Посмотреть лог файл</a></h3>
