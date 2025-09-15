@@ -23,4 +23,4 @@
 <p><a href="writeexception.php" target="_blank">Добавление в лог</a></p>
 <p><a href="writelog.php" target="_blank">Файл с классом кастомного логера</a></p>
 
-<?require($_SERVER["DOCUMENT_ROOT"]."/bitrix/footer.php");?>
+<?require($_SERVER["DOCUMENT_ROOT"]."/bitrix/footer.php");?> 

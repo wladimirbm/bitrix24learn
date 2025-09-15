@@ -45,4 +45,4 @@ class Mylog extends FileExceptionHandlerLog
         $logfile = "exception_" . date('Y-m-d') . ".log";
         file_put_contents("/logs/" . $logfile, '');
     }
-}
+} 

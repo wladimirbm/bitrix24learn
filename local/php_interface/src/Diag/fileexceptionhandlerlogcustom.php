@@ -39,4 +39,4 @@ class FileExceptionHandlerLogCustom extends FileExceptionHandlerLog
 		$this->logger->log($logLevel, $message, $context);
 	}
 
-}
+} 
