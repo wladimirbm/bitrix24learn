@@ -39,7 +39,7 @@ class FileExceptionHandlerLogCustom extends FileExceptionHandlerLog
 		debug_print_backtrace();
 		$backtrace = ob_get_clean();
 		
-		$message .= print_r($backtrace) . "\n";
+		$message .= print_r($backtrace, true) . "\n";
 		$message .= "-----\n\n";
 
 		$this->logger->log($logLevel, $message, $context);
