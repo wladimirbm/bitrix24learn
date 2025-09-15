@@ -11,13 +11,30 @@ $APPLICATION->SetTitle("Список Домашних работ");
         vertical-align: middle;
         background-position: 50% 50%;
         border-radius: 16px;
-        margin-left:20px;
+        margin-left: 20px;
+    }
+
+    .proc {
+        background-image: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTYiIGhlaWdodD0iMjAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHBhdGggZD0iTTEzLjU3IDQuMjFhMy43NCAzLjc0IDAgMDAtMi45IDQuMTlDOC44IDYuMiA4Ljg5IDMuNyA4Ljg5LjA5IDIuOTQgMi4zMyA0LjMzIDguOCA0LjE1IDEwLjc3Yy0xLjUtMS4yMi0xLjc4LTQuMTUtMS43OC00LjE1Qy44IDcuNDMgMCA5LjYgMCAxMS4zN2E3LjcxIDcuNzEgMCAxMDE1LjQgMGMwLTIuNTQtMS44NS0zLjctMS44My03LjE2IiBmaWxsPSIjRkY2MDI3Ii8+PC9zdmc+);
+        height: 16px;
+        width: 28px;
+        display: table-cell;
+        vertical-align: middle;
+        background-position: 50% 50%;
+        border-radius: 16px;
+        margin-left: 20px;
+    }
+
+    h2 {
+        display: table;
     }
 </style>
 <H1><? $APPLICATION->ShowTitle() ?></H1>
 <p>Репозиторий: <a href="https://github.com/wladimirbm/bitrix24learn">https://github.com/wladimirbm/bitrix24learn</a></p>
-<h2 style="display: table;"><a href="homework1/">Домашняя работа 1 (Создание и настройка проекта в VScode // ДЗ)</a>
+<h2><a href="homework1/">Домашняя работа 1 (Создание и настройка проекта в VScode // ДЗ)</a>
     <div class="done"></div>
 </h2>
-<h2><a href="homework2/">Домашняя работа 2 (Отладка и логирование // ДЗ)</a></h2>
+<h2><a href="homework2/">Домашняя работа 2 (Отладка и логирование // ДЗ)</a>
+    <div class="proc"></div>
+</h2>
 <? require($_SERVER["DOCUMENT_ROOT"] . "/bitrix/footer.php"); ?>
