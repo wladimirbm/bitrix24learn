@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Debug;
+namespace App\Diag;
 
 use Bitrix\Main\Diag\FileExceptionHandlerLog;
 use Bitrix\Main\Diag\ExceptionHandlerFormatter;
