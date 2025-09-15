@@ -23,14 +23,14 @@ class Mylog extends FileExceptionHandlerLog
             $logfile .= $logfile . ".log";
 
         $log = date('[Y-m-d H:i:s] ');
-        if (empty($fromfile)) {
-            $log .= $fromfile;
+        if (!empty($fromfile)) {
+            $log .= "- File:".$fromfile;
         }
-        if (empty($fromline)) {
-            $log .= " : " . $fromline;
+        if (!empty($fromline)) {
+            $log .= " - Line:" . $fromline;
         }
         $log .= "\n";
-        if (empty($namedata)) {
+        if (!empty($namedata)) {
             $log .= $namedata . ":\n";
         }
 
