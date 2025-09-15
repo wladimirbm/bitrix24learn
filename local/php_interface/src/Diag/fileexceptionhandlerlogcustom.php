@@ -1,4 +1,5 @@
 <?php
+
 namespace Otus\Diag;
 
 use Bitrix\Main;
@@ -11,7 +12,7 @@ class FileExceptionHandlerLogCustom extends FileExceptionHandlerLog
 	//const MAX_LOG_SIZE = 1000000;
 	//const DEFAULT_LOG_FILE = "/logs/exception.log";
 
-	private $level; 
+	private $level;
 
 	/** @var Log\LoggerInterface */
 	//protected $logger;
@@ -22,7 +23,7 @@ class FileExceptionHandlerLogCustom extends FileExceptionHandlerLog
 	 */
 	public function write($exception, $logType)
 	{
-		
+
 		$text = ExceptionHandlerFormatter::format($exception, false, $this->level);
 
 		$context = [
@@ -33,10 +34,9 @@ class FileExceptionHandlerLogCustom extends FileExceptionHandlerLog
 
 		$message = "OTUS: [{date}] - Host: {host} - {type} - {$text}\n";
 		$message .= "-----\n";
-		$message .= debug_backtrace()."\n";
+		$message .= print_r(debug_backtrace(), true) . "\n";
 		$message .= "-----\n\n";
 
-		$this->logger->log($logLevel, $message, $context); 
+		$this->logger->log($logLevel, $message, $context);
 	}
-
-} 
+}
