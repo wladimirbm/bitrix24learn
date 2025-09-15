@@ -43,6 +43,10 @@ class FileExceptionHandlerLogCustom extends FileExceptionHandlerLog
 		$message .= "-----\n\n";
 		*/
 
+		if (!file_exists($_SERVER['DOCUMENT_ROOT'] . "/logs")) {
+			mkdir($_SERVER['DOCUMENT_ROOT'] . "/logs", BX_DIR_PERMISSIONS, true);
+		}
+
 		$this->logger->log($logLevel, $message, $context);
 	}
 }
