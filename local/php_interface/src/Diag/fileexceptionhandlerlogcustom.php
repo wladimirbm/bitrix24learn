@@ -36,7 +36,7 @@ class FileExceptionHandlerLogCustom extends FileExceptionHandlerLog
 		$message .= debug_backtrace()."\n";
 		$message .= "-----\n\n";
 
-		$this->logger->log($logLevel, $message, $context);
+		$this->logger->log($logLevel, $message, $context); 
 	}
 
 } 
