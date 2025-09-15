@@ -8,6 +8,13 @@ use Bitrix\Main\Diag\ExceptionHandlerFormatter;
 class Mylog extends FileExceptionHandlerLog
 {
 
+    /** Add data to log file:
+     * $data - array() - data for write to file
+     * $namedata - string - name of var
+     * $logfile - string - other name  for log file
+     * $fromfile - string - name of file, can be __FILE__
+     * $fromline - string - number of line, can be __LINE__
+     */
     public static function addLog($data, $namedata = null, $logfile = null, $fromfile = null, $fromline = null)
     {
         if (empty($logfile))
@@ -24,7 +31,7 @@ class Mylog extends FileExceptionHandlerLog
         }
         $log .= "\n";
         if (empty($namedata)) {
-            $log .= $namedata . "\n";
+            $log .= $namedata . ":\n";
         }
 
         $log .= print_r($data, true) . "\n\n";

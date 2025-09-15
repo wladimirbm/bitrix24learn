@@ -1,7 +1,5 @@
 <?php 
-
-//if (file_exists(__DIR__ . 'debug/mylog.php')) {
+if (file_exists('debug/mylog.php')) {
     require_once('debug/mylog.php');
-//}
-
+}
 ?> 
