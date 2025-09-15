@@ -11,7 +11,7 @@ class FileExceptionHandlerLogCustom extends FileExceptionHandlerLog
 	const MAX_LOG_SIZE = 1000000;
 	const DEFAULT_LOG_FILE = "/logs/exception.log";
 
-	private $level;
+	private $level; 
 
 	/** @var Log\LoggerInterface */
 	protected $logger;
