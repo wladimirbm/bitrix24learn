@@ -45,14 +45,14 @@ class Mylog extends FileExceptionHandlerLog
         return;
     }
 
-    public static function ClearDefLog()
+    public static function ClearMyLog()
     {
         $logfile = "mylog_" . date('Y-m-d') . ".log";
         file_put_contents($_SERVER['DOCUMENT_ROOT'] . "/logs/" . $logfile, '');
         return;
     }
 
-    public static function ClearDefException()
+    public static function ClearMyException()
     {
         $logfile = "exception_" . date('Y-m-d') . ".log";
         file_put_contents($_SERVER['DOCUMENT_ROOT'] . "/logs/" . $logfile, '');

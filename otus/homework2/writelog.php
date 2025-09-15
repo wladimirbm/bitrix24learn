@@ -1,5 +1,7 @@
 <? require($_SERVER["DOCUMENT_ROOT"] . "/bitrix/header.php"); ?>
 <?php
+\Bitrix\Main\Diag\Debug::dumpToFile($_SERVER, '$_SERVER');
+\Bitrix\Main\Diag\Debug::writeToFile($_SERVER, '$_SERVER');
 \App\Debug\Mylog::addLog($_SERVER, '$_SERVER', '', __FILE__, __LINE__);
 echo "\App\Debug\Mylog::addLog(_SERVER, '_SERVER', '', ".__FILE__.", ".__LINE__.");";
 ?>
