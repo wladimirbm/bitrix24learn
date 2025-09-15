@@ -34,7 +34,12 @@ class FileExceptionHandlerLogCustom extends FileExceptionHandlerLog
 
 		$message = "OTUS: [{date}] - Host: {host} - {type} - {$text}\n";
 		$message .= "-----\n";
-		$message .= print_r(debug_print_backtrace(), true) . "\n";
+		
+		ob_start();
+		debug_print_backtrace();
+		$backtrace = ob_get_clean();
+		
+		$message .= print_r($backtrace) . "\n";
 		$message .= "-----\n\n";
 
 		$this->logger->log($logLevel, $message, $context);
