@@ -29,7 +29,7 @@ class Mylog extends FileExceptionHandlerLog
 
         $log .= print_r($data, true) . "\n\n";
 
-        file_put_contents("/logs/" . $logfile, $log);
+        file_put_contents("/logs/" . $logfile, $log, FILE_APPEND );
 
         return;
     }
