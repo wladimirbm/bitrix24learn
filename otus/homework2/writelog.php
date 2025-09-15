@@ -4,7 +4,7 @@
     <?php print_r($_SERVER); ?>
 </pre>
 <?php
-use App\Diag\Mylog;
-App\Diag\Mylog::addLog($_SERVER, '$_SERVER', '', __FILE__, __LINE__);
+//use App\Diag\Mylog;
+\App\Diag\Mylog::addLog($_SERVER, '$_SERVER', '', __FILE__, __LINE__);
 ?>
 <? require($_SERVER["DOCUMENT_ROOT"] . "/bitrix/footer.php"); ?> 
