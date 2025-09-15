@@ -13,7 +13,7 @@ return array(
             'assertion_error_type' => 256,
             'log' => array(
                 'class_name' => Otus\Diag\FileExceptionHandlerLogCustom::class,
-                'required_file' => 'local/php_interface/src/diag/fileexceptionhandlerlogcustom.php',
+                'required_file' => 'php_interface/src/diag/fileexceptionhandlerlogcustom.php',
                 'settings' => array(
                     'file' => 'logs/exception_' . date('Y-m-d') . ".log",
                     'log_size' => 1000000,
