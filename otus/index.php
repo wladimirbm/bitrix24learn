@@ -11,6 +11,7 @@ $APPLICATION->SetTitle("Список Домашних работ");
         vertical-align: middle;
         background-position: 50% 50%;
         border-radius: 16px;
+        margin-left:20px;
     }
 </style>
 <H1><? $APPLICATION->ShowTitle() ?></H1>
