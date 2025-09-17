@@ -48,11 +48,7 @@ $arUrlRewrite=array (
     'PATH' => '/bitrix/services/mobile/webcomponent.php',
     'SORT' => 100,
   ),
-<<<<<<< HEAD
-  152 => 
-=======
   153 => 
->>>>>>> 706a881 (core update histing)
   array (
     'CONDITION' => '#^/disk/boards/([0-9]+)/openAttachedDocument#',
     'RULE' => 'action=disk.integration.flipchart.openAttachedDocument&attachedObjectId=$1',
@@ -148,11 +144,7 @@ $arUrlRewrite=array (
     'PATH' => '/timeman/login-history/index.php',
     'SORT' => 100,
   ),
-<<<<<<< HEAD
-  153 => 
-=======
   154 => 
->>>>>>> 706a881 (core update histing)
   array (
     'CONDITION' => '#^/disk/boards/([0-9]+)/openDocument#',
     'RULE' => 'action=disk.integration.flipchart.openDocument&fileId=$1',
@@ -160,11 +152,7 @@ $arUrlRewrite=array (
     'PATH' => '/bitrix/services/main/ajax.php',
     'SORT' => 100,
   ),
-<<<<<<< HEAD
-  154 => 
-=======
   155 => 
->>>>>>> 706a881 (core update histing)
   array (
     'CONDITION' => '#^/disk/boards/([0-9]+)/openAttached#',
     'RULE' => 'action=disk.integration.flipchart.openAttachedDocument&attachedObjectId=$1',
@@ -204,11 +192,7 @@ $arUrlRewrite=array (
     'PATH' => '/extranet/call/index.php',
     'SORT' => 100,
   ),
-<<<<<<< HEAD
-  147 => 
-=======
   148 => 
->>>>>>> 706a881 (core update histing)
   array (
     'CONDITION' => '#^/bi/dashboard/detail/([0-9]+)/#',
     'RULE' => 'dashboardId=$1',
@@ -328,11 +312,7 @@ $arUrlRewrite=array (
     'PATH' => '/extranet/marketplace/app/index.php',
     'SORT' => 100,
   ),
-<<<<<<< HEAD
-  155 => 
-=======
   156 => 
->>>>>>> 706a881 (core update histing)
   array (
     'CONDITION' => '#^/disk/boards/([0-9]+)/open#',
     'RULE' => 'action=disk.integration.flipchart.openDocument&fileId=$1',
@@ -516,11 +496,7 @@ $arUrlRewrite=array (
     'PATH' => '/extranet/workgroups/index.php',
     'SORT' => 100,
   ),
-<<<<<<< HEAD
-  156 => 
-=======
   147 => 
->>>>>>> 706a881 (core update histing)
   array (
     'CONDITION' => '#^/call/detail/([0-9]+)#',
     'RULE' => 'callId=$1',
@@ -864,11 +840,7 @@ $arUrlRewrite=array (
     'PATH' => '/marketing/ads.php',
     'SORT' => 100,
   ),
-<<<<<<< HEAD
-  150 => 
-=======
   151 => 
->>>>>>> 706a881 (core update histing)
   array (
     'CONDITION' => '#^/bi/statistics/#',
     'RULE' => '',
@@ -1068,11 +1040,7 @@ $arUrlRewrite=array (
     'PATH' => '/crm/button/index.php',
     'SORT' => 100,
   ),
-<<<<<<< HEAD
-  148 => 
-=======
   149 => 
->>>>>>> 706a881 (core update histing)
   array (
     'CONDITION' => '#^/bi/dataset/#',
     'RULE' => '',
@@ -1104,11 +1072,7 @@ $arUrlRewrite=array (
     'PATH' => '/crm/quote/index.php',
     'SORT' => 100,
   ),
-<<<<<<< HEAD
-  149 => 
-=======
   150 => 
->>>>>>> 706a881 (core update histing)
   array (
     'CONDITION' => '#^/bi/source/#',
     'RULE' => '',
@@ -1116,11 +1080,7 @@ $arUrlRewrite=array (
     'PATH' => '/bi/source/index.php',
     'SORT' => 100,
   ),
-<<<<<<< HEAD
-  151 => 
-=======
   152 => 
->>>>>>> 706a881 (core update histing)
   array (
     'CONDITION' => '#^/vibe/edit/#',
     'RULE' => '',
