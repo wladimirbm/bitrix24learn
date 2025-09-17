@@ -459,6 +459,10 @@ $APPLICATION->IncludeComponent(
 		}
 
 		<?php if($arResult["IBLOCK_ID"]==16) { ?>
+			if($arResult["ELEMENT_ID"]==0) {
+				document.querySelector("#tab_el_edit_table > tbody > tr.bx-top > td.bx-field-value > input[type=text]").value="Автоматическое заполнение";
+				document.querySelector("#tab_el_edit_table > tbody > tr.bx-top > td.bx-field-value > input[type=text]").setAttribute('readonly', 'readonly');
+			}
 			const field1 = document.querySelector("#tab_el_edit_table > tbody > tr:nth-child(2) > td.bx-field-value > input[type=text]");
 			const field2 = document.querySelector("#tab_el_edit_table > tbody > tr:nth-child(3) > td.bx-field-value > input[type=text]");
 			const field3 = document.querySelector("#tab_el_edit_table > tbody > tr:nth-child(4) > td.bx-field-value > input[type=text]");
