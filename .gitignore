@@ -5,3 +5,4 @@
 /logs/
 /__bx_log.log
 /.vscode/
+/urlrewrite.php
