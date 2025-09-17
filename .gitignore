@@ -4,3 +4,4 @@
 !/bitrix/.settings_extra.php
 /logs/
 /__bx_log.log
+/.vscode/
