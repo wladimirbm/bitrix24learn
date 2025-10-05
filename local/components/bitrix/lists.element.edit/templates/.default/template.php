@@ -468,7 +468,7 @@ $APPLICATION->IncludeComponent(
 			const field1 = document.querySelector("#tab_el_edit_table > tbody > tr:nth-child(2) > td.bx-field-value > input[type=text]");
 			const field2 = document.querySelector("#tab_el_edit_table > tbody > tr:nth-child(3) > td.bx-field-value > input[type=text]");
 			const field3 = document.querySelector("#tab_el_edit_table > tbody > tr:nth-child(4) > td.bx-field-value > input[type=text]");
-// Добавляем обработчик события 'click'
+
 			field1.addEventListener('keyup', () => {
 			document.querySelector("#tab_el_edit_table > tbody > tr.bx-top > td.bx-field-value > input[type=text]").value = field1.value + ' ' + field2.value + ' ' + field3.value;
 			});
