@@ -41,14 +41,14 @@ else {
     foreach ($doctorDatas as $doctorData) {
         $doctor['id'] =  $doctorData->getId();
         $doctor['name'] =  $doctorData->getName();
-        $doctor['lastname'] =  $doctorData->getLastname();
-        $doctor['firstname'] =  $doctorData->getFirstname();
-        $doctor['middlename'] =  $doctorData->getMiddlename();
-        $doctor['birthday'] =  $doctorData->getBirthday();
+        $doctor['lastname'] =  $doctorData->getLastname()->getValue();
+        $doctor['firstname'] =  $doctorData->getFirstname()->getValue();
+        $doctor['middlename'] =  $doctorData->getMiddlename()->getValue();
+        $doctor['birthday'] =  $doctorData->getBirthday()->getValue();
         $doctor['duty'] = $doctorData->getDuty()->getElement()->getName();
         $doctor['picture'] = CFile::GetPath($doctorData->getDetailPicture());
         foreach ($doctorData->getProcedures()->getAll() as $prItem) {
-            $doctor['procs'][] = $prItem->getId();
+            $doctor['procs'][$prItem->getId()] = $prItem->getName();
         }
     }
     dump($doctor);
