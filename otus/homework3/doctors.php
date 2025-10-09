@@ -1,6 +1,6 @@
 <?php
-use Bitrix\Main\UI\Extension;
-Extension::load('ui.bootstrap4');
+// use Bitrix\Main\UI\Extension;
+// Extension::load('ui.bootstrap4');
 ?>
 
 <?require($_SERVER["DOCUMENT_ROOT"]."/bitrix/header.php");?>
@@ -51,7 +51,18 @@ foreach ($doctors as $doctor) {
     echo "<hr>";
 
 ?>
-
+<style>
+    .table{ 
+    }
+    .table .row {
+        display: flex;
+        align-items:baseline;
+        justify-content: space-between;
+        padding: 10px;
+        border: 1px solid grey;
+        border-radius:5px;
+    }
+</style>
 <div class="table">
     <div class="row">
         <div class="col-md-3">
