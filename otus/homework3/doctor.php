@@ -21,6 +21,9 @@ $doctorDatas = \Bitrix\Iblock\Elements\ElementDoctorsTable::getList([ // пол�
     'select' => [
         'ID',
         'NAME',
+        'FIRSTNAME',
+        'LASTNAME',
+        'MIDDLENAME',
         'DETAIL_PICTURE',
         'PROCEDURES.ELEMENT.NAME',
         'DUTY.ELEMENT.NAME',
