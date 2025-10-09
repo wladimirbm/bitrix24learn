@@ -25,7 +25,7 @@ foreach ($doctors as $doctor) {
     dump($doctor->getId().' '.$doctor->getName().' - - -');
     dump(CFile::GetPath($doctor->getDetailPicture()));
 
-    dump($doctor->getDuty()->getName()); 
+    dump($doctor->getDuty()->getElement()->getName()); 
 
     foreach($doctor->getProceduses()->getAll() as $prItem) {
         // получаем значение свойства Описание у процедуры 
