@@ -3,7 +3,7 @@ require($_SERVER["DOCUMENT_ROOT"] . "/bitrix/header.php"); ?>
 
 <?php
 $docId = 0;
-if (!empty($_GET['docId'])&&$_GET['docId']==(int)$_GET['docId']) {
+if (!empty($_GET['docId']) && $_GET['docId'] == (int)$_GET['docId']) {
     $docId = (int)$_GET['docId'];
     $event = "Редактировать";
 } else $event = "Добавить";
@@ -17,7 +17,7 @@ $APPLICATION->SetTitle($event . " доктора");
 <?php
 
 
-$doctorData = \Bitrix\Iblock\Elements\ElementDoctorsTable::getList([ // получение списка процедур у врачей
+$doctorDatas = \Bitrix\Iblock\Elements\ElementDoctorsTable::getList([ // получение списка процедур у врачей
     'select' => [
         'ID',
         'NAME',
@@ -38,18 +38,20 @@ $doctor = [];
 if (empty($doctorData) && !empty($docId))
     echo '<h2>Доктор не найден. <a href="doctors.php">Вернуться к списку</a></h2>';
 else {
-     $doctor['id'] =  $doctorData->getId();
-     $doctor['name'] =  $doctorData->getName();
-     $doctor['lastname'] =  $doctorData->getLastname();
-     $doctor['firstname'] =  $doctorData->getFirstname();
-     $doctor['middlename'] =  $doctorData->getMiddlename();
-     $doctor['birthday'] =  $doctorData->getBirthday();
-     $doctor['duty'] = $doctorData->getDuty()->getElement()->getName();
-     $doctor['picture'] = CFile::GetPath($doctorData->getDetailPicture());
-     foreach ($doctorData->getProcedures()->getAll() as $prItem) { 
-        $doctor['procs'][] = $prItem->getId;
-     }
-dump($doctor);
+    foreach ($doctorDatas as $doctorData) {
+        $doctor['id'] =  $doctorData->getId();
+        $doctor['name'] =  $doctorData->getName();
+        $doctor['lastname'] =  $doctorData->getLastname();
+        $doctor['firstname'] =  $doctorData->getFirstname();
+        $doctor['middlename'] =  $doctorData->getMiddlename();
+        $doctor['birthday'] =  $doctorData->getBirthday();
+        $doctor['duty'] = $doctorData->getDuty()->getElement()->getName();
+        $doctor['picture'] = CFile::GetPath($doctorData->getDetailPicture());
+        foreach ($doctorData->getProcedures()->getAll() as $prItem) {
+            $doctor['procs'][] = $prItem->getId;
+        }
+    }
+    dump($doctor);
 ?>
 
 
