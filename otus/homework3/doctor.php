@@ -32,8 +32,8 @@ $doctorData = \Bitrix\Iblock\Elements\ElementDoctorsTable::getList([ // полу
         'ACTIVE' => 'Y',
     ],
 ])
-    ->fetchObject();
-//dump($doctorData);
+    ->fetchCollection();
+dump($doctorData);
 $doctor = [];
 if (empty($doctorData) && !empty($docId))
     echo '<h2>Доктор не найден. <a href="doctors.php">Вернуться к списку</a></h2>';
@@ -44,9 +44,9 @@ else {
      $doctor['firstname'] =  $doctorData->getFirstname();
      $doctor['middlename'] =  $doctorData->getMiddlename();
      $doctor['birthday'] =  $doctorData->getBirthday();
-     $doctor['duty'] = $doctor->getDuty()->getElement()->getName();
-     $doctor['picture'] = CFile::GetPath($doctor->getDetailPicture());
-     foreach ($doctor->getProcedures()->getAll() as $prItem) { 
+     $doctor['duty'] = $doctorData->getDuty()->getElement()->getName();
+     $doctor['picture'] = CFile::GetPath($doctorData->getDetailPicture());
+     foreach ($doctorData->getProcedures()->getAll() as $prItem) { 
         $doctor['procs'][] = $prItem->getId;
      }
 dump($doctor);
