@@ -11,10 +11,10 @@
     echo "</pre>";
     */
 ?>
-<h2>Список</h2>
-<p><a href="/logs/mylog_<?php echo date('Y-m-d');?>.log">Файл лога</a></p>
+<h2>Работа со моделями</h2>
+<p><a href="doctors.php">Список докторов</a></p>
 
-<h2>Модель</h2>
+<h2>Модели</h2>
 <p><a href="/logs/mylog_<?php echo date('Y-m-d');?>.log">Файл лога</a></p>
 
 <?require($_SERVER["DOCUMENT_ROOT"]."/bitrix/footer.php");?> 
