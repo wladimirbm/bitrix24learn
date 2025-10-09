@@ -1,16 +1,9 @@
 <?php
-
-// use Bitrix\Main\UI\Extension;
-// Extension::load('ui.bootstrap4');
-
-
 require($_SERVER["DOCUMENT_ROOT"] . "/bitrix/header.php"); ?>
 <?php
-$APPLICATION->SetTitle("Список докторов");
-?>
-<H1><? $APPLICATION->ShowTitle() ?></H1>
-<?php
-$doctors = \Bitrix\Iblock\Elements\ElementDoctorsTable::getList([ // получение списка процедур у врачей
+if(!empty($_GET['docId']))
+        $dicId = (int)$_GET['docId'];
+$doctorData = \Bitrix\Iblock\Elements\ElementDoctorsTable::getList([ // получение списка процедур у врачей
     'select' => [
         'ID',
         'NAME',
@@ -21,16 +14,27 @@ $doctors = \Bitrix\Iblock\Elements\ElementDoctorsTable::getList([ // получ�
         //'PROCEDURES.ELEMENT.COLORS'
     ],
     'filter' => [
-        //'ID' => $docId,
+        'ID' => $docId,
         'ACTIVE' => 'Y',
     ],
 ])
-    ->fetchCollection();
+    ->fetchObject();
+dump($doctorData);
 
+    if(empty($doctorData)) 
+        $event = "Добавить";
+    else $event = "Редактировать";
+?>
+<?php
+$APPLICATION->SetTitle($event." доктора");
+?>
+<H1><? $APPLICATION->ShowTitle() ?></H1>
+
+<?
 $doctorsList = [];
 foreach ($doctors as $doctor) {
-    $doctorsList[$doctor->getId()]['name'] = $doctor->getName();
-    $doctorsList[$doctor->getId()]['duty'] = $doctor->getDuty()->getElement()->getName();
+    $doctorsList['name'] = $doctor->getName();
+    $doctorsList['duty'] = $doctor->getDuty()->getElement()->getName();
     // dump($doctor->getId() . ' ' . $doctor->getName() . ' - - -');
     // dump(CFile::GetPath($doctor->getDetailPicture()));
     // dump($doctor->getDuty()->getElement()->getName());
@@ -51,8 +55,7 @@ echo "<hr>";
 
 ?>
 <style>
-    table th,
-    table td {
+    table th,table td {
         padding: 10px;
         border: 1px solid grey;
         border-radius: 5px;
@@ -60,8 +63,8 @@ echo "<hr>";
 </style>
 <table>
     <tr>
-        <th class="col-md-3">
-            ID
+        <th colspan="2">
+
         </th>
         <th class="col-md-3">
             ФИО
@@ -73,31 +76,9 @@ echo "<hr>";
             Процедуры
         </th>
         <th class="col-md-3">
-            <a href="doctor.php">Добавить</a>
+            <a href="#">Добавить</a>
         </th>
     </tr>
-    <?php foreach ($doctorsList as $id => $doc) { ?>
-        <tr class="row">
-            <td class="col-md-3">
-                <?php echo $id; ?>
-            </td>
-            <td class="col-md-3">
-                <?php echo $doc['name']; ?>
-            </td>
-            <td class="col-md-3">
-                <?php echo $doc['duty']; ?>
-            </td>
-            <td class="col-md-3">
-                <?php foreach ($doc['proc'] as $proc) {
-                    echo $proc . "<br>";
-                } ?>
-            </td>
-            <td class="col-md-3">
-                <a href="doctor.php?docId=<?php echo $id; ?>">Редактировать</a>
-            </td>
-        </tr>
-    <?php } ?>
 </table>
-
 
 <? require($_SERVER["DOCUMENT_ROOT"] . "/bitrix/footer.php"); ?>
