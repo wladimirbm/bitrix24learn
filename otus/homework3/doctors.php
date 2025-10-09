@@ -1,3 +1,7 @@
+<?php
+\Bitrix\Main\UI\Extension::load("ui.bootstrap4");
+?>
+
 <?require($_SERVER["DOCUMENT_ROOT"]."/bitrix/header.php");?>
 <?php 
     $APPLICATION->SetTitle("Список докторов");
@@ -21,7 +25,11 @@ $doctors = \Bitrix\Iblock\Elements\ElementDoctorsTable::getList([ // получ�
 ])
 ->fetchCollection(); 
 
+$doctorsList = [];
 foreach ($doctors as $doctor) {
+    $doctorsList[$doctor->getId()]['name']=$doctor->getName();
+    $doctorsList[$doctor->getId()]['duty']=$doctor->getDuty()->getElement()->getName();
+    
     dump($doctor->getId().' '.$doctor->getName().' - - -');
     dump(CFile::GetPath($doctor->getDetailPicture()));
 
@@ -30,6 +38,7 @@ foreach ($doctors as $doctor) {
     foreach($doctor->getProcedures()->getAll() as $prItem) {
         // получаем значение свойства Описание у процедуры 
         //if($prItem->getElement()->getDescription()!== null){
+        $doctorsList[$doctor->getId()]['proc'][$prItem->getId()]=$prItem->getElement()->getName();
         dump($prItem->getId().' - '.$prItem->getElement()->getName()/*.' - '.$prItem->getElement()->getDescription()->getValue() */);
         //}
         // получаем значение свойства Цвет у процедуры 
@@ -39,5 +48,43 @@ foreach ($doctors as $doctor) {
     }
     }
     echo "<hr>";
+
 ?>
+
+<div class="table">
+    <div class="row">
+        <div class="col-md-3">
+        ФИО
+        </div>
+        <div class="col-md-3">
+        Должность
+        </div>
+        <div class="col-md-3">
+        Процедуры
+        </div>
+        <div class="col-md-3">
+            
+        </div>
+    </div>
+<?php foreach($doctorsList as $doc) { ?>
+    <div class="row">
+        <div class="col-md-3">
+         <?php echo $doc['name']; ?>   
+        </div>
+        <div class="col-md-3">
+         <?php echo $doc['duty']; ?>   
+        </div>
+        <div class="col-md-3">
+         <?php foreach($doc['proc'] as $proc) { 
+            echo $proc."<br>";
+          } ?>
+        </div>
+        <div class="col-md-3">
+            <a href="#">Редактировать</a>
+        </div>
+    </div>
+<?php } ?>
+</div>
+
+
 <?require($_SERVER["DOCUMENT_ROOT"]."/bitrix/footer.php");?>
