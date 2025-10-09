@@ -48,7 +48,7 @@ else {
         $doctor['duty'] = $doctorData->getDuty()->getElement()->getName();
         $doctor['picture'] = CFile::GetPath($doctorData->getDetailPicture());
         foreach ($doctorData->getProcedures()->getAll() as $prItem) {
-            $doctor['procs'][] = $prItem->getId;
+            $doctor['procs'][] = $prItem->getId();
         }
     }
     dump($doctor);
