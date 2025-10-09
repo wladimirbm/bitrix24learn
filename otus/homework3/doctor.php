@@ -44,10 +44,10 @@ else {
     foreach ($doctorDatas as $doctorData) {
         $doctor['id'] =  $doctorData->getId();
         $doctor['name'] =  $doctorData->getName();
-        $doctor['lastname'] =  $doctorData->getElement()->getLastname()->getValue();
-        $doctor['firstname'] =  $doctorData->getElement()->getFirstname()->getValue();
-        $doctor['middlename'] =  $doctorData->getElement()->getMiddlename()->getValue();
-        $doctor['birthday'] =  $doctorData->getElement()->getBirthday()->getValue();
+        $doctor['lastname'] =  $doctorData->getLastname()->getValue();
+        $doctor['firstname'] =  $doctorData->getFirstname()->getValue();
+        $doctor['middlename'] =  $doctorData->getMiddlename()->getValue();
+        $doctor['birthday'] =  $doctorData->getBirthday()->getValue();
         $doctor['duty'] = $doctorData->getDuty()->getElement()->getName();
         $doctor['picture'] = CFile::GetPath($doctorData->getDetailPicture());
         foreach ($doctorData->getProcedures()->getAll() as $prItem) {
