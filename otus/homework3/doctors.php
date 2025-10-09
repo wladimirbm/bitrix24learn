@@ -1,9 +1,10 @@
 <?php
+
 // use Bitrix\Main\UI\Extension;
 // Extension::load('ui.bootstrap4');
-?>
 
-<?require($_SERVER["DOCUMENT_ROOT"]."/bitrix/header.php");?>
+
+require($_SERVER["DOCUMENT_ROOT"]."/bitrix/header.php");?>
 <?php 
     $APPLICATION->SetTitle("Список докторов");
 ?>
