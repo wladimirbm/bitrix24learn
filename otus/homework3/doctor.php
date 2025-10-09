@@ -2,7 +2,8 @@
 require($_SERVER["DOCUMENT_ROOT"] . "/bitrix/header.php"); ?>
 
 <?php
-if (!empty($_GET['docId'])) {
+$docId = 0;
+if (!empty($_GET['docId'])&&$_GET['docId']==(int)$_GET['docId']) {
     $docId = (int)$_GET['docId'];
     $event = "Редактировать";
 } else $event = "Добавить";
@@ -32,16 +33,28 @@ $doctorData = \Bitrix\Iblock\Elements\ElementDoctorsTable::getList([ // полу
     ],
 ])
     ->fetchObject();
-dump($doctorData);
-
-if (empty($doctorData)&&!empty($docId))
+//dump($doctorData);
+$doctorsList = [];
+if (empty($doctorData) && !empty($docId))
     echo '<h2>Доктор не найден. <a href="doctors.php">Вернуться к списку</a></h2>';
 else {
-
+     $doctorsList['id'] =  $doctorData->getId();
+     $doctorsList['name'] =  $doctorData->getName();
+     $doctorsList['lastname'] =  $doctorData->getLastname();
+     $doctorsList['firstname'] =  $doctorData->getFirstname();
+     $doctorsList['middlename'] =  $doctorData->getMiddlename();
+     $doctorsList['birthday'] =  $doctorData->getBirthday();
+     $doctorsList['duty'] = $doctor->getDuty()->getElement()->getName();
+     $doctorsList['picture'] = CFile::GetPath($doctor->getDetailPicture());
+     foreach ($doctor->getProcedures()->getAll() as $prItem) { 
+        $doctorsList['procs'][] = $prItem->getId;
+     }
+dump($doctorsList);
 ?>
 
 
     <?
+    /*
     $doctorsList = [];
     foreach ($doctors as $doctor) {
         $doctorsList['name'] = $doctor->getName();
@@ -54,7 +67,7 @@ else {
             // получаем значение свойства Описание у процедуры 
             //if($prItem->getElement()->getDescription()!== null){
             $doctorsList[$doctor->getId()]['proc'][$prItem->getId()] = $prItem->getElement()->getName();
-            // dump($prItem->getId() . ' - ' . $prItem->getElement()->getName()/*.' - '.$prItem->getElement()->getDescription()->getValue() */);
+            // dump($prItem->getId() . ' - ' . $prItem->getElement()->getName());//.' - '.$prItem->getElement()->getDescription()->getValue() 
             //}
             // получаем значение свойства Цвет у процедуры 
             // foreach($prItem->getElement()->getColors()->getAll() as $color) {
@@ -63,7 +76,7 @@ else {
         }
     }
     echo "<hr>";
-
+*/
     ?>
     <style>
         table th,
