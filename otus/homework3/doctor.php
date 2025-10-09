@@ -95,19 +95,58 @@ else {
     <table>
         <tr>
             <th colspan="2">
+                <?php echo $doctor['name'] ?? "Новый" ?>
+            </th>
+        </tr>
+        <tr>
+            <th>
+                Фотография
+            </th>
+            <td>
+                <img src="<?php echo $doctor['picture'] ?? ''; ?>">
+                <input type="file" name="picture">
+                <input type="hidden" name="editpicture" value="<?php echo $doctor['picture'] ?? ''; ?>">
+            </td>
+        </tr>
+        <tr>
+            <th>
+                Фамилия
+            </th>
+            <td>
+                <input type="text" name="lastname" value="<?php echo $doctor['lastname'] ?? ''; ?>">
+            </td>
+        </tr>
+        <tr>
 
+            <th>
+                Дата рождения
             </th>
-            <th class="col-md-3">
-                ФИО
-            </th>
-            <th class="col-md-3">
+            <td>
+                <input type="text" name="duty" value="<?php echo $doctor['birthday'] ?? ''; ?>">
+            </td>
+        </tr>
+        <tr>
+
+            <th>
                 Должность
             </th>
-            <th class="col-md-3">
+            <td>
+                <input type="text" name="duty" value="<?php echo $doctor['duty'] ?? ''; ?>">
+            </td>
+        </tr>
+        <tr>
+
+            <th>
                 Процедуры
             </th>
-            <th class="col-md-3">
-                <a href="#">Добавить</a>
+            <td>
+                <input type="text" name="lastname" value="<?php echo $doctor['lastname'] ?? ''; ?>">
+            </td>
+        </tr>
+        <tr>
+
+            <th colspan=2>
+                <input type="button" name="doctordata" value="Добавить">
             </th>
         </tr>
     </table>
