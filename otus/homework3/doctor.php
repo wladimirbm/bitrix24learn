@@ -1,4 +1,5 @@
 <?php
+
 use \Bitrix\Main\UI\Extension;
 
 
@@ -94,9 +95,9 @@ else {
 */
     ?>
 
-<?php
-$containerId = 'field-selector-container';
-?>
+    <?php
+    $containerId = 'field-procedures';
+    ?>
 
 
     <style>
@@ -184,22 +185,20 @@ $containerId = 'field-selector-container';
 <?php } ?>
 
 <script>
-function() {
     const selector = new BX.UI.FieldSelector({
         containerId: '<?= $containerId ?>',
-        fieldName: 'procedures_id',
-        multiple: false,
+        fieldName: 'user_ids[]',
+        multiple: true,
         collectionType: 'int',
-        entities: [
-            {
-                id: 'crm_contact',
-                options: { enableSearch: true }
-            }
-        ],
-        selectedItems: [['crm_contact', 1]]
+        entities: [{
+            id: 'user'
+        }],
+        selectedItems: [
+            ['user', 101],
+            ['user', 102]
+        ]
     });
     selector.render();
-})();
 </script>
 
 <? require($_SERVER["DOCUMENT_ROOT"] . "/bitrix/footer.php"); ?>
