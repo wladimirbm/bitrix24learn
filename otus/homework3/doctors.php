@@ -10,6 +10,7 @@ $doctors = \Bitrix\Iblock\Elements\ElementDoctorsTable::getList([ // получ�
         'NAME', 
         'DETAIL_PICTURE',
         'PROCEDURES.ELEMENT.NAME',
+        'DUTY.ELEMENT.NAME',
         //'PROCEDURES.ELEMENT.DESCRIPTION', // PROC_IDS_MULTI - множественное поле Процедуры у элемента инфоблока Доктора 
         //'PROCEDURES.ELEMENT.COLORS'
     ], 
@@ -24,16 +25,19 @@ foreach ($doctors as $doctor) {
     dump($doctor->getId().' '.$doctor->getName().' - - -');
     dump(CFile::GetPath($doctor->getDetailPicture()));
 
-    foreach($doctor->getProcIdsMulti()->getAll() as $prItem) {
+    dump($doctor->getDuty()->getName()); 
+
+    foreach($doctor->getProceduses()->getAll() as $prItem) {
         // получаем значение свойства Описание у процедуры 
-        if($prItem->getElement()->getDescription()!== null){
+        //if($prItem->getElement()->getDescription()!== null){
         dump($prItem->getId().' - '.$prItem->getElement()->getName()/*.' - '.$prItem->getElement()->getDescription()->getValue() */);
-        }
+        //}
         // получаем значение свойства Цвет у процедуры 
         // foreach($prItem->getElement()->getColors()->getAll() as $color) {
         //     pr($color->getValue());
         // }
     }
     }
+    echo "<hr>";
 ?>
 <?require($_SERVER["DOCUMENT_ROOT"]."/bitrix/footer.php");?>
