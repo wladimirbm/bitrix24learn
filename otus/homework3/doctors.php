@@ -1,5 +1,6 @@
 <?php
-\Bitrix\Main\UI\Extension::load("ui.bootstrap4");
+use Bitrix\Main\UI\Extension;
+Extension::load('ui.bootstrap4');
 ?>
 
 <?require($_SERVER["DOCUMENT_ROOT"]."/bitrix/header.php");?>
