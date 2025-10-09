@@ -1,8 +1,21 @@
 <?php
 require($_SERVER["DOCUMENT_ROOT"] . "/bitrix/header.php"); ?>
+
 <?php
-if(!empty($_GET['docId']))
-        $dicId = (int)$_GET['docId'];
+if (!empty($_GET['docId'])) {
+    $docId = (int)$_GET['docId'];
+    $event = "Редактировать";
+} else $event = "Добавить";
+?>
+
+<?php
+$APPLICATION->SetTitle($event . " доктора");
+?>
+<H1><? $APPLICATION->ShowTitle() ?></H1>
+
+<?php
+
+
 $doctorData = \Bitrix\Iblock\Elements\ElementDoctorsTable::getList([ // получение списка процедур у врачей
     'select' => [
         'ID',
@@ -21,64 +34,64 @@ $doctorData = \Bitrix\Iblock\Elements\ElementDoctorsTable::getList([ // полу
     ->fetchObject();
 dump($doctorData);
 
-    if(empty($doctorData)) 
-        $event = "Добавить";
-    else $event = "Редактировать";
-?>
-<?php
-$APPLICATION->SetTitle($event." доктора");
-?>
-<H1><? $APPLICATION->ShowTitle() ?></H1>
+if (empty($doctorData)&&!empty($docId))
+    echo '<h2>Доктор не найден. <a href="doctors.php">Вернуться к списку</a></h2>';
+else {
 
-<?
-$doctorsList = [];
-foreach ($doctors as $doctor) {
-    $doctorsList['name'] = $doctor->getName();
-    $doctorsList['duty'] = $doctor->getDuty()->getElement()->getName();
-    // dump($doctor->getId() . ' ' . $doctor->getName() . ' - - -');
-    // dump(CFile::GetPath($doctor->getDetailPicture()));
-    // dump($doctor->getDuty()->getElement()->getName());
+?>
 
-    foreach ($doctor->getProcedures()->getAll() as $prItem) {
-        // получаем значение свойства Описание у процедуры 
-        //if($prItem->getElement()->getDescription()!== null){
-        $doctorsList[$doctor->getId()]['proc'][$prItem->getId()] = $prItem->getElement()->getName();
-        // dump($prItem->getId() . ' - ' . $prItem->getElement()->getName()/*.' - '.$prItem->getElement()->getDescription()->getValue() */);
-        //}
-        // получаем значение свойства Цвет у процедуры 
-        // foreach($prItem->getElement()->getColors()->getAll() as $color) {
-        //     pr($color->getValue());
-        // }
+
+    <?
+    $doctorsList = [];
+    foreach ($doctors as $doctor) {
+        $doctorsList['name'] = $doctor->getName();
+        $doctorsList['duty'] = $doctor->getDuty()->getElement()->getName();
+        // dump($doctor->getId() . ' ' . $doctor->getName() . ' - - -');
+        // dump(CFile::GetPath($doctor->getDetailPicture()));
+        // dump($doctor->getDuty()->getElement()->getName());
+
+        foreach ($doctor->getProcedures()->getAll() as $prItem) {
+            // получаем значение свойства Описание у процедуры 
+            //if($prItem->getElement()->getDescription()!== null){
+            $doctorsList[$doctor->getId()]['proc'][$prItem->getId()] = $prItem->getElement()->getName();
+            // dump($prItem->getId() . ' - ' . $prItem->getElement()->getName()/*.' - '.$prItem->getElement()->getDescription()->getValue() */);
+            //}
+            // получаем значение свойства Цвет у процедуры 
+            // foreach($prItem->getElement()->getColors()->getAll() as $color) {
+            //     pr($color->getValue());
+            // }
+        }
     }
-}
-echo "<hr>";
+    echo "<hr>";
 
-?>
-<style>
-    table th,table td {
-        padding: 10px;
-        border: 1px solid grey;
-        border-radius: 5px;
-    }
-</style>
-<table>
-    <tr>
-        <th colspan="2">
+    ?>
+    <style>
+        table th,
+        table td {
+            padding: 10px;
+            border: 1px solid grey;
+            border-radius: 5px;
+        }
+    </style>
+    <table>
+        <tr>
+            <th colspan="2">
 
-        </th>
-        <th class="col-md-3">
-            ФИО
-        </th>
-        <th class="col-md-3">
-            Должность
-        </th>
-        <th class="col-md-3">
-            Процедуры
-        </th>
-        <th class="col-md-3">
-            <a href="#">Добавить</a>
-        </th>
-    </tr>
-</table>
+            </th>
+            <th class="col-md-3">
+                ФИО
+            </th>
+            <th class="col-md-3">
+                Должность
+            </th>
+            <th class="col-md-3">
+                Процедуры
+            </th>
+            <th class="col-md-3">
+                <a href="#">Добавить</a>
+            </th>
+        </tr>
+    </table>
+<?php } ?>
 
 <? require($_SERVER["DOCUMENT_ROOT"] . "/bitrix/footer.php"); ?>
