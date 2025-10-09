@@ -34,22 +34,22 @@ $doctorData = \Bitrix\Iblock\Elements\ElementDoctorsTable::getList([ // полу
 ])
     ->fetchObject();
 //dump($doctorData);
-$doctorsList = [];
+$doctor = [];
 if (empty($doctorData) && !empty($docId))
     echo '<h2>Доктор не найден. <a href="doctors.php">Вернуться к списку</a></h2>';
 else {
-     $doctorsList['id'] =  $doctorData->getId();
-     $doctorsList['name'] =  $doctorData->getName();
-     $doctorsList['lastname'] =  $doctorData->getLastname();
-     $doctorsList['firstname'] =  $doctorData->getFirstname();
-     $doctorsList['middlename'] =  $doctorData->getMiddlename();
-     $doctorsList['birthday'] =  $doctorData->getBirthday();
-     $doctorsList['duty'] = $doctor->getDuty()->getElement()->getName();
-     $doctorsList['picture'] = CFile::GetPath($doctor->getDetailPicture());
+     $doctor['id'] =  $doctorData->getId();
+     $doctor['name'] =  $doctorData->getName();
+     $doctor['lastname'] =  $doctorData->getLastname();
+     $doctor['firstname'] =  $doctorData->getFirstname();
+     $doctor['middlename'] =  $doctorData->getMiddlename();
+     $doctor['birthday'] =  $doctorData->getBirthday();
+     $doctor['duty'] = $doctor->getDuty()->getElement()->getName();
+     $doctor['picture'] = CFile::GetPath($doctor->getDetailPicture());
      foreach ($doctor->getProcedures()->getAll() as $prItem) { 
-        $doctorsList['procs'][] = $prItem->getId;
+        $doctor['procs'][] = $prItem->getId;
      }
-dump($doctorsList);
+dump($doctor);
 ?>
 
 
