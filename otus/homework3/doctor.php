@@ -1,7 +1,16 @@
 <?php
+use \Bitrix\Main\UI\Extension;
+
+
 require($_SERVER["DOCUMENT_ROOT"] . "/bitrix/header.php"); ?>
 
+
+
+
 <?php
+// Подключаем расширение
+Extension::load('ui.field-selector');
+
 $docId = 0;
 if (!empty($_GET['docId']) && $_GET['docId'] == (int)$_GET['docId']) {
     $docId = (int)$_GET['docId'];
@@ -84,6 +93,12 @@ else {
     echo "<hr>";
 */
     ?>
+
+<?php
+$containerId = 'field-selector-container';
+?>
+
+
     <style>
         table th,
         table td {
@@ -117,6 +132,22 @@ else {
             </td>
         </tr>
         <tr>
+            <th>
+                Имя
+            </th>
+            <td>
+                <input type="text" name="firstname" value="<?php echo $doctor['firstname'] ?? ''; ?>">
+            </td>
+        </tr>
+        <tr>
+            <th>
+                Отчество
+            </th>
+            <td>
+                <input type="text" name="middlename" value="<?php echo $doctor['middlename'] ?? ''; ?>">
+            </td>
+        </tr>
+        <tr>
 
             <th>
                 Дата рождения
@@ -140,16 +171,35 @@ else {
                 Процедуры
             </th>
             <td>
-                <input type="text" name="lastname" value="<?php echo $doctor['lastname'] ?? ''; ?>">
+                <div id="<?php echo $containerId; ?>"></div>
             </td>
         </tr>
         <tr>
 
             <th colspan=2>
-                <input type="button" name="doctordata" value="Добавить">
+                <input type="button" name="doctordata" value="<?php echo $event; ?>">
             </th>
         </tr>
     </table>
 <?php } ?>
+
+<script>
+function() {
+    const selector = new BX.UI.FieldSelector({
+        containerId: '<?= $containerId ?>',
+        fieldName: 'procedures_id',
+        multiple: false,
+        collectionType: 'int',
+        entities: [
+            {
+                id: 'crm_contact',
+                options: { enableSearch: true }
+            }
+        ],
+        selectedItems: [['crm_contact', 1]]
+    });
+    selector.render();
+})();
+</script>
 
 <? require($_SERVER["DOCUMENT_ROOT"] . "/bitrix/footer.php"); ?>
