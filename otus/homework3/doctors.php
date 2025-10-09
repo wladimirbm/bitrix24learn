@@ -27,7 +27,7 @@ foreach ($doctors as $doctor) {
 
     dump($doctor->getDuty()->getElement()->getName()); 
 
-    foreach($doctor->getProceduses()->getAll() as $prItem) {
+    foreach($doctor->getProcedures()->getAll() as $prItem) {
         // получаем значение свойства Описание у процедуры 
         //if($prItem->getElement()->getDescription()!== null){
         dump($prItem->getId().' - '.$prItem->getElement()->getName()/*.' - '.$prItem->getElement()->getDescription()->getValue() */);
