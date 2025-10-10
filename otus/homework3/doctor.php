@@ -183,7 +183,8 @@ else {
                             <div id="'.$containerId.'"></div>
                             <script>
                                 (function() {
-                                    const selector = new BX.Iblock.FieldSelector('.$config.');
+                                    //const selector = new BX.Iblock.FieldSelector('.$config.');
+                                    const selector = new BX.UI.FieldSelector('.$config.');
                                     selector.render();
                                 })();
                             </script>
