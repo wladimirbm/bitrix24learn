@@ -170,7 +170,7 @@ else {
                     $config = \Bitrix\Main\Web\Json::encode([
                         'containerId' => $containerId,
                         'fieldName' => 'procedures',
-                        'multiple' => false,
+                        'multiple' => true,
                         'collectionType' => 'int',
                         'selectedItems' => $values,
                         'iblockId' => 18,
