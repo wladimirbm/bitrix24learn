@@ -107,7 +107,7 @@ else { //if(false)
                 Фотография
             </th>
             <td>
-                <img src="<?php echo $doctor['picture'] ?? ''; ?>">
+                <img src="<?php echo $doctor['picture'] ?? ''; ?>"><br>
                 <input type="file" name="picture">
                 <input type="hidden" name="editpicture" value="<?php echo $doctor['picture'] ?? ''; ?>">
             </td>
@@ -149,7 +149,7 @@ else { //if(false)
                    
                     <script>
                     import {Mask} from 'ui.inputmask';
-                    const mask = new Mask({
+                    const mask = new InputMask({
                         //BX.UI.Inputmask
                         //BX.UI.FieldSelector
                         container: document.querySelector('.date-input'),
