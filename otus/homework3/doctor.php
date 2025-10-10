@@ -36,8 +36,8 @@ $doctorDatas = \Bitrix\Iblock\Elements\ElementDoctorsTable::getList([ // пол�
         'ACTIVE' => 'Y',
     ],
 ])
-    ->fetchObject();
-print_r($doctorData);
+    ->fetch();
+dump($doctorDatas);
 $doctor = [];
 if (empty($doctorDatas) && !empty($docId))
     echo '<h2>Доктор не найден. <a href="doctors.php">Вернуться к списку</a></h2>';
