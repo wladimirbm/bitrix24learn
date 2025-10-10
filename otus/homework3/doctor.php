@@ -53,8 +53,8 @@ else {
         $doctor['picture'] = CFile::GetPath($doctorData->getDetailPicture());
         
         foreach ($doctorData->getProcedures()->getAll() as $prItem) {
-            dump($prItem);
-            $doctor['procs'][$prItem->getId()] = $prItem->getElement()->getName();
+            //dump($prItem);
+            $doctor['procs'][$prItem->getElement()->getId()] = $prItem->getElement()->getName();
         }
     }
     dump($doctor);
