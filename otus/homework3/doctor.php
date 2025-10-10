@@ -161,7 +161,8 @@ else {
 
                     \Bitrix\Main\Loader::includeModule('iblock');
 
-                    \Bitrix\Main\UI\Extension::load('iblock.field-selector');
+                    //\Bitrix\Main\UI\Extension::load('iblock.field-selector');
+                    \Bitrix\Main\UI\Extension::load('ui.field-selector');
 
                     $containerId = 'field-procedures'; // ID dom-контейнера для TagSelector'а
 
