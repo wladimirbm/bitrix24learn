@@ -28,6 +28,7 @@ $doctorDatas = \Bitrix\Iblock\Elements\ElementDoctorsTable::getList([ // пол�
         'DETAIL_PICTURE',
         'PROCEDURES.ELEMENT.ID',
         'PROCEDURES.ELEMENT.NAME',
+        'DUTY.ELEMENT.ID',
         'DUTY.ELEMENT.NAME',
         //'PROCEDURES.ELEMENT.DESCRIPTION', // PROC_IDS_MULTI - множественное поле Процедуры у элемента инфоблока Доктора 
         //'PROCEDURES.ELEMENT.COLORS'
@@ -51,6 +52,7 @@ else { //if(false)
         $doctor['middlename'] =  $doctorData->getMiddlename()->getValue();
         $doctor['birthday'] =  $doctorData->getBirthday()->getValue();
         $doctor['duty'] = $doctorData->getDuty()->getElement()->getName();
+        $doctor['duty_id'] = $doctorData->getDuty()->getElement()->getId();
         $doctor['picture'] = CFile::GetPath($doctorData->getDetailPicture());
         
         foreach ($doctorData->getProcedures()->getAll() as $prItem) {
