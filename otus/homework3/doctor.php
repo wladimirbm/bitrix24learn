@@ -26,6 +26,7 @@ $doctorDatas = \Bitrix\Iblock\Elements\ElementDoctorsTable::getList([ // пол�
         'MIDDLENAME',
         'BIRTHDAY',
         'DETAIL_PICTURE',
+        'PROCEDURES.ELEMENT.ID',
         'PROCEDURES.ELEMENT.NAME',
         'DUTY.ELEMENT.NAME',
         //'PROCEDURES.ELEMENT.DESCRIPTION', // PROC_IDS_MULTI - множественное поле Процедуры у элемента инфоблока Доктора 
@@ -168,7 +169,10 @@ else { if(false)
 
                     $containerId = 'field-procedures'; // ID dom-контейнера для TagSelector'а
 
-                    $values = array_keys($doctor['procs']); // текущее значение
+                    if(!empty($doctor['procs']))
+                        $values = array_keys($doctor['procs']); // текущее значение
+                    else
+                        $values = [];
 
                     $entities = [[],['options'=> ['enableSearch' => true]]];
 
