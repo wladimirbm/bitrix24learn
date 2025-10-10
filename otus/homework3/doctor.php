@@ -148,7 +148,9 @@ else { //if(false)
                 <input type="text" name="duty" class="date-input" value="<?php echo date('d.m.Y', strtotime($doctor['birthday'])) ?? ''; ?>">
                    
                     <script>
-                    const mask = new BX.UI.Inputmask({
+                    import {Mask} from 'ui.inputmask';
+                    const mask = new Mask({
+                        //BX.UI.Inputmask
                         //BX.UI.FieldSelector
                         container: document.querySelector('.date-input'),
                         mask: 'xx.xx.xxxx'
