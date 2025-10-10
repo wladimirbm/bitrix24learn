@@ -149,7 +149,7 @@ else { //if(false)
                    
                     <script>
                     //import {Mask} from 'ui.inputmask';
-                    const mask = new Inputmask({
+                    const mask = new BX.UI.Mask({
                         //BX.UI.Inputmask
                         //BX.UI.FieldSelector
                         container: document.querySelector('.date-input'),
