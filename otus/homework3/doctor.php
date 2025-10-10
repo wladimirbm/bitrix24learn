@@ -36,7 +36,7 @@ $doctorDatas = \Bitrix\Iblock\Elements\ElementDoctorsTable::getList([ // пол�
         'ACTIVE' => 'Y',
     ],
 ])
-    ->fetchAll();
+    ->fetchObject();
 print_r($doctorData);
 $doctor = [];
 if (empty($doctorDatas) && !empty($docId))
