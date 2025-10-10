@@ -41,7 +41,7 @@ print_r($doctorData);
 $doctor = [];
 if (empty($doctorDatas) && !empty($docId))
     echo '<h2>Доктор не найден. <a href="doctors.php">Вернуться к списку</a></h2>';
-else {
+else { if(false)
     foreach ($doctorDatas as $doctorData) {
         $doctor['id'] =  $doctorData->getId();
         $doctor['name'] =  $doctorData->getName();
