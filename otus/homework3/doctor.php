@@ -161,12 +161,14 @@ else {
 
                     \Bitrix\Main\Loader::includeModule('iblock');
 
-                    //\Bitrix\Main\UI\Extension::load('iblock.field-selector');
-                    \Bitrix\Main\UI\Extension::load('ui.field-selector');
+                    \Bitrix\Main\UI\Extension::load('iblock.field-selector');
+                    //\Bitrix\Main\UI\Extension::load('ui.field-selector');
 
                     $containerId = 'field-procedures'; // ID dom-контейнера для TagSelector'а
 
                     $values = array_keys($doctor['procs']); // текущее значение
+
+                    $entities = [[],['options'=> ['enableSearch' => true]]];
 
                     $config = \Bitrix\Main\Web\Json::encode([
                         'containerId' => $containerId,
@@ -177,14 +179,16 @@ else {
                         'iblockId' => 18,
                         'userType' => \Bitrix\Iblock\PropertyTable::USER_TYPE_ELEMENT_AUTOCOMPLETE,
                         'entityId' => \Bitrix\Iblock\Integration\UI\EntitySelector\IblockPropertyElementProvider::ENTITY_ID,
+                        'entities' => $entities,
+            
                     ]);
 
                     echo '
                             <div id="'.$containerId.'"></div>
                             <script>
                                 (function() {
-                                    //const selector = new BX.Iblock.FieldSelector('.$config.');
-                                    const selector = new BX.UI.FieldSelector('.$config.');
+                                    const selector = new BX.Iblock.FieldSelector('.$config.');
+                                    //const selector = new BX.UI.FieldSelector('.$config.');
                                     selector.render();
                                 })();
                             </script>
