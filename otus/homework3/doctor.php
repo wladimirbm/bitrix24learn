@@ -12,7 +12,7 @@ if (!empty($_GET['docId']) && $_GET['docId'] == (int)$_GET['docId']) {
 <?php
 $APPLICATION->SetTitle($event . " доктора");
 ?>
-<H1><? $APPLICATION->ShowTitle() ?></H1>
+<H1><? $APPLICATION->ShowTitle() ?> <?php echo ' <a href="doctors.php">Вернуться к списку</a>';?></H1>
 
 <?php
 
@@ -41,7 +41,7 @@ $doctorDatas = \Bitrix\Iblock\Elements\ElementDoctorsTable::getList([ // пол�
 //dump($doctorDatas);
 $doctor = [];
 if (empty($doctorDatas) && !empty($docId))
-    echo '<h2>Доктор не найден. <a href="doctors.php">Вернуться к списку</a></h2>';
+    echo '<h2>Доктор не найден.</h2>';
 else { //if(false)
     foreach ($doctorDatas as $doctorData) {
         $doctor['id'] =  $doctorData->getId();
