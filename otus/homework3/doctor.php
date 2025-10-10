@@ -142,7 +142,19 @@ else { //if(false)
                 Дата рождения
             </th>
             <td>
-                <input type="text" name="duty" value="<?php echo $doctor['birthday'] ?? ''; ?>">
+                <?php
+                \Bitrix\Main\UI\Extension::load("ui.inputmask");
+                ?>
+                <input type="text" name="duty" class="date-input" value="<?php echo date('d.m.Y', strtotime($doctor['birthday'])) ?? ''; ?>">
+                   
+                    <script>
+                    const mask = new Mask({
+                        container: document.querySelector('.date-input'),
+                        mask: 'xx.xx.xxxx'
+                    });
+                    
+                    mask.init()
+                    </script>
             </td>
         </tr>
         <tr>
