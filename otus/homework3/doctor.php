@@ -1,16 +1,6 @@
-<?php
-
-use \Bitrix\Main\UI\Extension;
-
-
-require($_SERVER["DOCUMENT_ROOT"] . "/bitrix/header.php"); ?>
-
-
-
+<?php require($_SERVER["DOCUMENT_ROOT"] . "/bitrix/header.php"); ?>
 
 <?php
-// Подключаем расширение
-Extension::load('ui.field-selector');
 
 $docId = 0;
 if (!empty($_GET['docId']) && $_GET['docId'] == (int)$_GET['docId']) {
@@ -95,11 +85,6 @@ else {
 */
     ?>
 
-    <?php
-    $containerId = 'field-procedures';
-    ?>
-
-
     <style>
         table th,
         table td {
@@ -172,7 +157,38 @@ else {
                 Процедуры
             </th>
             <td>
-                <div id="<?php echo $containerId; ?>"></div>
+               <?php
+
+                    \Bitrix\Main\Loader::includeModule('iblock');
+
+                    \Bitrix\Main\UI\Extension::load('iblock.field-selector');
+
+                    $containerId = 'field-procedures'; // ID dom-контейнера для TagSelector'а
+
+                    $values = $doctor['procs']; // текущее значение
+
+                    $config = \Bitrix\Main\Web\Json::encode([
+                        'containerId' => $containerId,
+                        'fieldName' => 'procedures',
+                        'multiple' => false,
+                        'collectionType' => 'int',
+                        'selectedItems' => $values,
+                        'iblockId' => 18,
+                        'userType' => \Bitrix\Iblock\PropertyTable::USER_TYPE_ELEMENT_AUTOCOMPLETE,
+                        'entityId' => \Bitrix\Iblock\Integration\UI\EntitySelector\IblockPropertyElementProvider::ENTITY_ID,
+                    ]);
+
+                    return <<<HTML
+                            <div id="$containerId"></div>
+                            <script>
+                                (function() {
+                                    const selector = new BX.Iblock.FieldSelector($config);
+                                    selector.render();
+                                })();
+                            </script>
+                    HTML;
+
+                                                            ?>
             </td>
         </tr>
         <tr>
@@ -184,21 +200,5 @@ else {
     </table>
 <?php } ?>
 
-<script>
-    const selector = new BX.UI.FieldSelector({
-        containerId: '<?= $containerId ?>',
-        fieldName: 'user_ids[]',
-        multiple: true,
-        collectionType: 'int',
-        entities: [{
-            id: 'user'
-        }],
-        selectedItems: [
-            ['user', 101],
-            ['user', 102]
-        ]
-    });
-    selector.render();
-</script>
 
 <? require($_SERVER["DOCUMENT_ROOT"] . "/bitrix/footer.php"); ?>
