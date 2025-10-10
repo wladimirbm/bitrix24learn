@@ -180,12 +180,10 @@ else {
 
                     echo '
                             <div id="$containerId"></div>
-                            <script>
-                                (function() {
+                            
                                     const selector = new BX.Iblock.FieldSelector('.$config.');
                                     selector.render();
-                                })();
-                            </script>
+                                
                     ';
 
                                                             ?>
