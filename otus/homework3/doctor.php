@@ -51,8 +51,9 @@ else {
         $doctor['birthday'] =  $doctorData->getBirthday()->getValue();
         $doctor['duty'] = $doctorData->getDuty()->getElement()->getName();
         $doctor['picture'] = CFile::GetPath($doctorData->getDetailPicture());
-        dump($doctorData->getProcedures()->getAll());
+        
         foreach ($doctorData->getProcedures()->getAll() as $prItem) {
+            dump($prItem);
             $doctor['procs'][$prItem->getId()] = $prItem->getElement()->getName();
         }
     }
