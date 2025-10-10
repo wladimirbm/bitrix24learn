@@ -178,15 +178,15 @@ else {
                         'entityId' => \Bitrix\Iblock\Integration\UI\EntitySelector\IblockPropertyElementProvider::ENTITY_ID,
                     ]);
 
-                    return <<<HTML
+                    echo '
                             <div id="$containerId"></div>
                             <script>
                                 (function() {
-                                    const selector = new BX.Iblock.FieldSelector($config);
+                                    const selector = new BX.Iblock.FieldSelector('.$config.');
                                     selector.render();
                                 })();
                             </script>
-                    HTML;
+                    ';
 
                                                             ?>
             </td>
