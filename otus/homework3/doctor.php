@@ -165,7 +165,7 @@ else {
 
                     $containerId = 'field-procedures'; // ID dom-контейнера для TagSelector'а
 
-                    $values = $doctor['procs']; // текущее значение
+                    $values = array_keys($doctor['procs']); // текущее значение
 
                     $config = \Bitrix\Main\Web\Json::encode([
                         'containerId' => $containerId,
