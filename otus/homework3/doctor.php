@@ -116,7 +116,7 @@ else { //if(false)
         <table>
             <tr>
                 <th colspan="2">
-                    <input type="hidden" name="docId" value="<?php echo $ocId; ?>">
+                    <input type="hidden" name="docId" value="<?php echo $docId; ?>">
                     <?php echo $doctor['name'] ?? "Новый" ?>
                 </th>
             </tr>
@@ -261,7 +261,7 @@ else { //if(false)
 
                     $config = \Bitrix\Main\Web\Json::encode([
                         'containerId' => $containerId,
-                        'fieldName' => 'procedures',
+                        'fieldName' => 'procedures[]',
                         'multiple' => true,
                         'collectionType' => 'int',
                         'selectedItems' => $values,
