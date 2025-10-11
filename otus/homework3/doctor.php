@@ -4,7 +4,7 @@
 \Bitrix\Main\UI\Extension::load('iblock.field-selector');
 \Bitrix\Main\UI\Extension::load("ui.forms");
 
-if (!empty($_POST)) {
+if (!empty($_POST)&&!empty($_POST['doctordata'])) {
     dump($_POST);
     die();
 }
@@ -116,8 +116,8 @@ else { //if(false)
         <table>
             <tr>
                 <th colspan="2">
-                    <?php echo $doctor['name'] ?? "Новый" ?>
                     <input type="hidden" name="docId" value="<?php echo $ocId; ?>">
+                    <?php echo $doctor['name'] ?? "Новый" ?>
                 </th>
             </tr>
             <tr>
@@ -289,7 +289,7 @@ else { //if(false)
             <tr>
 
                 <th colspan=2>
-                    <input type="button" name="doctordata" value="<?php echo $event; ?>">
+                    <input type="submit" name="doctordata" value="<?php echo $event; ?>">
                 </th>
             </tr>
         </table>
