@@ -1,8 +1,8 @@
 <?php require($_SERVER["DOCUMENT_ROOT"] . "/bitrix/header.php"); ?>
 <?php
 \Bitrix\Main\Loader::includeModule('iblock');
-
 \Bitrix\Main\UI\Extension::load('iblock.field-selector');
+\Bitrix\Main\UI\Extension::load("ui.forms"); 
 
 if (!empty($_POST)) {
     dump($_POST);
