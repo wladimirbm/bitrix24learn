@@ -1,12 +1,22 @@
 <?php require($_SERVER["DOCUMENT_ROOT"] . "/bitrix/header.php"); ?>
-
 <?php
+
+
+if(isset($_POST)) {
+    dump($_POST); die();
+}
+
+
+
+
 
 $docId = 0;
 if (!empty($_GET['docId']) && $_GET['docId'] == (int)$_GET['docId']) {
     $docId = (int)$_GET['docId'];
     $event = "Редактировать";
-} else $event = "Добавить";
+} else { $event = "Добавить";
+    $docId=0;
+}
 ?>
 
 <?php
@@ -102,6 +112,7 @@ else { //if(false)
         <tr>
             <th colspan="2">
                 <?php echo $doctor['name'] ?? "Новый" ?>
+                <input type="hidden" name="docId" value="<?php echo $ocId; ?>">
             </th>
         </tr>
         <tr>
