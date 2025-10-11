@@ -2,7 +2,7 @@
 <?php
 \Bitrix\Main\Loader::includeModule('iblock');
 \Bitrix\Main\UI\Extension::load('iblock.field-selector');
-\Bitrix\Main\UI\Extension::load("ui.forms"); 
+\Bitrix\Main\UI\Extension::load("ui.forms");
 
 if (!empty($_POST)) {
     dump($_POST);
@@ -135,7 +135,10 @@ else { //if(false)
                     Фамилия
                 </th>
                 <td>
-                    <input type="text" name="lastname" value="<?php echo $doctor['lastname'] ?? ''; ?>">
+                    <div class="ui-ctl ui-ctl-textbox"> <!-- 1. Основной контейнер -->
+                        <input type="text" class="ui-ctl-element" name="lastname" value="<?php echo $doctor['lastname'] ?? ''; ?>"> <!-- 2. Основное поле -->
+                    </div>
+                    <!-- <input type="text" name="lastname" value="<?php echo $doctor['lastname'] ?? ''; ?>"> -->
                 </td>
             </tr>
             <tr>
@@ -143,7 +146,10 @@ else { //if(false)
                     Имя
                 </th>
                 <td>
-                    <input type="text" name="firstname" value="<?php echo $doctor['firstname'] ?? ''; ?>">
+                      <div class="ui-ctl ui-ctl-textbox"> <!-- 1. Основной контейнер -->
+                        <input type="text" class="ui-ctl-element" name="firstname" value="<?php echo $doctor['firstname'] ?? ''; ?>"> <!-- 2. Основное поле -->
+                    </div>
+                    <!-- <input type="text" name="firstname" value="<?php echo $doctor['firstname'] ?? ''; ?>"> -->
                 </td>
             </tr>
             <tr>
@@ -152,9 +158,9 @@ else { //if(false)
                 </th>
                 <td>
                     <div class="ui-ctl ui-ctl-textbox"> <!-- 1. Основной контейнер -->
-	<input type="text" class="ui-ctl-element" name="middlename" value="<?php echo $doctor['middlename'] ?? ''; ?>">  <!-- 2. Основное поле -->
-</div>
-                    <input type="text" name="middlename" value="<?php echo $doctor['middlename'] ?? ''; ?>">
+                        <input type="text" class="ui-ctl-element" name="middlename" value="<?php echo $doctor['middlename'] ?? ''; ?>"> <!-- 2. Основное поле -->
+                    </div>
+                    <!-- <input type="text" name="middlename" value="<?php echo $doctor['middlename'] ?? ''; ?>"> -->
                 </td>
             </tr>
             <tr>
