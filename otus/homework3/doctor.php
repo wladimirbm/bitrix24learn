@@ -192,7 +192,7 @@ else { //if(false)
                 $containerId = 'field-duty'; // ID dom-контейнера для TagSelector'а
 
                 if (!empty($doctor['duty']))
-                    $values = array_keys($doctor['duty']); // текущее значение
+                    $values = $doctor['duty']; // текущее значение
                 else
                     $values = [];
 
