@@ -2,7 +2,7 @@
 <?php
 
 
-if(isset($_POST)) {
+if(!empty($_POST)) {
     dump($_POST); die();
 }
 
