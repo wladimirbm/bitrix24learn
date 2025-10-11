@@ -135,7 +135,7 @@ else { //if(false)
                     Фамилия
                 </th>
                 <td>
-                    <div class="ui-ctl ui-ctl-textbox"> <!-- 1. Основной контейнер -->
+                    <div class="ui-ctl ui-ctl-textbox">
                         <input type="text" class="ui-ctl-element" name="lastname" value="<?php echo $doctor['lastname'] ?? ''; ?>"> <!-- 2. Основное поле -->
                     </div>
                     <!-- <input type="text" name="lastname" value="<?php echo $doctor['lastname'] ?? ''; ?>"> -->
@@ -146,7 +146,7 @@ else { //if(false)
                     Имя
                 </th>
                 <td>
-                      <div class="ui-ctl ui-ctl-textbox"> <!-- 1. Основной контейнер -->
+                    <div class="ui-ctl ui-ctl-textbox">
                         <input type="text" class="ui-ctl-element" name="firstname" value="<?php echo $doctor['firstname'] ?? ''; ?>"> <!-- 2. Основное поле -->
                     </div>
                     <!-- <input type="text" name="firstname" value="<?php echo $doctor['firstname'] ?? ''; ?>"> -->
@@ -157,7 +157,7 @@ else { //if(false)
                     Отчество
                 </th>
                 <td>
-                    <div class="ui-ctl ui-ctl-textbox"> <!-- 1. Основной контейнер -->
+                    <div class="ui-ctl ui-ctl-textbox">
                         <input type="text" class="ui-ctl-element" name="middlename" value="<?php echo $doctor['middlename'] ?? ''; ?>"> <!-- 2. Основное поле -->
                     </div>
                     <!-- <input type="text" name="middlename" value="<?php echo $doctor['middlename'] ?? ''; ?>"> -->
@@ -172,8 +172,7 @@ else { //if(false)
                     <?php
                     \Bitrix\Main\UI\Extension::load("ui.inputmask");
                     ?>
-                    <input type="text" name="duty" class="date-input" value="<?php echo date('d.m.Y', strtotime($doctor['birthday'])) ?? ''; ?>">
-
+                    <input type="text" name="duty" class="date-input ui-ctl-element" value="<?php echo date('d.m.Y', strtotime($doctor['birthday'])) ?? ''; ?>">
                     <script>
                         //import {Mask} from 'ui.inputmask';
                         const mask = new BX.UI.Mask({
