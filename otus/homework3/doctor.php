@@ -112,106 +112,110 @@ else { //if(false)
             border-radius: 5px;
         }
     </style>
-    <table>
-        <tr>
-            <th colspan="2">
-                <?php echo $doctor['name'] ?? "Новый" ?>
-                <input type="hidden" name="docId" value="<?php echo $ocId; ?>">
-            </th>
-        </tr>
-        <tr>
-            <th>
-                Фотография
-            </th>
-            <td>
-                <img src="<?php echo $doctor['picture'] ?? ''; ?>"><br>
-                <input type="file" name="picture">
-                <input type="hidden" name="editpicture" value="<?php echo $doctor['picture'] ?? ''; ?>">
-            </td>
-        </tr>
-        <tr>
-            <th>
-                Фамилия
-            </th>
-            <td>
-                <input type="text" name="lastname" value="<?php echo $doctor['lastname'] ?? ''; ?>">
-            </td>
-        </tr>
-        <tr>
-            <th>
-                Имя
-            </th>
-            <td>
-                <input type="text" name="firstname" value="<?php echo $doctor['firstname'] ?? ''; ?>">
-            </td>
-        </tr>
-        <tr>
-            <th>
-                Отчество
-            </th>
-            <td>
-                <input type="text" name="middlename" value="<?php echo $doctor['middlename'] ?? ''; ?>">
-            </td>
-        </tr>
-        <tr>
+    <form action="" method="POSt" enctype="multipart/form-data">
+        <table>
+            <tr>
+                <th colspan="2">
+                    <?php echo $doctor['name'] ?? "Новый" ?>
+                    <input type="hidden" name="docId" value="<?php echo $ocId; ?>">
+                </th>
+            </tr>
+            <tr>
+                <th>
+                    Фотография
+                </th>
+                <td>
+                    <img src="<?php echo $doctor['picture'] ?? ''; ?>"><br>
+                    <input type="file" name="picture">
+                    <input type="hidden" name="editpicture" value="<?php echo $doctor['picture'] ?? ''; ?>">
+                </td>
+            </tr>
+            <tr>
+                <th>
+                    Фамилия
+                </th>
+                <td>
+                    <input type="text" name="lastname" value="<?php echo $doctor['lastname'] ?? ''; ?>">
+                </td>
+            </tr>
+            <tr>
+                <th>
+                    Имя
+                </th>
+                <td>
+                    <input type="text" name="firstname" value="<?php echo $doctor['firstname'] ?? ''; ?>">
+                </td>
+            </tr>
+            <tr>
+                <th>
+                    Отчество
+                </th>
+                <td>
+                    <div class="ui-ctl ui-ctl-textbox"> <!-- 1. Основной контейнер -->
+	<input type="text" class="ui-ctl-element" name="middlename" value="<?php echo $doctor['middlename'] ?? ''; ?>">  <!-- 2. Основное поле -->
+</div>
+                    <input type="text" name="middlename" value="<?php echo $doctor['middlename'] ?? ''; ?>">
+                </td>
+            </tr>
+            <tr>
 
-            <th>
-                Дата рождения
-            </th>
-            <td>
-                <?php
-                \Bitrix\Main\UI\Extension::load("ui.inputmask");
-                ?>
-                <input type="text" name="duty" class="date-input" value="<?php echo date('d.m.Y', strtotime($doctor['birthday'])) ?? ''; ?>">
+                <th>
+                    Дата рождения
+                </th>
+                <td>
+                    <?php
+                    \Bitrix\Main\UI\Extension::load("ui.inputmask");
+                    ?>
+                    <input type="text" name="duty" class="date-input" value="<?php echo date('d.m.Y', strtotime($doctor['birthday'])) ?? ''; ?>">
 
-                <script>
-                    //import {Mask} from 'ui.inputmask';
-                    const mask = new BX.UI.Mask({
-                        //BX.UI.Inputmask
-                        //BX.UI.FieldSelector
-                        container: document.querySelector('.date-input'),
-                        mask: 'xx.xx.xxxx'
-                    });
+                    <script>
+                        //import {Mask} from 'ui.inputmask';
+                        const mask = new BX.UI.Mask({
+                            //BX.UI.Inputmask
+                            //BX.UI.FieldSelector
+                            container: document.querySelector('.date-input'),
+                            mask: 'xx.xx.xxxx'
+                        });
 
-                    mask.init()
-                </script>
-            </td>
-        </tr>
-        <tr>
+                        mask.init()
+                    </script>
+                </td>
+            </tr>
+            <tr>
 
-            <th>
-                Должность
-            </th>
-            <td>
-                <input type="text" name="duty" value="<?php echo $doctor['duty'] ?? ''; ?>">
-                  <?php
+                <th>
+                    Должность
+                </th>
+                <td>
+                    <!-- <input type="text" name="duty" value="<?php echo $doctor['duty'] ?? ''; ?>"> -->
+                    <?php
 
 
-                //\Bitrix\Main\UI\Extension::load('ui.field-selector');
+                    //\Bitrix\Main\UI\Extension::load('ui.field-selector');
 
-                $containerId = 'field-duty'; // ID dom-контейнера для TagSelector'а
+                    $containerId = 'field-duty'; // ID dom-контейнера для TagSelector'а
 
-                if (!empty($doctor['duty']))
-                    $values = [$doctor['duty_id']]; // текущее значение
-                else
-                    $values = [];
+                    if (!empty($doctor['duty']))
+                        $values = [$doctor['duty_id']]; // текущее значение
+                    else
+                        $values = [];
 
-                $entities = [[], ['options' => ['enableSearch' => true]]];
+                    $entities = [[], ['options' => ['enableSearch' => true]]];
 
-                $config = \Bitrix\Main\Web\Json::encode([
-                    'containerId' => $containerId,
-                    'fieldName' => 'duty',
-                    'multiple' => false,
-                    'collectionType' => 'int',
-                    'selectedItems' => $values,
-                    'iblockId' => 17,
-                    'userType' => \Bitrix\Iblock\PropertyTable::USER_TYPE_ELEMENT_AUTOCOMPLETE,
-                    'entityId' => \Bitrix\Iblock\Integration\UI\EntitySelector\IblockPropertyElementProvider::ENTITY_ID,
-                    'entities' => $entities,
+                    $config = \Bitrix\Main\Web\Json::encode([
+                        'containerId' => $containerId,
+                        'fieldName' => 'duty',
+                        'multiple' => false,
+                        'collectionType' => 'int',
+                        'selectedItems' => $values,
+                        'iblockId' => 17,
+                        'userType' => \Bitrix\Iblock\PropertyTable::USER_TYPE_ELEMENT_AUTOCOMPLETE,
+                        'entityId' => \Bitrix\Iblock\Integration\UI\EntitySelector\IblockPropertyElementProvider::ENTITY_ID,
+                        'entities' => $entities,
 
-                ]);
+                    ]);
 
-                echo '
+                    echo '
                             <div id="' . $containerId . '"></div>
                             <script>
                                 (function() {
@@ -222,43 +226,43 @@ else { //if(false)
                             </script>
                     ';
 
-                ?>
-            </td>
-        </tr>
-        <tr>
+                    ?>
+                </td>
+            </tr>
+            <tr>
 
-            <th>
-                Процедуры
-            </th>
-            <td>
-                <?php
+                <th>
+                    Процедуры
+                </th>
+                <td>
+                    <?php
 
 
-                //\Bitrix\Main\UI\Extension::load('ui.field-selector');
+                    //\Bitrix\Main\UI\Extension::load('ui.field-selector');
 
-                $containerId = 'field-procedures'; // ID dom-контейнера для TagSelector'а
+                    $containerId = 'field-procedures'; // ID dom-контейнера для TagSelector'а
 
-                if (!empty($doctor['procs']))
-                    $values = array_keys($doctor['procs']); // текущее значение
-                else
-                    $values = [];
+                    if (!empty($doctor['procs']))
+                        $values = array_keys($doctor['procs']); // текущее значение
+                    else
+                        $values = [];
 
-                $entities = [[], ['options' => ['enableSearch' => true]]];
+                    $entities = [[], ['options' => ['enableSearch' => true]]];
 
-                $config = \Bitrix\Main\Web\Json::encode([
-                    'containerId' => $containerId,
-                    'fieldName' => 'procedures',
-                    'multiple' => true,
-                    'collectionType' => 'int',
-                    'selectedItems' => $values,
-                    'iblockId' => 18,
-                    'userType' => \Bitrix\Iblock\PropertyTable::USER_TYPE_ELEMENT_AUTOCOMPLETE,
-                    'entityId' => \Bitrix\Iblock\Integration\UI\EntitySelector\IblockPropertyElementProvider::ENTITY_ID,
-                    'entities' => $entities,
+                    $config = \Bitrix\Main\Web\Json::encode([
+                        'containerId' => $containerId,
+                        'fieldName' => 'procedures',
+                        'multiple' => true,
+                        'collectionType' => 'int',
+                        'selectedItems' => $values,
+                        'iblockId' => 18,
+                        'userType' => \Bitrix\Iblock\PropertyTable::USER_TYPE_ELEMENT_AUTOCOMPLETE,
+                        'entityId' => \Bitrix\Iblock\Integration\UI\EntitySelector\IblockPropertyElementProvider::ENTITY_ID,
+                        'entities' => $entities,
 
-                ]);
+                    ]);
 
-                echo '
+                    echo '
                             <div id="' . $containerId . '"></div>
                             <script>
                                 (function() {
@@ -269,16 +273,17 @@ else { //if(false)
                             </script>
                     ';
 
-                ?>
-            </td>
-        </tr>
-        <tr>
+                    ?>
+                </td>
+            </tr>
+            <tr>
 
-            <th colspan=2>
-                <input type="button" name="doctordata" value="<?php echo $event; ?>">
-            </th>
-        </tr>
-    </table>
+                <th colspan=2>
+                    <input type="button" name="doctordata" value="<?php echo $event; ?>">
+                </th>
+            </tr>
+        </table>
+    </form>
 <?php } ?>
 
 
