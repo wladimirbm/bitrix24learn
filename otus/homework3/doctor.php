@@ -172,7 +172,12 @@ else { //if(false)
                     <?php
                     \Bitrix\Main\UI\Extension::load("ui.inputmask");
                     ?>
-                    <input type="text" name="duty" class="date-input ui-ctl-element" value="<?php echo date('d.m.Y', strtotime($doctor['birthday'])) ?? ''; ?>">
+                    <input type="text" name="birthday" class="date-input ui-ctl-element date-input" value="<?php echo date('d.m.Y', strtotime($doctor['birthday'])) ?? ''; ?>">
+                    <?php CJSCore::Init(array('date')); // подключаем инициализацию
+                    ?>
+                    <input type="text"
+                        name="birthday"
+                        onclick="BX.calendar({node: this, field: this, bTime: false});" />
                     <script>
                         //import {Mask} from 'ui.inputmask';
                         const mask = new BX.UI.Mask({
