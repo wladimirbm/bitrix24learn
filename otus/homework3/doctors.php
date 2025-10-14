@@ -1,4 +1,8 @@
 <?php
+if (!empty($_GET['delDoc'])) {
+    $res = \Bitrix\Iblock\Elements\ElementDoctorsTable::delete((int)$_GET['delDoc']);
+    LocalRedirect('/otus/homework3/doctors.php');
+}
 
 // use Bitrix\Main\UI\Extension;
 // Extension::load('ui.bootstrap4');
@@ -7,10 +11,11 @@
 require($_SERVER["DOCUMENT_ROOT"] . "/bitrix/header.php"); ?>
 <?php
 $APPLICATION->SetTitle("Список докторов");
-$APPLICATION->SetAdditionalCSS('/homework3/style.css');
+$APPLICATION->SetAdditionalCSS('/otus/homework3/style.css');
 ?>
 <H1><? $APPLICATION->ShowTitle() ?></H1>
 <?php
+
 $doctors = \Bitrix\Iblock\Elements\ElementDoctorsTable::getList([ // получение списка процедур у врачей
     'select' => [
         'ID',
@@ -65,8 +70,7 @@ echo "<hr>";
             Процедуры
         </th>
         <th class="col-md-3">
-            <a href="doctor.php">Добавить</a><br />
-            <a href="doctor.php">Удалить</a>
+            <a href="doctor.php">Добавить</a>
         </th>
     </tr>
     <?php foreach ($doctorsList as $id => $doc) { ?>
@@ -86,7 +90,8 @@ echo "<hr>";
                 } ?>
             </td>
             <td class="col-md-3">
-                <a href="doctor.php?docId=<?php echo $id; ?>">Редактировать</a>
+                <a href="doctor.php?docId=<?php echo $id; ?>">Редактировать</a><br />
+                <a href="doctors.php?delDoc=<?php echo $id; ?>">Удалить</a>
             </td>
         </tr>
     <?php } ?>
