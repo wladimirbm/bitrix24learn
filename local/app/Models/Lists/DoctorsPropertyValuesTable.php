@@ -20,7 +20,7 @@ class DoctorsPropertyValuesTable extends AbstractIblockPropertyValuesTable
             'PROCEDURES' => new ReferenceField(
                 'procedures', 
                 DoctorProceduresPropertyValuesTable::class, 
-                ['=this.duty' => 'ref.IBLOCK_ELEMENT_ID']
+                ['=this.procedures' => 'ref.IBLOCK_ELEMENT_ID']
             )
         ];
 
