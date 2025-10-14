@@ -7,6 +7,7 @@
 require($_SERVER["DOCUMENT_ROOT"] . "/bitrix/header.php"); ?>
 <?php
 $APPLICATION->SetTitle("Список докторов");
+$APPLICATION->SetAdditionalCSS('/homework3/style.css');
 ?>
 <H1><? $APPLICATION->ShowTitle() ?></H1>
 <?php
@@ -17,8 +18,6 @@ $doctors = \Bitrix\Iblock\Elements\ElementDoctorsTable::getList([ // получ�
         'DETAIL_PICTURE',
         'PROCEDURES.ELEMENT.NAME',
         'DUTY.ELEMENT.NAME',
-        //'PROCEDURES.ELEMENT.DESCRIPTION', // PROC_IDS_MULTI - множественное поле Процедуры у элемента инфоблока Доктора 
-        //'PROCEDURES.ELEMENT.COLORS'
     ],
     'filter' => [
         //'ID' => $docId,
@@ -50,14 +49,7 @@ foreach ($doctors as $doctor) {
 echo "<hr>";
 
 ?>
-<style>
-    table th,
-    table td {
-        padding: 10px;
-        border: 1px solid grey;
-        border-radius: 5px;
-    }
-</style>
+
 <table>
     <tr>
         <th class="col-md-3">
@@ -73,7 +65,8 @@ echo "<hr>";
             Процедуры
         </th>
         <th class="col-md-3">
-            <a href="doctor.php">Добавить</a>
+            <a href="doctor.php">Добавить</a><br />
+            <a href="doctor.php">Удалить</a>
         </th>
     </tr>
     <?php foreach ($doctorsList as $id => $doc) { ?>

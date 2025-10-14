@@ -7,63 +7,44 @@ dump($_POST);
 dump($_FILES);
 if (!empty($_POST) && !empty($_POST['doctordata'])) {
 
-
-    // редактирование записей в БД
-    /*\Bitrix\Main\Loader::IncludeModule("iblock");
-// делаем запрос на изменение поля NAME в записи (BMW X5) с ID 29
-$res = \Bitrix\Iblock\Elements\ElementcarTable::update(29, array(
-    'NAME' => 'TEST 777',
-));
-*/
-$el = new CIBlockElement;  
-$arFile = $_FILES['DETAIL_PICTURE'];  
-$fileId = CFile::SaveFile($arFile, "iblock"); // Сохраняем в /upload/iblock/  
-if ($fileId) {  
-$arFields = [ "IBLOCK_ID" => 5, "NAME" => "Элемент с картинкой", "DETAIL_PICTURE" => $fileId // Привязываем файл по ID  
-];  
-$el->Add($arFields);  
-}
-
-
-
     if (empty($_POST['docId'])) {  //new
 
-         // добавление данных  записей в инфоблок Автомобили
-        $dbResult = CarsTable::add([
-        'NAME'=>($_POST['firstname']??' ').($_POST['lastname']??' ').($_POST['middlename']??''),
-        'FIRSTNAME',
-        'LASTNAME',
-        'MIDDLENAME',
-        'BIRTHDAY',
-        'DETAIL_PICTURE',,
-]);
+        // добавление данных  записей в инфоблок
 
+        if (!empty($_FILES['picture'])) {
+            $picId = CFile::SaveFile($_FILES['picture'], "iblock");
+        } else $picId = 0;
 
-        // добавление данных  записей в инфоблок Автомобили
-        /*$dbResult = CarsTable::add([
-        'NAME'=>'TEST',
-        'MANUFACTURER_ID'=>33,
-        'CITY_ID'=>30,
-        'MODEL'=>'X5',
-        'ENGINE_VOLUME'=>'4',
-        'PRODUCTION_DATE'=>date('d.m.Y'),
-]);
-  'NAME',
-        'FIRSTNAME',
-        'LASTNAME',
-        'MIDDLENAME',
-        'BIRTHDAY',
-        'DETAIL_PICTURE',*/
-$el = new CIBlockElement;  
-$arFile = $_FILES['DETAIL_PICTURE'];  
-$fileId = CFile::SaveFile($arFile, "iblock"); // Сохраняем в /upload/iblock/  
-if ($fileId) {  
-$arFields = [ "IBLOCK_ID" => 5, "NAME" => "Элемент с картинкой", "DETAIL_PICTURE" => $fileId // Привязываем файл по ID  
-];  
-$el->Add($arFields);  
-}
+        $dbResult = \Bitrix\Iblock\Elements\ElementDoctorsTable::add([
+            'NAME' => ($_POST['firstname'] ?? ' ') . ($_POST['lastname'] ?? ' ') . ($_POST['middlename'] ?? ''),
+            'FIRSTNAME' => $_POST['firstname'],
+            'LASTNAME' => $_POST['lastname'],
+            'MIDDLENAME' => $_POST['middlename'],
+            'BIRTHDAY' => $_POST['birthday'],
+            'DETAIL_PICTURE' => $picId,
+            'DUTY' => $_POST['duty'],
+            'PROCEDURES' => $_POST['procedures'],
+
+        ]);
     } else { //edit
 
+        $docData = array(
+            'NAME' => ($_POST['firstname'] ?? ' ') . ($_POST['lastname'] ?? ' ') . ($_POST['middlename'] ?? ''),
+            'FIRSTNAME' => $_POST['firstname'],
+            'LASTNAME' => $_POST['lastname'],
+            'MIDDLENAME' => $_POST['middlename'],
+            'BIRTHDAY' => $_POST['birthday'],
+            //'DETAIL_PICTURE' => $picId,
+            'DUTY' => $_POST['duty'],
+            'PROCEDURES' => $_POST['procedures'],
+        );
+
+        if (!empty($_FILES['picture'])) {
+            $picId = CFile::SaveFile($_FILES['picture'], "iblock");
+            $docData['DETAIL_PICTURE'] = $picId;
+        }
+
+        $res = \Bitrix\Iblock\Elements\ElementDoctorsTable::update($_POST['docId'], $docData);
     }
     die();
 }
