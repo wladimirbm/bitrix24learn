@@ -13,7 +13,7 @@ dump($_FILES);
         // добавление данных  записей в инфоблок
 
         if (!empty($_FILES['picture'])) {
-            $picId = CFile::SaveFile($_FILES['picture'], "iblock");
+            $picId = CFile::SaveFile($_FILES['picture'], "otusblock");
         } else $picId = 0;
 
         $dbResult = DoctorsTable::add([
@@ -27,6 +27,8 @@ dump($_FILES);
             'PROCEDURES_ID' => $_POST['procedures'],
 
         ]);
+
+
     } else { //edit
 
         $docData = array(
@@ -41,7 +43,7 @@ dump($_FILES);
         );
 
         if (!empty($_FILES['picture'])) {
-            $picId = CFile::SaveFile($_FILES['picture'], "iblock");
+            $picId = CFile::SaveFile($_FILES['picture'], "otusblock");
             $docData['DETAIL_PICTURE'] = $picId;
         }
         dump($docData);
@@ -85,8 +87,7 @@ $doctorDatas = \Bitrix\Iblock\Elements\ElementDoctorsTable::getList([ // пол�
         'PROCEDURES_ID.ELEMENT.NAME',
         'DUTY_ID.ELEMENT.ID',
         'DUTY_ID.ELEMENT.NAME',
-        //'PROCEDURES.ELEMENT.DESCRIPTION', // PROC_IDS_MULTI - множественное поле Процедуры у элемента инфоблока Доктора 
-        //'PROCEDURES.ELEMENT.COLORS'
+        
     ],
     'filter' => [
         'ID' => $docId,
@@ -96,13 +97,13 @@ $doctorDatas = \Bitrix\Iblock\Elements\ElementDoctorsTable::getList([ // пол�
     ->fetchCollection();
 //dump($doctorDatas);
 
-
+/*
 $elements = \Bitrix\Iblock\Elements\ElementProceduresTable::getList([ // car - cимвольный код API инфоблока
     'select' => ['NAME'], // имя свойства 
 ])->fetchCollection();
 $PROCEDURES_NAME = [];
 foreach ($elements as $element) {
-    $PROCEDURES_NAME[] = $element->getName(); // получение значения свойства MODEL
+    $PROCEDURES_NAME[] = $element->getName(); 
 }
 //dump($PROCEDURES_NAME);
 
@@ -111,9 +112,10 @@ $elements = \Bitrix\Iblock\Elements\ElementDutyTable::getList([ // car - cимв
 ])->fetchCollection();
 $DUTY_NAME = [];
 foreach ($elements as $element) {
-    $DUTY_NAME[] = $element->getName(); // получение значения свойства MODEL
+    $DUTY_NAME[] = $element->getName();
 }
 //dump($DUTY_NAME);
+*/
 
 $doctor = [];
 if (empty($doctorDatas) && !empty($docId))
