@@ -4,7 +4,7 @@ namespace Models\Lists;
 
 use Models\AbstractIblockPropertyValuesTable;
 
-class DoctorProcediresPropertyValuesTable extends AbstractIblockPropertyValuesTable
+class DoctorProceduresPropertyValuesTable extends AbstractIblockPropertyValuesTable
 {
     const IBLOCK_ID = 18;
 }
