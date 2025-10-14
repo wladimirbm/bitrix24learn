@@ -16,7 +16,7 @@ $doctors = \Bitrix\Iblock\Elements\ElementDoctorsTable::getList([ // получ�
         'NAME',
         'DETAIL_PICTURE',
         'PROCEDURES.ELEMENT.NAME',
-        'DUTYS.ELEMENT.NAME',
+        'DUTY.ELEMENT.NAME',
         //'PROCEDURES.ELEMENT.DESCRIPTION', // PROC_IDS_MULTI - множественное поле Процедуры у элемента инфоблока Доктора 
         //'PROCEDURES.ELEMENT.COLORS'
     ],

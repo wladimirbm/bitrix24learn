@@ -101,8 +101,8 @@ $doctorDatas = \Bitrix\Iblock\Elements\ElementDoctorsTable::getList([ // пол�
         'DETAIL_PICTURE',
         'PROCEDURES.ELEMENT.ID',
         'PROCEDURES.ELEMENT.NAME',
-        'DUTYS.ELEMENT.ID',
-        'DUTYS.ELEMENT.NAME',
+        'DUTY.ELEMENT.ID',
+        'DUTY.ELEMENT.NAME',
         //'PROCEDURES.ELEMENT.DESCRIPTION', // PROC_IDS_MULTI - множественное поле Процедуры у элемента инфоблока Доктора 
         //'PROCEDURES.ELEMENT.COLORS'
     ],
@@ -127,11 +127,11 @@ dump($PROCEDURES_NAME);
 $elements = \Bitrix\Iblock\Elements\ElementDutysTable::getList([ // car - cимвольный код API инфоблока
     'select' => ['NAME'], // имя свойства 
 ])->fetchCollection();
-$DUTYS_NAME = [];
+$DUTY_NAME = [];
 foreach ($elements as $element) {
-    $DUTYS_NAME[] = $element->getName()->getValue(); // получение значения свойства MODEL
+    $DUTY_NAME[] = $element->getName()->getValue(); // получение значения свойства MODEL
 }
-dump($DUTYS_NAME);
+dump($DUTY_NAME);
 
 $doctor = [];
 if (empty($doctorDatas) && !empty($docId))
@@ -144,8 +144,8 @@ else { //if(false)
         $doctor['firstname'] =  $doctorData->getFirstname()->getValue();
         $doctor['middlename'] =  $doctorData->getMiddlename()->getValue();
         $doctor['birthday'] =  $doctorData->getBirthday()->getValue();
-        $doctor['duty'] = $doctorData->getDutys()->getElement()->getName();
-        $doctor['duty_id'] = $doctorData->getDutys()->getElement()->getId();
+        $doctor['duty'] = $doctorData->getDuty()->getElement()->getName();
+        $doctor['duty_id'] = $doctorData->getDuty()->getElement()->getId();
         $doctor['picture'] = CFile::GetPath($doctorData->getDetailPicture());
 
         foreach ($doctorData->getProcedures()->getAll() as $prItem) {
