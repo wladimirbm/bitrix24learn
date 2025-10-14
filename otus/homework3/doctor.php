@@ -28,6 +28,7 @@ dump($_FILES);
 
         ]);
 
+        dump($dbResult);
 
     } else { //edit
 
