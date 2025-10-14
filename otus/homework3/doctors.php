@@ -6,6 +6,7 @@ if (!empty($_GET['delDoc'])) {
     $res = \Bitrix\Iblock\Elements\ElementDoctorsTable::delete((int)$_GET['delDoc']);
     LocalRedirect('/otus/homework3/doctors.php');
 } 
+\Bitrix\Main\UI\Extension::load("ui.dialogs.messagebox");
 ?>
 <?php
 $APPLICATION->SetTitle("Список докторов");
@@ -92,7 +93,7 @@ echo "<hr>";
             </td>
             <td class="col-md-3">
                 <a href="doctor.php?docId=<?php echo $id; ?>">Редактировать</a><br />
-                <a href="doctors.php?delDoc=<?php echo $id; ?>">Удалить</a>
+                <a href="doctors.php?delDoc=<?php echo $id; ?>" onClick='BX.UI.Dialogs.MessageBox.confirm("Удалить", () => { return true; }, "Отменить", () => {return false;});'>Удалить</a>
             </td>
         </tr>
     <?php } ?>
