@@ -93,11 +93,18 @@ echo "<hr>";
             </td>
             <td class="col-md-3">
                 <a href="doctor.php?docId=<?php echo $id; ?>">Редактировать</a><br />
-                <a href="doctors.php?delDoc=<?php echo $id; ?>" onClick='BX.UI.Dialogs.MessageBox.confirm("Удалить", () => { }, "Да", () => {return true;});'>Удалить</a>
+                <a href="doctors.php?delDoc=<?php echo $id; ?>" onClick='confDel();'>Удалить</a>
             </td>
         </tr>
     <?php } ?>
 </table>
 
+<script>
 
+    function confDel(e) {
+        e.preventDefault();
+        BX.UI.Dialogs.MessageBox.confirm("Удалить", () => { return false }, "Да", () => { return true; });
+    }
+    
+</script>
 <? require($_SERVER["DOCUMENT_ROOT"] . "/bitrix/footer.php"); ?>
