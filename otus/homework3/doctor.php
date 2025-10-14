@@ -3,9 +3,68 @@
 \Bitrix\Main\Loader::includeModule('iblock');
 \Bitrix\Main\UI\Extension::load('iblock.field-selector');
 \Bitrix\Main\UI\Extension::load("ui.forms");
+dump($_POST);
+dump($_FILES);
+if (!empty($_POST) && !empty($_POST['doctordata'])) {
 
-if (!empty($_POST)&&!empty($_POST['doctordata'])) {
-    dump($_POST);
+
+    // редактирование записей в БД
+    /*\Bitrix\Main\Loader::IncludeModule("iblock");
+// делаем запрос на изменение поля NAME в записи (BMW X5) с ID 29
+$res = \Bitrix\Iblock\Elements\ElementcarTable::update(29, array(
+    'NAME' => 'TEST 777',
+));
+*/
+$el = new CIBlockElement;  
+$arFile = $_FILES['DETAIL_PICTURE'];  
+$fileId = CFile::SaveFile($arFile, "iblock"); // Сохраняем в /upload/iblock/  
+if ($fileId) {  
+$arFields = [ "IBLOCK_ID" => 5, "NAME" => "Элемент с картинкой", "DETAIL_PICTURE" => $fileId // Привязываем файл по ID  
+];  
+$el->Add($arFields);  
+}
+
+
+
+    if (empty($_POST['docId'])) {  //new
+
+         // добавление данных  записей в инфоблок Автомобили
+        $dbResult = CarsTable::add([
+        'NAME'=>($_POST['firstname']??' ').($_POST['lastname']??' ').($_POST['middlename']??''),
+        'FIRSTNAME',
+        'LASTNAME',
+        'MIDDLENAME',
+        'BIRTHDAY',
+        'DETAIL_PICTURE',,
+]);
+
+
+        // добавление данных  записей в инфоблок Автомобили
+        /*$dbResult = CarsTable::add([
+        'NAME'=>'TEST',
+        'MANUFACTURER_ID'=>33,
+        'CITY_ID'=>30,
+        'MODEL'=>'X5',
+        'ENGINE_VOLUME'=>'4',
+        'PRODUCTION_DATE'=>date('d.m.Y'),
+]);
+  'NAME',
+        'FIRSTNAME',
+        'LASTNAME',
+        'MIDDLENAME',
+        'BIRTHDAY',
+        'DETAIL_PICTURE',*/
+$el = new CIBlockElement;  
+$arFile = $_FILES['DETAIL_PICTURE'];  
+$fileId = CFile::SaveFile($arFile, "iblock"); // Сохраняем в /upload/iblock/  
+if ($fileId) {  
+$arFields = [ "IBLOCK_ID" => 5, "NAME" => "Элемент с картинкой", "DETAIL_PICTURE" => $fileId // Привязываем файл по ID  
+];  
+$el->Add($arFields);  
+}
+    } else { //edit
+
+    }
     die();
 }
 
@@ -42,8 +101,8 @@ $doctorDatas = \Bitrix\Iblock\Elements\ElementDoctorsTable::getList([ // пол�
         'DETAIL_PICTURE',
         'PROCEDURES.ELEMENT.ID',
         'PROCEDURES.ELEMENT.NAME',
-        'DUTY.ELEMENT.ID',
-        'DUTY.ELEMENT.NAME',
+        'DUTYS.ELEMENT.ID',
+        'DUTYS.ELEMENT.NAME',
         //'PROCEDURES.ELEMENT.DESCRIPTION', // PROC_IDS_MULTI - множественное поле Процедуры у элемента инфоблока Доктора 
         //'PROCEDURES.ELEMENT.COLORS'
     ],
@@ -54,6 +113,26 @@ $doctorDatas = \Bitrix\Iblock\Elements\ElementDoctorsTable::getList([ // пол�
 ])
     ->fetchCollection();
 //dump($doctorDatas);
+
+
+$elements = \Bitrix\Iblock\Elements\ElementProceduresTable::getList([ // car - cимвольный код API инфоблока
+    'select' => ['NAME'], // имя свойства 
+])->fetchCollection();
+$PROCEDURES_NAME = [];
+foreach ($elements as $element) {
+    $PROCEDURES_NAME[] = $element->getName()->getValue(); // получение значения свойства MODEL
+}
+dump($PROCEDURES_NAME);
+
+$elements = \Bitrix\Iblock\Elements\ElementDutysTable::getList([ // car - cимвольный код API инфоблока
+    'select' => ['NAME'], // имя свойства 
+])->fetchCollection();
+$DUTYS_NAME = [];
+foreach ($elements as $element) {
+    $DUTYS_NAME[] = $element->getName()->getValue(); // получение значения свойства MODEL
+}
+dump($DUTYS_NAME);
+
 $doctor = [];
 if (empty($doctorDatas) && !empty($docId))
     echo '<h2>Доктор не найден.</h2>';
@@ -65,8 +144,8 @@ else { //if(false)
         $doctor['firstname'] =  $doctorData->getFirstname()->getValue();
         $doctor['middlename'] =  $doctorData->getMiddlename()->getValue();
         $doctor['birthday'] =  $doctorData->getBirthday()->getValue();
-        $doctor['duty'] = $doctorData->getDuty()->getElement()->getName();
-        $doctor['duty_id'] = $doctorData->getDuty()->getElement()->getId();
+        $doctor['duty'] = $doctorData->getDutys()->getElement()->getName();
+        $doctor['duty_id'] = $doctorData->getDutys()->getElement()->getId();
         $doctor['picture'] = CFile::GetPath($doctorData->getDetailPicture());
 
         foreach ($doctorData->getProcedures()->getAll() as $prItem) {
