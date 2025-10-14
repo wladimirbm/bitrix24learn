@@ -93,7 +93,7 @@ echo "<hr>";
             </td>
             <td class="col-md-3">
                 <a href="doctor.php?docId=<?php echo $id; ?>">Редактировать</a><br />
-                <a href="doctors.php?delDoc=<?php echo $id; ?>" onClick='BX.UI.Dialogs.MessageBox.confirm("Удалить", () => { return true; }, "Отменить", () => {return false;});'>Удалить</a>
+                <a href="doctors.php?delDoc=<?php echo $id; ?>" onClick='BX.UI.Dialogs.MessageBox.confirm("Удалить", () => { }, "Да", () => {return true;});'>Удалить</a>
             </td>
         </tr>
     <?php } ?>
