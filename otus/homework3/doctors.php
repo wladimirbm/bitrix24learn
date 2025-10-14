@@ -21,8 +21,8 @@ $doctors = DoctorsTable::getList([ // получение списка проце
         'ID',
         'NAME',
         'DETAIL_PICTURE',
-        'PROCEDURES_NAME' => 'PROCEDURES.ELEMENT.NAME',
-        'DUTY_NAME' => 'DUTY.ELEMENT.NAME',
+        'PROCEDURES_NAME',// => 'PROCEDURES.ELEMENT.NAME',
+        'DUTY_NAME',// => 'DUTY.ELEMENT.NAME',
     ],
     'filter' => [
         //'ID' => $docId,
