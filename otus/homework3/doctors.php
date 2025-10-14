@@ -33,7 +33,7 @@ $doctors = \Bitrix\Iblock\Elements\ElementDoctorsTable::getList([ // получ�
 //->fetchAll();    
 ->fetchCollection();
 
-dump($doctors);
+//dump($doctors);
 
 $doctorsList = [];
 foreach ($doctors as $doctor) {
@@ -105,6 +105,6 @@ echo "<hr>";
         e.preventDefault();
         BX.UI.Dialogs.MessageBox.confirm("Удалить", () => { return false }, "Да", () => { return true; });
     }
-    
+
 </script>
 <? require($_SERVER["DOCUMENT_ROOT"] . "/bitrix/footer.php"); ?>
