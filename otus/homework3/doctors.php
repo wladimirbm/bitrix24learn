@@ -39,9 +39,9 @@ dump($doctors);
 $doctorsList = [];
 foreach ($doctors as $doctor) {
     $doctorsList[$doctor->getId()]['name'] = $doctor->getName() ?? '';
-    echo $doctor->getId()."<br>";
+    //echo $doctor->getId()."<br>";
     $doctorsList[$doctor->getId()]['duty'] = $doctor->getDuty()->getElement()->getName()??'';//->getElement()->getName() ?? ''; //->getElement()->getName() ?? '';
-    //$doctorsList[$doctor->getId()]['duty'] = $doctor->getDuty()->getElement()->getName() ?? ''; //->getElement()->getName() ?? '';
+   
     // dump($doctor->getId() . ' ' . $doctor->getName() . ' - - -');
     // dump(CFile::GetPath($doctor->getDetailPicture()));
     // dump($doctor->getDuty()->getElement()->getName());
@@ -51,11 +51,7 @@ foreach ($doctors as $doctor) {
         //if($prItem->getElement()->getDescription()!== null){
         $doctorsList[$doctor->getId()]['proc'][$prItem->getId()] = $prItem->getElement()->getName() ?? '';
         // dump($prItem->getId() . ' - ' . $prItem->getElement()->getName()/*.' - '.$prItem->getElement()->getDescription()->getValue() */);
-        //}
-        // получаем значение свойства Цвет у процедуры 
-        // foreach($prItem->getElement()->getColors()->getAll() as $color) {
-        //     pr($color->getValue());
-        // }
+]
     }
 }
 echo "<hr>";
