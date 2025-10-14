@@ -16,7 +16,7 @@ dump($_FILES);
             $picId = CFile::SaveFile($_FILES['picture'], "iblock");
         } else $picId = 0;
 
-        $dbResult = \Bitrix\Iblock\Elements\ElementDoctorsTable::add([
+        $dbResult = DoctorsTable::add([
             'NAME' => ($_POST['firstname'] ?? ' ') . ($_POST['lastname'] ?? ' ') . ($_POST['middlename'] ?? ''),
             'FIRSTNAME' => $_POST['firstname'],
             'LASTNAME' => $_POST['lastname'],
@@ -45,9 +45,9 @@ dump($_FILES);
             $docData['DETAIL_PICTURE'] = $picId;
         }
 
-        $res = \Bitrix\Iblock\Elements\ElementDoctorsTable::update($_POST['docId'], $docData);
+        $res = DoctorsTable::update($_POST['docId'], $docData);
     }
-    die();
+    die('Done!');
 }
 
 
