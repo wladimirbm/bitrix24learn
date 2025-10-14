@@ -44,7 +44,7 @@ dump($_FILES);
             $picId = CFile::SaveFile($_FILES['picture'], "iblock");
             $docData['DETAIL_PICTURE'] = $picId;
         }
-
+        dump($docData);
         $res = DoctorsTable::update($_POST['docId'], $docData);
     }
     die('Done!');
