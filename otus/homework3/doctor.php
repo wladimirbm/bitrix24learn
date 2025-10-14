@@ -3,10 +3,11 @@
 \Bitrix\Main\Loader::includeModule('iblock');
 \Bitrix\Main\UI\Extension::load('iblock.field-selector');
 \Bitrix\Main\UI\Extension::load("ui.forms");
+use Models\Lists\DoctorsPropertyValuesTable as DoctorsTable;
+
+if (!empty($_POST) && !empty($_POST['doctordata'])) {
 dump($_POST);
 dump($_FILES);
-if (!empty($_POST) && !empty($_POST['doctordata'])) {
-
     if (empty($_POST['docId'])) {  //new
 
         // добавление данных  записей в инфоблок
@@ -103,7 +104,7 @@ $PROCEDURES_NAME = [];
 foreach ($elements as $element) {
     $PROCEDURES_NAME[] = $element->getName(); // получение значения свойства MODEL
 }
-dump($PROCEDURES_NAME);
+//dump($PROCEDURES_NAME);
 
 $elements = \Bitrix\Iblock\Elements\ElementDutyTable::getList([ // car - cимвольный код API инфоблока
     'select' => ['NAME'], // имя свойства 
@@ -112,7 +113,7 @@ $DUTY_NAME = [];
 foreach ($elements as $element) {
     $DUTY_NAME[] = $element->getName(); // получение значения свойства MODEL
 }
-dump($DUTY_NAME);
+//dump($DUTY_NAME);
 
 $doctor = [];
 if (empty($doctorDatas) && !empty($docId))
