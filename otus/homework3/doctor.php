@@ -105,7 +105,7 @@ foreach ($elements as $element) {
 }
 dump($PROCEDURES_NAME);
 
-$elements = \Bitrix\Iblock\Elements\ElementDutysTable::getList([ // car - cимвольный код API инфоблока
+$elements = \Bitrix\Iblock\Elements\ElementDutyTable::getList([ // car - cимвольный код API инфоблока
     'select' => ['NAME'], // имя свойства 
 ])->fetchCollection();
 $DUTY_NAME = [];
