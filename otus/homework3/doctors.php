@@ -51,7 +51,7 @@ foreach ($doctors as $doctor) {
         //if($prItem->getElement()->getDescription()!== null){
         $doctorsList[$doctor->getId()]['proc'][$prItem->getId()] = $prItem->getElement()->getName() ?? '';
         // dump($prItem->getId() . ' - ' . $prItem->getElement()->getName()/*.' - '.$prItem->getElement()->getDescription()->getValue() */);
-]
+
     }
 }
 echo "<hr>";
