@@ -17,7 +17,7 @@ dump($_FILES);
         } else $picId = 0;
 
         $dbResult = DoctorsTable::add([
-            'NAME' => ($_POST['firstname'].' ' ?? '') . ($_POST['lastname'].' ' ?? '') . ($_POST['middlename'].' ' ?? ''),
+            'NAME' => ($_POST['lastname'].' ' ?? '') . ($_POST['firstname'].' ' ?? '') . ($_POST['middlename'].' ' ?? ''),
             'FIRSTNAME' => $_POST['firstname'],
             'LASTNAME' => $_POST['lastname'],
             'MIDDLENAME' => $_POST['middlename'],
