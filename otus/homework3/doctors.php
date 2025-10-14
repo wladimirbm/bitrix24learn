@@ -21,9 +21,9 @@ $doctors = \Bitrix\Iblock\Elements\ElementDoctorsTable::getList([ // получ�
         'ID',
         'NAME',
         'DETAIL_PICTURE',
-        'PROCEDURES.ELEMENT.NAME',
-        'DUTY.ELEMENT.NAME',
-        'DUTY_NAME' => 'DUTY.ELEMENT.NAME'
+        'PROCEDURES_ID.ELEMENT.NAME',
+        'DUTY_ID.ELEMENT.NAME',
+        'DUTY_NAME' => 'DUTY_ID.ELEMENT.NAME'
     ],
     'filter' => [
         //'ID' => $docId,
@@ -40,13 +40,13 @@ $doctorsList = [];
 foreach ($doctors as $doctor) {
     $doctorsList[$doctor->getId()]['name'] = $doctor->getName() ?? '';
     //echo $doctor->getId()."<br>";
-    $doctorsList[$doctor->getId()]['duty'] = $doctor->getDuty()->getElement()->getName()??'';//->getElement()->getName() ?? ''; //->getElement()->getName() ?? '';
+    $doctorsList[$doctor->getId()]['duty'] = $doctor->getDutyId()->getElement()->getName()??'';//->getElement()->getName() ?? ''; //->getElement()->getName() ?? '';
    
     // dump($doctor->getId() . ' ' . $doctor->getName() . ' - - -');
     // dump(CFile::GetPath($doctor->getDetailPicture()));
     // dump($doctor->getDuty()->getElement()->getName());
 
-    foreach ($doctor->getProcedures()->getAll() as $prItem) {
+    foreach ($doctor->getProceduresId()->getAll() as $prItem) {
         // получаем значение свойства Описание у процедуры 
         //if($prItem->getElement()->getDescription()!== null){
         $doctorsList[$doctor->getId()]['proc'][$prItem->getId()] = $prItem->getElement()->getName() ?? '';

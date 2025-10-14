@@ -36,8 +36,8 @@ dump($_FILES);
             'MIDDLENAME' => $_POST['middlename'],
             'BIRTHDAY' => $_POST['birthday'],
             //'DETAIL_PICTURE' => $picId,
-            'DUTY' => $_POST['duty'],
-            //'PROCEDURES' => $_POST['procedures'],
+            'DUTY_ID' => $_POST['duty'],
+            'PROCEDURES_ID' => $_POST['procedures'],
         );
 
         if (!empty($_FILES['picture'])) {
