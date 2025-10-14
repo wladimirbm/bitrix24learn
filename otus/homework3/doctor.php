@@ -5,6 +5,26 @@
 \Bitrix\Main\UI\Extension::load("ui.forms");
 use Models\Lists\DoctorsPropertyValuesTable as DoctorsTable;
 
+
+
+$docId = 0;
+if (!empty($_GET['docId']) && $_GET['docId'] == (int)$_GET['docId']) {
+    $docId = (int)$_GET['docId'];
+    $event = "Редактировать";
+} else {
+    $event = "Добавить";
+    $docId = 0;
+}
+?>
+
+<?php
+$APPLICATION->SetTitle($event . " доктора");
+?>
+<H1><? $APPLICATION->ShowTitle() ?> <?php echo ' <a href="doctors.php">Вернуться к списку</a>'; ?></H1>
+
+<?php
+
+
 if (!empty($_POST) && !empty($_POST['doctordata'])) {
 dump($_POST);
 dump($_FILES);
@@ -52,27 +72,6 @@ dump($_FILES);
     }
     die('Done!');
 }
-
-
-
-
-
-$docId = 0;
-if (!empty($_GET['docId']) && $_GET['docId'] == (int)$_GET['docId']) {
-    $docId = (int)$_GET['docId'];
-    $event = "Редактировать";
-} else {
-    $event = "Добавить";
-    $docId = 0;
-}
-?>
-
-<?php
-$APPLICATION->SetTitle($event . " доктора");
-?>
-<H1><? $APPLICATION->ShowTitle() ?> <?php echo ' <a href="doctors.php">Вернуться к списку</a>'; ?></H1>
-
-<?php
 
 
 $doctorDatas = \Bitrix\Iblock\Elements\ElementDoctorsTable::getList([ // получение списка процедур у врачей
