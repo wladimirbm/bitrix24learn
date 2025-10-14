@@ -23,8 +23,8 @@ dump($_FILES);
             'MIDDLENAME' => $_POST['middlename'],
             'BIRTHDAY' => $_POST['birthday'],
             'DETAIL_PICTURE' => $picId,
-            //'DUTY' => $_POST['duty'],
-            //'PROCEDURES' => $_POST['procedures'],
+            'DUTY_ID' => $_POST['duty'],
+            'PROCEDURES_ID' => $_POST['procedures'],
 
         ]);
     } else { //edit
@@ -36,7 +36,7 @@ dump($_FILES);
             'MIDDLENAME' => $_POST['middlename'],
             'BIRTHDAY' => $_POST['birthday'],
             //'DETAIL_PICTURE' => $picId,
-            //'DUTY' => $_POST['duty'],
+            'DUTY' => $_POST['duty'],
             //'PROCEDURES' => $_POST['procedures'],
         );
 
@@ -81,10 +81,10 @@ $doctorDatas = \Bitrix\Iblock\Elements\ElementDoctorsTable::getList([ // пол�
         'MIDDLENAME',
         'BIRTHDAY',
         'DETAIL_PICTURE',
-        'PROCEDURES.ELEMENT.ID',
-        'PROCEDURES.ELEMENT.NAME',
-        'DUTY.ELEMENT.ID',
-        'DUTY.ELEMENT.NAME',
+        'PROCEDURES_ID.ELEMENT.ID',
+        'PROCEDURES_ID.ELEMENT.NAME',
+        'DUTY_ID.ELEMENT.ID',
+        'DUTY_ID.ELEMENT.NAME',
         //'PROCEDURES.ELEMENT.DESCRIPTION', // PROC_IDS_MULTI - множественное поле Процедуры у элемента инфоблока Доктора 
         //'PROCEDURES.ELEMENT.COLORS'
     ],
@@ -126,11 +126,11 @@ else { //if(false)
         $doctor['firstname'] =  $doctorData->getFirstname()->getValue();
         $doctor['middlename'] =  $doctorData->getMiddlename()->getValue();
         $doctor['birthday'] =  $doctorData->getBirthday()->getValue();
-        $doctor['duty'] = $doctorData->getDuty()->getElement()->getName();
-        $doctor['duty_id'] = $doctorData->getDuty()->getElement()->getId();
+        $doctor['duty'] = $doctorData->getDutyId()->getElement()->getName();
+        $doctor['duty_id'] = $doctorData->getDutyId()->getElement()->getId();
         $doctor['picture'] = CFile::GetPath($doctorData->getDetailPicture());
 
-        foreach ($doctorData->getProcedures()->getAll() as $prItem) {
+        foreach ($doctorData->getProceduresId()->getAll() as $prItem) {
             //dump($prItem);
             $doctor['procs'][$prItem->getElement()->getId()] = $prItem->getElement()->getName();
         }
