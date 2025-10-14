@@ -23,8 +23,8 @@ dump($_FILES);
             'MIDDLENAME' => $_POST['middlename'],
             'BIRTHDAY' => $_POST['birthday'],
             'DETAIL_PICTURE' => $picId,
-            'DUTY' => $_POST['duty'],
-            'PROCEDURES' => $_POST['procedures'],
+            //'DUTY' => $_POST['duty'],
+            //'PROCEDURES' => $_POST['procedures'],
 
         ]);
     } else { //edit
@@ -36,8 +36,8 @@ dump($_FILES);
             'MIDDLENAME' => $_POST['middlename'],
             'BIRTHDAY' => $_POST['birthday'],
             //'DETAIL_PICTURE' => $picId,
-            'DUTY' => $_POST['duty'],
-            'PROCEDURES' => $_POST['procedures'],
+            //'DUTY' => $_POST['duty'],
+            //'PROCEDURES' => $_POST['procedures'],
         );
 
         if (!empty($_FILES['picture'])) {
