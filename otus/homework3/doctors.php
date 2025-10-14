@@ -30,9 +30,9 @@ $doctors = \Bitrix\Iblock\Elements\ElementDoctorsTable::getList([ // получ�
         'ACTIVE' => 'Y',
     ],
 ])
-->fetch();    
+//->fetch();    
 //->fetchAll();    
-//->fetchCollection();
+->fetchCollection();
 
 dump($doctors);
 
