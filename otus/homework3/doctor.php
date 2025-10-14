@@ -19,6 +19,7 @@ if (!empty($_GET['docId']) && $_GET['docId'] == (int)$_GET['docId']) {
 
 <?php
 $APPLICATION->SetTitle($event . " доктора");
+$APPLICATION->SetAdditionalCSS('/otus/homework3/style.css');
 ?>
 <H1><? $APPLICATION->ShowTitle() ?> <?php echo ' <a href="doctors.php">Вернуться к списку</a>'; ?></H1>
 
@@ -97,22 +98,23 @@ $doctorDatas = \Bitrix\Iblock\Elements\ElementDoctorsTable::getList([ // пол�
     ->fetchCollection();
 //dump($doctorDatas);
 
+//
 /*
 $elements = \Bitrix\Iblock\Elements\ElementProceduresTable::getList([ // car - cимвольный код API инфоблока
-    'select' => ['NAME'], // имя свойства 
+    'select' => ['ID', 'NAME'], // имя свойства 
 ])->fetchCollection();
 $PROCEDURES_NAME = [];
 foreach ($elements as $element) {
-    $PROCEDURES_NAME[] = $element->getName(); 
+    $PROCEDURES_NAME[$element->getId()] = $element->getName(); 
 }
 //dump($PROCEDURES_NAME);
 
 $elements = \Bitrix\Iblock\Elements\ElementDutyTable::getList([ // car - cимвольный код API инфоблока
-    'select' => ['NAME'], // имя свойства 
+    'select' => ['ID', 'NAME'], // имя свойства 
 ])->fetchCollection();
 $DUTY_NAME = [];
 foreach ($elements as $element) {
-    $DUTY_NAME[] = $element->getName();
+    $DUTY_NAME[$element->getId()] = $element->getName();
 }
 //dump($DUTY_NAME);
 */
@@ -140,31 +142,6 @@ else { //if(false)
     dump($doctor);
 ?>
 
-
-    <?
-    /*
-    $doctorsList = [];
-    foreach ($doctors as $doctor) {
-        $doctorsList['name'] = $doctor->getName();
-        $doctorsList['duty'] = $doctor->getDuty()->getElement()->getName();
-        // dump($doctor->getId() . ' ' . $doctor->getName() . ' - - -');
-        // dump(CFile::GetPath($doctor->getDetailPicture()));
-        // dump($doctor->getDuty()->getElement()->getName());
-
-        foreach ($doctor->getProcedures()->getAll() as $prItem) {
-            // получаем значение свойства Описание у процедуры 
-            //if($prItem->getElement()->getDescription()!== null){
-            $doctorsList[$doctor->getId()]['proc'][$prItem->getId()] = $prItem->getElement()->getName();
-            // dump($prItem->getId() . ' - ' . $prItem->getElement()->getName());//.' - '.$prItem->getElement()->getDescription()->getValue() 
-            //}
-            // получаем значение свойства Цвет у процедуры 
-            // foreach($prItem->getElement()->getColors()->getAll() as $color) {
-            //     pr($color->getValue());
-            // }
-        }
-    }
-    echo "<hr>";
-*/
     ?>
 
     <style>
