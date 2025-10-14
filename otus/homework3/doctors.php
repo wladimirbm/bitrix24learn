@@ -23,14 +23,16 @@ $doctors = \Bitrix\Iblock\Elements\ElementDoctorsTable::getList([ // получ�
         'DETAIL_PICTURE',
         'PROCEDURES.ELEMENT.NAME',
         'DUTY.ELEMENT.NAME',
+        'DUTY_NAME' => 'DUTY.ELEMENT.NAME'
     ],
     'filter' => [
         //'ID' => $docId,
         'ACTIVE' => 'Y',
     ],
 ])
+->fetch();    
 //->fetchAll();    
-->fetchCollection();
+//->fetchCollection();
 
 dump($doctors);
 
@@ -38,7 +40,8 @@ $doctorsList = [];
 foreach ($doctors as $doctor) {
     $doctorsList[$doctor->getId()]['name'] = $doctor->getName() ?? '';
     echo $doctor->getId()."<br>";
-    $doctorsList[$doctor->getId()]['duty'] = $doctor->getDuty()->getElement()->getName()->getValue() ?? ''; //->getElement()->getName() ?? '';
+    $doctorsList[$doctor->getId()]['duty'] = $doctor->getDutyName()??'';//->getElement()->getName() ?? ''; //->getElement()->getName() ?? '';
+    //$doctorsList[$doctor->getId()]['duty'] = $doctor->getDuty()->getElement()->getName() ?? ''; //->getElement()->getName() ?? '';
     // dump($doctor->getId() . ' ' . $doctor->getName() . ' - - -');
     // dump(CFile::GetPath($doctor->getDetailPicture()));
     // dump($doctor->getDuty()->getElement()->getName());
