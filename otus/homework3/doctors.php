@@ -40,7 +40,7 @@ $doctorsList = [];
 foreach ($doctors as $doctor) {
     $doctorsList[$doctor->getId()]['name'] = $doctor->getName() ?? '';
     echo $doctor->getId()."<br>";
-    $doctorsList[$doctor->getId()]['duty'] = $doctor->getDutyName()??'';//->getElement()->getName() ?? ''; //->getElement()->getName() ?? '';
+    $doctorsList[$doctor->getId()]['duty'] = $doctor->getDuty()->getElemnt()->getName()??'';//->getElement()->getName() ?? ''; //->getElement()->getName() ?? '';
     //$doctorsList[$doctor->getId()]['duty'] = $doctor->getDuty()->getElement()->getName() ?? ''; //->getElement()->getName() ?? '';
     // dump($doctor->getId() . ' ' . $doctor->getName() . ' - - -');
     // dump(CFile::GetPath($doctor->getDetailPicture()));
