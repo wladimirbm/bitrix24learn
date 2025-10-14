@@ -1,14 +1,12 @@
 <?php
+// use Bitrix\Main\UI\Extension;
+// Extension::load('ui.bootstrap4');
+require($_SERVER["DOCUMENT_ROOT"] . "/bitrix/header.php");
 if (!empty($_GET['delDoc'])) {
     $res = \Bitrix\Iblock\Elements\ElementDoctorsTable::delete((int)$_GET['delDoc']);
     LocalRedirect('/otus/homework3/doctors.php');
-}
-
-// use Bitrix\Main\UI\Extension;
-// Extension::load('ui.bootstrap4');
-
-
-require($_SERVER["DOCUMENT_ROOT"] . "/bitrix/header.php"); ?>
+} 
+?>
 <?php
 $APPLICATION->SetTitle("Список докторов");
 $APPLICATION->SetAdditionalCSS('/otus/homework3/style.css');
