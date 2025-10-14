@@ -49,7 +49,7 @@ dump($_FILES);
         dump($docData);
         $res = DoctorsTable::update($_POST['docId'], $docData);
     }
-    //die('Done!');
+    die('Done!');
 }
 
 
