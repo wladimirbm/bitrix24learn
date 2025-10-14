@@ -101,7 +101,7 @@ $elements = \Bitrix\Iblock\Elements\ElementProceduresTable::getList([ // car - c
 ])->fetchCollection();
 $PROCEDURES_NAME = [];
 foreach ($elements as $element) {
-    $PROCEDURES_NAME[] = $element->getName()->getValue(); // получение значения свойства MODEL
+    $PROCEDURES_NAME[] = $element->getName(); // получение значения свойства MODEL
 }
 dump($PROCEDURES_NAME);
 
@@ -110,7 +110,7 @@ $elements = \Bitrix\Iblock\Elements\ElementDutysTable::getList([ // car - cим�
 ])->fetchCollection();
 $DUTY_NAME = [];
 foreach ($elements as $element) {
-    $DUTY_NAME[] = $element->getName()->getValue(); // получение значения свойства MODEL
+    $DUTY_NAME[] = $element->getName(); // получение значения свойства MODEL
 }
 dump($DUTY_NAME);
 
