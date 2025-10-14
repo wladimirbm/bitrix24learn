@@ -13,14 +13,14 @@ class DoctorsPropertyValuesTable extends AbstractIblockPropertyValuesTable
     {
         $map = [
             'DUTY' => new ReferenceField(
-                'DUTY', 
+                'duty', 
                 DoctorDutyPropertyValuesTable::class, 
-                ['=this.PROPERTY_67' => 'ref.IBLOCK_ELEMENT_ID']
+                ['=this.duty' => 'ref.IBLOCK_ELEMENT_ID']
             ),
             'PROCEDURES' => new ReferenceField(
-                'PROCEDURES', 
+                'procedures', 
                 DoctorProceduresPropertyValuesTable::class, 
-                ['=this.PROPERTY_68' => 'ref.IBLOCK_ELEMENT_ID']
+                ['=this.duty' => 'ref.IBLOCK_ELEMENT_ID']
             )
         ];
 
