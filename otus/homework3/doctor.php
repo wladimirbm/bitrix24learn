@@ -55,6 +55,16 @@ dump($_FILES);
 
     } else { //edit
 
+
+        $dbIblockProps = \Bitrix\Iblock\PropertyTable::getList(array(
+            'select' => array('*'),
+            'filter' => array('IBLOCK_ID' =>16)
+        ));
+        while ($arIblockProps = $dbIblockProps->fetch()){ 
+            dump($arIblockProps);
+        }
+
+
         $docData = array(
             'NAME' => ($_POST['firstname'] ?? ' ') . ($_POST['lastname'] ?? ' ') . ($_POST['middlename'] ?? ''),
             'FIRSTNAME' => $_POST['firstname'],
