@@ -151,7 +151,7 @@ abstract class AbstractIblockPropertyValuesTable extends DataManager
             'IBLOCK_ID'       => static::IBLOCK_ID,
             'PROPERTY_VALUES' => $data,
         ];
-dump($fields);
+//dump($fields);
         return static::$iblockElement->Add($fields);
     }
 
