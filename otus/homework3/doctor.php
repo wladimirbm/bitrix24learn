@@ -62,14 +62,16 @@ dump($_FILES);
             'MIDDLENAME' => $_POST['middlename'],
             'BIRTHDAY' => new Date(date('Y-m-d',strtotime($_POST['birthday'])), 'Y-m-d'),
             //'DETAIL_PICTURE' => $picId,
-            //'DUTY_ID' => $_POST['duty'],
-            //'PROCEDURES_ID' => $_POST['procedures'],
+            'DUTY_ID' => $_POST['duty'],
+            'PROCEDURES_ID' => $_POST['procedures'],
         );
 
+        /*
         if(!empty($_POST['duty']))
             $docData['DUTY_ID'] = $_POST['duty'];
-        if(!empty($_POST['procedures'])&&!empty($_POST['procedures'][0]))
+        if(!empty($_POST['procedures']))
             $docData['PROCEDURES_ID'] = $_POST['procedures'];
+        */
         if (!empty($_FILES['picture'])) {
             $picId = CFile::SaveFile($_FILES['picture'], "otusblock");
             $docData['DETAIL_PICTURE'] = $picId;
@@ -136,8 +138,8 @@ else { //if(false)
         $doctor['firstname'] =  $doctorData->getFirstname()->getValue();
         $doctor['middlename'] =  $doctorData->getMiddlename()->getValue();
         $doctor['birthday'] =  $doctorData->getBirthday()->getValue();
-        $doctor['duty'] = $doctorData->getDutyId()->getElement()->getName();
-        $doctor['duty_id'] = $doctorData->getDutyId()->getElement()->getId();
+        $doctor['duty'] = $doctorData->getDutyId()->getElement()!==null?$doctorData->getDutyId()->getElement()->getName():0;
+        $doctor['duty_id'] = $doctorData->getDutyId()->getElement()!==null?$doctorData->getDutyId()->getElement()->getId():0;
         $doctor['picture'] = CFile::GetPath($doctorData->getDetailPicture());
 
         foreach ($doctorData->getProceduresId()->getAll() as $prItem) {
