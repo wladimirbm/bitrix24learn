@@ -77,7 +77,7 @@ dump($_FILES);
             $docData['DETAIL_PICTURE'] = $picId;
         }
         dump($docData);
-        $res = DoctorsTable::update($_POST['docId'], $docData);
+        $res = \Bitrix\Iblock\Elements\ElementDoctorsTable::update($_POST['docId'], $docData);
     }
     die('Done!');
 }
