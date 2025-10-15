@@ -40,7 +40,8 @@ foreach ($doctors as $doctor) {
     $doctorsList[$doctor->getId()]['name'] = $doctor->getName() ?? '';
     //echo $doctor->getId()."<br>";
     
-    $doctorsList[$doctor->getId()]['duty'] = ($doctor->getDutyId()->getElement()->getName()!==null) ? $doctor->getDutyId()->getElement()->getName() : ''; 
+    $doctorsList[$doctor->getId()]['duty'] = ($doctor->getDutyId()!==null) ? $doctor->getDutyId()->getElement()->getName() : ''; 
+    //$doctorsList[$doctor->getId()]['duty'] = ($doctor->getDutyId()->getElement()->getName()!==null) ? $doctor->getDutyId()->getElement()->getName() : ''; 
     //$doctorsList[$doctor->getId()]['duty'] = ($doctor->getDutyName()->getValue()!==null) ? $doctor->getDutyName()->getValue() : ''; 
     //->getElement()->getName() ?? ''; //->getElement()->getName() ?? '';
 
