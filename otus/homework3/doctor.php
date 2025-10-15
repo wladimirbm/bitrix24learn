@@ -66,7 +66,7 @@ dump($_FILES);
 
         if(!empty($_POST['duty']))
             $docData['DUTY_ID'] = $_POST['duty'];
-        if(!empty($_POST['procedures'])||!empty($_POST['procedures'][0]))
+        if(!empty($_POST['procedures'])&&!empty($_POST['procedures'][0]))
             $docData['PROCEDURES_ID'] = $_POST['procedures'];
         if (!empty($_FILES['picture'])) {
             $picId = CFile::SaveFile($_FILES['picture'], "otusblock");
