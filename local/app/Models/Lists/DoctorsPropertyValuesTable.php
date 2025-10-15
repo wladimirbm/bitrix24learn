@@ -8,6 +8,7 @@ use Bitrix\Main\ORM\Query\Join;
 use Bitrix\Main\ORM\Fields\Relations\Reference;
 //use Bitrix\Main\ORM\Fields\Relations\OneToMany;
 
+
 use Models\AbstractIblockPropertyValuesTable; 
 
 class DoctorsPropertyValuesTable extends AbstractIblockPropertyValuesTable
