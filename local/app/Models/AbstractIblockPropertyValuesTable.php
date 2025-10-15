@@ -19,6 +19,7 @@ use Bitrix\Main\ORM\Fields\DatetimeField;
 use Bitrix\Main\ORM\Fields\ExpressionField;
 use Bitrix\Main\SystemException;
 use CIBlockElement;
+use Bitrix\Main\FileTable;
 
 /**
  * Class AbstractIblockPropertyValueTable
