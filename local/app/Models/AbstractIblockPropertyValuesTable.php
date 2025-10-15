@@ -151,6 +151,8 @@ abstract class AbstractIblockPropertyValuesTable extends DataManager
             'IBLOCK_ID'       => static::IBLOCK_ID,
             'PROPERTY_VALUES' => $data,
         ];
+        if(!empty($data['DETAIL_PICTURE']))
+            $fields['DETAIL_PICTURE'] = CFile::MakeFileArray($_SERVER['DOCUMENT_ROOT'].CFile::GetPath($data['DETAIL_PICTURE']));
 //dump($fields);
         return static::$iblockElement->Add($fields);
     }
@@ -168,6 +170,8 @@ abstract class AbstractIblockPropertyValuesTable extends DataManager
             //'IBLOCK_ID'       => static::IBLOCK_ID,
             'PROPERTY_VALUES' => $data,
         ];
+        if(!empty($data['DETAIL_PICTURE']))
+            $fields['DETAIL_PICTURE'] = CFile::MakeFileArray($_SERVER['DOCUMENT_ROOT'].CFile::GetPath($data['DETAIL_PICTURE']));
 //dump($fields);
         return static::$iblockElement->update($row_id, $fields);
     }

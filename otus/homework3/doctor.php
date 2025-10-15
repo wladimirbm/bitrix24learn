@@ -3,6 +3,7 @@
 \Bitrix\Main\Loader::includeModule('iblock');
 \Bitrix\Main\UI\Extension::load('iblock.field-selector');
 \Bitrix\Main\UI\Extension::load("ui.forms");
+
 use Bitrix\Main\Type\Date;
 use Models\Lists\DoctorsPropertyValuesTable as DoctorsTable;
 use CIBlockElement;
@@ -14,7 +15,7 @@ if (!empty($_GET['docId']) && $_GET['docId'] == (int)$_GET['docId']) {
     $event = "Редактировать";
 } else {
     $event = "Добавить";
-    $docId = 0;
+    //$docId = 0;
 }
 ?>
 
@@ -28,8 +29,8 @@ $APPLICATION->SetAdditionalCSS('/otus/homework3/style.css');
 
 
 if (!empty($_POST) && !empty($_POST['doctordata'])) {
-dump($_POST);
-dump($_FILES);
+    dump($_POST);
+    dump($_FILES);
     if (empty($_POST['docId'])) {  //new
 
         // добавление данных  записей в инфоблок
@@ -39,7 +40,7 @@ dump($_FILES);
         } else $picId = 0;
 
         $dbResult = DoctorsTable::add([
-            'NAME' => ($_POST['lastname'].' ' ?? '') . ($_POST['firstname'].' ' ?? '') . ($_POST['middlename'].' ' ?? ''),
+            'NAME' => ($_POST['lastname'] . ' ' ?? '') . ($_POST['firstname'] . ' ' ?? '') . ($_POST['middlename'] . ' ' ?? ''),
             'FIRSTNAME' => $_POST['firstname'],
             'LASTNAME' => $_POST['lastname'],
             'MIDDLENAME' => $_POST['middlename'],
@@ -52,11 +53,9 @@ dump($_FILES);
         ]);
 
         dump($dbResult);
-
     } else { //edit
 
-        
-/*
+        /*
         $dbIblockProps = \Bitrix\Iblock\PropertyTable::getList(array(
             'select' => array('*'),
             'filter' => array('IBLOCK_ID' =>16)
@@ -71,7 +70,7 @@ dump($_FILES);
             'FIRSTNAME' => $_POST['firstname'],
             'LASTNAME' => $_POST['lastname'],
             'MIDDLENAME' => $_POST['middlename'],
-            'BIRTHDAY' => new Date(date('Y-m-d',strtotime($_POST['birthday'])), 'Y-m-d'),
+            'BIRTHDAY' => new Date(date('Y-m-d', strtotime($_POST['birthday'])), 'Y-m-d'),
             //'DETAIL_PICTURE' => $picId,
             'DUTY_ID' => $_POST['duty'],
             'PROCEDURES_ID' => $_POST['procedures'],
@@ -88,7 +87,9 @@ dump($_FILES);
             $docData['DETAIL_PICTURE'] = $picId;
         }
         dump($docData);
-            $res = DoctorsTable::myupdate($_POST['docId'], $docData);
+        $res = DoctorsTable::myupdate($_POST['docId'], $docData);
+        dump($res);
+
     }
     die('Done!');
 }
@@ -107,7 +108,7 @@ $doctorDatas = \Bitrix\Iblock\Elements\ElementDoctorsTable::getList([ // пол�
         'PROCEDURES_ID.ELEMENT.NAME',
         'DUTY_ID.ELEMENT.ID',
         'DUTY_ID.ELEMENT.NAME',
-        
+
     ],
     'filter' => [
         'ID' => $docId,
@@ -139,9 +140,10 @@ foreach ($elements as $element) {
 */
 
 $doctor = [];
-if (empty($doctorDatas) && !empty($docId))
+if (empty($doctorDatas) && !empty($docId)) {
     echo '<h2>Доктор не найден.</h2>';
-else { //if(false)
+    $docId = 0;
+} else { //if(false)
     foreach ($doctorDatas as $doctorData) {
         $doctor['id'] =  $doctorData->getId();
         $doctor['name'] =  $doctorData->getName();
@@ -149,8 +151,8 @@ else { //if(false)
         $doctor['firstname'] =  $doctorData->getFirstname()->getValue();
         $doctor['middlename'] =  $doctorData->getMiddlename()->getValue();
         $doctor['birthday'] =  $doctorData->getBirthday()->getValue();
-        $doctor['duty'] = $doctorData->getDutyId()->getElement()!==null?$doctorData->getDutyId()->getElement()->getName():0;
-        $doctor['duty_id'] = $doctorData->getDutyId()->getElement()!==null?$doctorData->getDutyId()->getElement()->getId():0;
+        $doctor['duty'] = $doctorData->getDutyId()->getElement() !== null ? $doctorData->getDutyId()->getElement()->getName() : 0;
+        $doctor['duty_id'] = $doctorData->getDutyId()->getElement() !== null ? $doctorData->getDutyId()->getElement()->getId() : 0;
         $doctor['picture'] = CFile::GetPath($doctorData->getDetailPicture());
 
         foreach ($doctorData->getProceduresId()->getAll() as $prItem) {
@@ -161,7 +163,7 @@ else { //if(false)
     dump($doctor);
 ?>
 
-   
+
 
     <style>
         table th,
@@ -184,7 +186,7 @@ else { //if(false)
                     Фотография
                 </th>
                 <td>
-                    <img src="<?php echo $doctor['picture'] ?? ''; ?>"><br>
+                    <img src="<?php echo $doctor['picture'] ?? ''; ?>" class="doctorImg"><br>
                     <input type="file" name="picture">
                     <input type="hidden" name="editpicture" value="<?php echo $doctor['picture'] ?? ''; ?>">
                 </td>
