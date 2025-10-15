@@ -23,11 +23,11 @@ class DoctorsPropertyValuesTable extends AbstractIblockPropertyValuesTable
                 DoctorDutyPropertyValuesTable::class, 
                 ['=this.DUTY_ID' => 'ref.IBLOCK_ELEMENT_ID']
             ),
-            // 'PROCEDURES' => new ReferenceField(
-            //     'PROCEDURES', 
-            //     DoctorProceduresPropertyValuesTable::class, 
-            //     ['=this.PROCEDURES_ID' => 'ref.IBLOCK_ELEMENT_ID']
-            // ),
+            'PROCEDURES' => new ReferenceField(
+                'PROCEDURES', 
+                DoctorProceduresPropertyValuesTable::class, 
+                ['=this.PROCEDURES_ID' => 'ref.IBLOCK_ELEMENT_ID']
+            ),
             // (new OneToMany(
             //     'PROCEDURES_ID', DoctorProceduresPropertyValuesTable::class, 'IBLOCK_ELEMENT_ID'))
 			// 	->configureJoinType(Join::TYPE_INNER),
