@@ -156,6 +156,23 @@ abstract class AbstractIblockPropertyValuesTable extends DataManager
     }
 
     /**
+     * @param array $data
+     *
+     * @return bool
+     */
+    public static function myupdate(int $row_id, array $data): bool
+    {
+        static::$iblockElement ?? static::$iblockElement = new CIBlockElement();
+        $fields = [
+            //'NAME'            => $data['NAME'],
+            //'IBLOCK_ID'       => static::IBLOCK_ID,
+            'PROPERTY_VALUES' => $data,
+        ];
+//dump($fields);
+        return static::$iblockElement->update($row_id, $fields);
+    }
+
+    /**
      * @param $primary
      *
      * @return DeleteResult

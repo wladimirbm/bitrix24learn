@@ -74,7 +74,7 @@ dump($_FILES);
             'BIRTHDAY' => new Date(date('Y-m-d',strtotime($_POST['birthday'])), 'Y-m-d'),
             //'DETAIL_PICTURE' => $picId,
             'DUTY_ID' => $_POST['duty'],
-            //'PROCEDURES_ID' => $_POST['procedures'],
+            'PROCEDURES_ID' => $_POST['procedures'],
         );
 
         /*
@@ -88,7 +88,7 @@ dump($_FILES);
             $docData['DETAIL_PICTURE'] = $picId;
         }
         dump($docData);
-        $res = DoctorsTable::update($_POST['docId'], $docData);
+            $res = DoctorsTable::myupdate($_POST['docId'], $docData);
     }
     die('Done!');
 }
