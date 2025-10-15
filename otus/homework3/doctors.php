@@ -41,6 +41,7 @@ foreach ($doctors as $doctor) {
     //echo $doctor->getId()."<br>";
     
     $doctorsList[$doctor->getId()]['duty'] = ($doctor->getDutyId()->getElement()->getName()!==null) ? $doctor->getDutyId()->getElement()->getName() : ''; 
+    $doctorsList[$doctor->getId()]['duty'] = ($doctor->getDutyName()->getValue()!==null) ? $doctor->getDutyName()->getValue() : ''; 
     //->getElement()->getName() ?? ''; //->getElement()->getName() ?? '';
 
     // dump($doctor->getId() . ' ' . $doctor->getName() . ' - - -');
