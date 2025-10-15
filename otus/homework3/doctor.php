@@ -59,7 +59,7 @@ dump($_FILES);
             'FIRSTNAME' => $_POST['firstname'],
             'LASTNAME' => $_POST['lastname'],
             'MIDDLENAME' => $_POST['middlename'],
-            'BIRTHDAY' => $_POST['birthday'],
+            'BIRTHDAY' => new Date(date('Y-m-d',strtotime($_POST['birthday'])), 'Y-m-d'),
             //'DETAIL_PICTURE' => $picId,
             //'DUTY_ID' => $_POST['duty'],
             //'PROCEDURES_ID' => $_POST['procedures'],
