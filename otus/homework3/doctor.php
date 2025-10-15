@@ -3,6 +3,7 @@
 \Bitrix\Main\Loader::includeModule('iblock');
 \Bitrix\Main\UI\Extension::load('iblock.field-selector');
 \Bitrix\Main\UI\Extension::load("ui.forms");
+use Bitrix\Main\Type\Date;
 use Models\Lists\DoctorsPropertyValuesTable as DoctorsTable;
 
 
@@ -42,7 +43,7 @@ dump($_FILES);
             'FIRSTNAME' => $_POST['firstname'],
             'LASTNAME' => $_POST['lastname'],
             'MIDDLENAME' => $_POST['middlename'],
-            'BIRTHDAY' => $_POST['birthday'],
+            'BIRTHDAY' => new Date(date('Y-m-d',strtotime($_POST['birthday'])), 'Y-m-d'),
             'DETAIL_PICTURE' => $picId,
             'DUTY_ID' => $_POST['duty'],
             'PROCEDURES_ID' => $_POST['procedures'],
