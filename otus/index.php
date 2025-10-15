@@ -44,4 +44,9 @@ $APPLICATION->SetTitle("Список Домашних работ");
         <div class="prog proc"></div>
     </h2>
 </div>
+<div>
+    <h2><a href="homework3/">Домашняя работа 4 (Создание своих таблиц БД и написание модели данных к ним // ДЗ) - в процессе</a>
+        <div class="prog proc"></div>
+    </h2>
+</div>
 <? require($_SERVER["DOCUMENT_ROOT"] . "/bitrix/footer.php"); ?>
