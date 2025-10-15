@@ -20,7 +20,7 @@ use Bitrix\Main\ORM\Fields\ExpressionField;
 use Bitrix\Main\SystemException;
 use CIBlockElement;
 use Bitrix\Main\FileTable;
-use Bitrix\Main\Classes\Genegal\CFile;
+use CFile;
 
 /**
  * Class AbstractIblockPropertyValueTable
