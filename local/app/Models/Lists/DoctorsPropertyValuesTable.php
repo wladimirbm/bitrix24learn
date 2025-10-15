@@ -28,7 +28,7 @@ class DoctorsPropertyValuesTable extends AbstractIblockPropertyValuesTable
                 ['=this.PROCEDURES_ID' => 'ref.IBLOCK_ELEMENT_ID']
             ),*/
             'PROCEDURES_ID' => (new OneToMany(
-                'PROCEDURES', DoctorProceduresPropertyValuesTable::class, 'IBLOCK_ELEMENT_ID'))
+                'PROCEDURES_ID', DoctorProceduresPropertyValuesTable::class, 'IBLOCK_ELEMENT_ID'))
 				->configureJoinType(Join::TYPE_INNER),
         ];
 
