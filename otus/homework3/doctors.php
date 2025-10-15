@@ -5,7 +5,7 @@ require($_SERVER["DOCUMENT_ROOT"] . "/bitrix/header.php");
 if (!empty($_GET['delDoc'])) {
     $res = \Bitrix\Iblock\Elements\ElementDoctorsTable::delete((int)$_GET['delDoc']);
     LocalRedirect('/otus/homework3/doctors.php');
-} 
+}
 \Bitrix\Main\UI\Extension::load("ui.dialogs.messagebox");
 ?>
 <?php
@@ -29,9 +29,9 @@ $doctors = \Bitrix\Iblock\Elements\ElementDoctorsTable::getList([ // получ�
         'ACTIVE' => 'Y',
     ],
 ])
-//->fetch();    
-//->fetchAll();    
-->fetchCollection();
+    //->fetch();    
+    //->fetchAll();    
+    ->fetchCollection();
 
 //dump($doctors);
 
@@ -39,16 +39,16 @@ $doctorsList = [];
 foreach ($doctors as $doctor) {
     $doctorsList[$doctor->getId()]['name'] = $doctor->getName() ?? '';
     //echo $doctor->getId()."<br>";
-    $doctorsList[$doctor->getId()]['duty'] = $doctor->getDutyId()->getElement()->getName()??'';//->getElement()->getName() ?? ''; //->getElement()->getName() ?? '';
-   
+    $doctorsList[$doctor->getId()]['duty'] = $doctor->getDutyId()->getElement()->getName() ?? ''; //->getElement()->getName() ?? ''; //->getElement()->getName() ?? '';
+
     // dump($doctor->getId() . ' ' . $doctor->getName() . ' - - -');
     // dump(CFile::GetPath($doctor->getDetailPicture()));
     // dump($doctor->getDuty()->getElement()->getName());
 
     foreach ($doctor->getProceduresId()->getAll() as $prItem) {
         // получаем значение свойства Описание у процедуры 
-        //if($prItem->getElement()->getDescription()!== null){
-        $doctorsList[$doctor->getId()]['proc'][$prItem->getId()] = $prItem->getElement()->getName() ?? '';
+        if ($prItem->getElement()->getName() !== null)
+            $doctorsList[$doctor->getId()]['proc'][$prItem->getId()] = $prItem->getElement()->getName() ?? '';
         // dump($prItem->getId() . ' - ' . $prItem->getElement()->getName()/*.' - '.$prItem->getElement()->getDescription()->getValue() */);
 
     }
@@ -100,11 +100,13 @@ echo "<hr>";
 </table>
 
 <script>
-
     function confDel(e) {
         e.preventDefault();
-        BX.UI.Dialogs.MessageBox.confirm("Удалить", () => { return false }, "Да", () => { return true; });
+        BX.UI.Dialogs.MessageBox.confirm("Удалить", () => {
+            return false
+        }, "Да", () => {
+            return true;
+        });
     }
-
 </script>
 <? require($_SERVER["DOCUMENT_ROOT"] . "/bitrix/footer.php"); ?>

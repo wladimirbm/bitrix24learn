@@ -142,7 +142,7 @@ else { //if(false)
     dump($doctor);
 ?>
 
-    ?>
+   
 
     <style>
         table th,
