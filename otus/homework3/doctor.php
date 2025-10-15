@@ -63,7 +63,7 @@ dump($_FILES);
             'BIRTHDAY' => new Date(date('Y-m-d',strtotime($_POST['birthday'])), 'Y-m-d'),
             //'DETAIL_PICTURE' => $picId,
             'DUTY_ID' => $_POST['duty'],
-            'PROCEDURES_ID' => $_POST['procedures'],
+            'PROCEDURES' => $_POST['procedures'],
         );
 
         /*
