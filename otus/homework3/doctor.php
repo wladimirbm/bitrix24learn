@@ -60,10 +60,14 @@ dump($_FILES);
             'MIDDLENAME' => $_POST['middlename'],
             'BIRTHDAY' => $_POST['birthday'],
             //'DETAIL_PICTURE' => $picId,
-            'DUTY_ID' => $_POST['duty'],
-            'PROCEDURES_ID' => $_POST['procedures'],
+            //'DUTY_ID' => $_POST['duty'],
+            //'PROCEDURES_ID' => $_POST['procedures'],
         );
 
+        if(!empty($_POST['duty']))
+            $docData['DUTY_ID'] = $_POST['duty'];
+        if(!empty($_POST['procedures']))
+            $docData['PROCEDURES_ID'] = $_POST['procedures'];
         if (!empty($_FILES['picture'])) {
             $picId = CFile::SaveFile($_FILES['picture'], "otusblock");
             $docData['DETAIL_PICTURE'] = $picId;
