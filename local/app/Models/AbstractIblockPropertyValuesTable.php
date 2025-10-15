@@ -20,6 +20,7 @@ use Bitrix\Main\ORM\Fields\ExpressionField;
 use Bitrix\Main\SystemException;
 use CIBlockElement;
 use Bitrix\Main\FileTable;
+use Bitrix\Main\Classes\Genegal\CFile;
 
 /**
  * Class AbstractIblockPropertyValueTable
@@ -171,8 +172,9 @@ abstract class AbstractIblockPropertyValuesTable extends DataManager
             //'IBLOCK_ID'       => static::IBLOCK_ID,
             'PROPERTY_VALUES' => $data,
         ];
-        if(!empty($data['DETAIL_PICTURE']))
+        if(!empty($data['DETAIL_PICTURE'])) 
             $fields['DETAIL_PICTURE'] = CFile::MakeFileArray($_SERVER['DOCUMENT_ROOT'].CFile::GetPath($data['DETAIL_PICTURE']));
+        //CFile::MakeFileArray()
 //dump($fields);
         return static::$iblockElement->update($row_id, $fields);
     }
