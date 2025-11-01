@@ -25,7 +25,7 @@ $tableName = 'otus_assistents';
 if ($connection->isTableExists($tableName)) {
     $connection->dropTable($tableName);
 }
-
+die();
 $tableName = 'otus_doctor_assistent';
 
 if ($connection->isTableExists($tableName)) {

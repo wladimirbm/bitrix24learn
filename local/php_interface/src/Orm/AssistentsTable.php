@@ -45,7 +45,8 @@ class AssistentsTable extends DataManager
             (new DateField('BIRTHDAY')),
 
              (new IntegerField('DUTY_ID'))
-                ->configureUnique(),
+                //->configureUnique()
+                ,
 
             (new Reference('DUTY', DutyTable::class, Join::on('this.DUTY_ID', 'ref.ID')))
                 ->configureJoinType('inner'),
