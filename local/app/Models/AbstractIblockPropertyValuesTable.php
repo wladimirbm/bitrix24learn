@@ -29,7 +29,7 @@ use CFile;
  */
 abstract class AbstractIblockPropertyValuesTable extends DataManager
 {
-   const IBLOCK_ID = null;
+    const IBLOCK_ID = null;
 
     protected static ?array $properties = null;
     protected static ?CIBlockElement $iblockElement = null;
@@ -39,7 +39,7 @@ abstract class AbstractIblockPropertyValuesTable extends DataManager
      */
     public static function getTableName(): string
     {
-        return 'b_iblock_element_prop_s'.static::IBLOCK_ID;
+        return 'b_iblock_element_prop_s' . static::IBLOCK_ID;
     }
 
     /**
@@ -47,7 +47,7 @@ abstract class AbstractIblockPropertyValuesTable extends DataManager
      */
     public static function getTableNameMulti(): string
     {
-        return 'b_iblock_element_prop_m'.static::IBLOCK_ID;
+        return 'b_iblock_element_prop_m' . static::IBLOCK_ID;
     }
 
     /**
@@ -58,13 +58,12 @@ abstract class AbstractIblockPropertyValuesTable extends DataManager
     public static function getMap(): array
     {
         $cache = Cache::createInstance();
-        $cacheDir = 'iblock_property_map/'.static::IBLOCK_ID;
+        $cacheDir = 'iblock_property_map/' . static::IBLOCK_ID;
         $multipleValuesTableClass = static::getMultipleValuesTableClass();
         static::initMultipleValuesTableClass();
 
         if ($cache->initCache(3600, md5($cacheDir), $cacheDir)) {
             $map = $cache->getVars();
-
         } else {
             $cache->startDataCache();
 
@@ -79,7 +78,8 @@ abstract class AbstractIblockPropertyValuesTable extends DataManager
                 if ($property['MULTIPLE'] === 'Y') {
                     $map[$property['CODE']] = new ExpressionField(
                         $property['CODE'],
-                        sprintf('(select group_concat(`VALUE` SEPARATOR "\0") as VALUE from %s as m where m.IBLOCK_ELEMENT_ID = %s and m.IBLOCK_PROPERTY_ID = %d)',
+                        sprintf(
+                            '(select group_concat(`VALUE` SEPARATOR "\0") as VALUE from %s as m where m.IBLOCK_ELEMENT_ID = %s and m.IBLOCK_PROPERTY_ID = %d)',
                             static::getTableNameMulti(),
                             '%s',
                             $property['ID']
@@ -89,9 +89,10 @@ abstract class AbstractIblockPropertyValuesTable extends DataManager
                     );
 
                     if ($property['USER_TYPE'] === 'EList') {
-                        $map[$property['CODE'].'_ELEMENT_NAME'] = new ExpressionField(
-                            $property['CODE'].'_ELEMENT_NAME',
-                            sprintf('(select group_concat(e.NAME SEPARATOR "\0") as VALUE from %s as m join b_iblock_element as e on m.VALUE = e.ID where m.IBLOCK_ELEMENT_ID = %s and m.IBLOCK_PROPERTY_ID = %d)',
+                        $map[$property['CODE'] . '_ELEMENT_NAME'] = new ExpressionField(
+                            $property['CODE'] . '_ELEMENT_NAME',
+                            sprintf(
+                                '(select group_concat(e.NAME SEPARATOR "\0") as VALUE from %s as m join b_iblock_element as e on m.VALUE = e.ID where m.IBLOCK_ELEMENT_ID = %s and m.IBLOCK_PROPERTY_ID = %d)',
                                 static::getTableNameMulti(),
                                 '%s',
                                 $property['ID']
@@ -101,8 +102,8 @@ abstract class AbstractIblockPropertyValuesTable extends DataManager
                         );
                     }
 
-                    $map[$property['CODE'].'|SINGLE'] = new ReferenceField(
-                        $property['CODE'].'|SINGLE',
+                    $map[$property['CODE'] . '|SINGLE'] = new ReferenceField(
+                        $property['CODE'] . '|SINGLE',
                         $multipleValuesTableClass,
                         [
                             '=this.IBLOCK_ELEMENT_ID' => 'ref.IBLOCK_ELEMENT_ID',
@@ -122,8 +123,8 @@ abstract class AbstractIblockPropertyValuesTable extends DataManager
                 }
 
                 if ($property['PROPERTY_TYPE'] === 'E' && ($property['USER_TYPE'] === 'EList' || is_null($property['USER_TYPE']))) {
-                    $map[$property['CODE'].'_ELEMENT'] = new ReferenceField(
-                        $property['CODE'].'_ELEMENT',
+                    $map[$property['CODE'] . '_ELEMENT'] = new ReferenceField(
+                        $property['CODE'] . '_ELEMENT',
                         ElementTable::class,
                         ["=this.{$property['CODE']}" => 'ref.ID']
                     );
@@ -154,10 +155,10 @@ abstract class AbstractIblockPropertyValuesTable extends DataManager
             'PROPERTY_VALUES' => $data,
         ];
 
-        $dp = CFile::MakeFileArray($_SERVER['DOCUMENT_ROOT'].CFile::GetPath($data['DETAIL_PICTURE']));
-        if(!empty($data['DETAIL_PICTURE']))
+        $dp = CFile::MakeFileArray($_SERVER['DOCUMENT_ROOT'] . CFile::GetPath($data['DETAIL_PICTURE']));
+        if (!empty($data['DETAIL_PICTURE']))
             $fields['DETAIL_PICTURE'] = $dp;
-//dump($fields);
+        //dump($fields);
         return static::$iblockElement->Add($fields);
     }
 
@@ -174,11 +175,12 @@ abstract class AbstractIblockPropertyValuesTable extends DataManager
             //'IBLOCK_ID'       => static::IBLOCK_ID,
             'PROPERTY_VALUES' => $data,
         ];
-        $dp = CFile::MakeFileArray($_SERVER['DOCUMENT_ROOT'].CFile::GetPath($data['DETAIL_PICTURE']));
-        if(!empty($data['DETAIL_PICTURE'])) 
+        if (!empty($data['DETAIL_PICTURE'])) {
+            $dp = CFile::MakeFileArray($_SERVER['DOCUMENT_ROOT'] . CFile::GetPath($data['DETAIL_PICTURE']));
             $fields['DETAIL_PICTURE'] = $dp;
+        }
         //CFile::MakeFileArray()
-//dump($fields);
+        //dump($fields);
         return static::$iblockElement->update($row_id, $fields);
     }
 
@@ -235,7 +237,7 @@ abstract class AbstractIblockPropertyValuesTable extends DataManager
      */
     public static function getMultipleFieldValueModifier(): array
     {
-        return [fn ($value) => array_filter(explode("\0", $value))];
+        return [fn($value) => array_filter(explode("\0", $value))];
     }
 
     /**
@@ -279,10 +281,10 @@ abstract class AbstractIblockPropertyValuesTable extends DataManager
     private static function getMultipleValuesTableClass(): string
     {
         $className = end(explode('\\', static::class));
-        $namespace = str_replace('\\'.$className, '', static::class);
+        $namespace = str_replace('\\' . $className, '', static::class);
         $className = str_replace('Table', 'MultipleTable', $className);
 
-        return $namespace.'\\'.$className;
+        return $namespace . '\\' . $className;
     }
 
     /**
@@ -291,24 +293,24 @@ abstract class AbstractIblockPropertyValuesTable extends DataManager
     private static function initMultipleValuesTableClass(): void
     {
         $className = end(explode('\\', static::class));
-        $namespace = str_replace('\\'.$className, '', static::class);
+        $namespace = str_replace('\\' . $className, '', static::class);
         $className = str_replace('Table', 'MultipleTable', $className);
 
-        if (class_exists($namespace.'\\'.$className)) {
+        if (class_exists($namespace . '\\' . $className)) {
             return;
         }
 
         $iblockId = static::IBLOCK_ID;
 
-//         $php = <<<PHP
-// namespace $namespace;
+        //         $php = <<<PHP
+        // namespace $namespace;
 
-// class {$className} extends \Models\AbstractIblockPropertyMultipleValuesTable
-// {
-//     const IBLOCK_ID = {$iblockId};
-// }
+        // class {$className} extends \Models\AbstractIblockPropertyMultipleValuesTable
+        // {
+        //     const IBLOCK_ID = {$iblockId};
+        // }
 
-// PHP;
-//         eval($php);
+        // PHP;
+        //         eval($php);
     }
 }
