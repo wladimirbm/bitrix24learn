@@ -6,7 +6,7 @@ $APPLICATION->SetAdditionalCSS('/otus/homework3/style.css');
 <H1><? $APPLICATION->ShowTitle() ?></H1>
 
 <?php
-use Otus\Orm\BookTable;
+//use Otus\Orm\BookTable;
 use Otus\Orm\AssistentsTable;
 use Bitrix\Main\Entity\Query;
 
