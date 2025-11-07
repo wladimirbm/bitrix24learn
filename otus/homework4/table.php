@@ -36,6 +36,7 @@ while ($assist = $assistResult->fetchObject()) {
     // Способ 1: Перебор коллекции
     foreach ($procs as $element) {
         echo "ID: " . $element->getId();
+        echo "NAME: " . $element->get('NAME'); // Название записи инфоблока
         echo "NAME: " . $element->getName(); // Название записи инфоблока
     }
      dump($assist); continue;
