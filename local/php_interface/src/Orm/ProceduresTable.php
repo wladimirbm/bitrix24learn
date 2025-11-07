@@ -77,9 +77,9 @@ class ProceduresTable extends DataManager
 			))->configureTitle(Loc::getMessage('ELEMENT_PROP_S18_ENTITY_IBLOCK_ELEMENT_ID_FIELD'))
 				->configurePrimary(true),
 
-			(new Fields\StringField('NAME'))
-                ->configureRequired(true)
-                ->configureTitle('Название процедуры'),
+			// (new Fields\StringField('NAME'))
+            //     ->configureRequired(true)
+            //     ->configureTitle('Название процедуры'),
 			// Связь со свойствами инфоблока
             //'PROPERTIES' => (new Fields\Relations\OneToMany('PROPERTIES', ProceduresPropertyTable::class, 'ELEMENT')),
 				
