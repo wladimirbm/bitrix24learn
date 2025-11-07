@@ -65,7 +65,7 @@ class ProceduresTable extends DataManager
 
 		
 		$map = [
-			'IBLOCK_ELEMENT_ID' => (new IntegerField(
+			'ID' => (new IntegerField(
 				'IBLOCK_ELEMENT_ID',
 				[]
 			))->configureTitle(Loc::getMessage('ELEMENT_PROP_S18_ENTITY_IBLOCK_ELEMENT_ID_FIELD'))

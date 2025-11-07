@@ -65,8 +65,9 @@ while ($assist = $assistResult->fetch()) {
         $assists[$assistId]['EDITORS'][] = $editorFullName;
     }
     */
+    dump($assist);
 }
 
-dump($assists);
+//dump($assists);
 
 require_once $_SERVER['DOCUMENT_ROOT'] . '/bitrix/footer.php';

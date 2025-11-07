@@ -36,7 +36,7 @@ class DutyTable extends DataManager
 	public static function getMap()
 	{
 		return [
-			'IBLOCK_ELEMENT_ID' => (new IntegerField('IBLOCK_ELEMENT_ID',
+			'ID' => (new IntegerField('IBLOCK_ELEMENT_ID',
 					[]
 				))->configureTitle(Loc::getMessage('ELEMENT_PROP_S17_ENTITY_IBLOCK_ELEMENT_ID_FIELD'))
 						->configurePrimary(true)
