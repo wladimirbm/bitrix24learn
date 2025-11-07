@@ -2,7 +2,7 @@
 
 namespace Otus\Orm;
 
-use Bitrix\Main\ORM\DataManager;
+use Bitrix\Main\ORM\Data\DataManager;
 use Bitrix\Main\ORM\Fields;
 
 class ProceduresAssistentTable extends DataManager
