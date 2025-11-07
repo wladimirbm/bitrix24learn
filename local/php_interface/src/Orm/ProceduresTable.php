@@ -19,6 +19,7 @@ use CIBlockElement;
 use Bitrix\Iblock\PropertyEnumerationTable;
 use Bitrix\Iblock\PropertyTable;
 use Models\Lists;
+use Models\Lists\DoctorProceduresPropertyValuesTable as DoctorProceduresPropertyValuesTable; 
 
 /**
  * Class ElementPropS18Table
