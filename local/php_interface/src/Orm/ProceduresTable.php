@@ -33,7 +33,7 @@ use Bitrix\Iblock\PropertyTable;
 class ProceduresTable extends DataManager
 {
 
-	 const IBLOCK_ID = 18;
+	const IBLOCK_ID = 18;
 
 	// protected static ?array $properties = null;
 	// protected static ?CIBlockElement $iblockElement = null;
@@ -65,7 +65,7 @@ class ProceduresTable extends DataManager
 	public static function getMap()
 	{
 
-		
+
 		$map = [
 			'ID' => (new IntegerField(
 				'IBLOCK_ELEMENT_ID',
@@ -73,17 +73,17 @@ class ProceduresTable extends DataManager
 			))->configureTitle(Loc::getMessage('ELEMENT_PROP_S18_ENTITY_IBLOCK_ELEMENT_ID_FIELD'))
 				->configurePrimary(true),
 			'IBLOCK_PROPERTY_ID' => (new IntegerField('IBLOCK_PROPERTY_ID')),
-            // // СВЯЗЬ СО СВОЙСТВАМИ ЧЕРЕЗ ElementPropertyTable
-            // (new OneToMany('PROPERTIES', ElementPropertyTable::class, 'ELEMENT'))
-            //     ->configureJoinType('LEFT'),
-            
-            // // СВЯЗЬ С ЗНАЧЕНИЯМИ СВОЙСТВ
-            // (new OneToMany('PROPERTY_VALUES', DoctorProceduresPropertyValuesTable::class, 'ELEMENT'))
-            //     ->configureJoinType('LEFT'),
+			// // СВЯЗЬ СО СВОЙСТВАМИ ЧЕРЕЗ ElementPropertyTable
+			// (new OneToMany('PROPERTIES', ElementPropertyTable::class, 'ELEMENT'))
+			//     ->configureJoinType('LEFT'),
+
+			// СВЯЗЬ С ЗНАЧЕНИЯМИ СВОЙСТВ
+			'ELEMENT' => (new OneToMany('PROPERTY_VALUES', ElementPropertyValueTable::class, 'ELEMENT'))
+				->configureJoinType('LEFT'),
 			'ASSISTENTS' => (new ManyToMany('ASSISTENTS', AssistentsTable::class))
-                ->configureTableName('otus_procedures_assistent')
-                ->configureLocalPrimary('ID', 'PROCEDURE_ID')
-                ->configureRemotePrimary('ID', 'ASSISTENT_ID'),
+				->configureTableName('otus_procedures_assistent')
+				->configureLocalPrimary('ID', 'PROCEDURE_ID')
+				->configureRemotePrimary('ID', 'ASSISTENT_ID'),
 		];
 
 		return $map;
@@ -112,13 +112,13 @@ class ProceduresTable extends DataManager
 		return static::$properties[static::IBLOCK_ID] ?? [];
 	}
 
-	    /**
-     * @return array
-     */
-    public static function getMultipleFieldValueModifier(): array
-    {
-        return [fn($value) => array_filter(explode("\0", $value))];
-    }
+	/**
+	 * @return array
+	 */
+	public static function getMultipleFieldValueModifier(): array
+	{
+		return [fn($value) => array_filter(explode("\0", $value))];
+	}
 
 	/**
 	 * @return string
