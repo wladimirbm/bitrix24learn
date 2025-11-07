@@ -20,7 +20,7 @@ $query->setSelect([
     'ID',
     'FIRSTNAME',
     'ABOUT',
-    'DOCTOR_FIRSTNAME' => 'DOCTOR.FIRSTNAME', //попробовать concat()
+    'DOCTOR_FIRSTNAME' => 'DOCTORS.FIRSTNAME', //попробовать concat()
     //'PROCEDURE_NAME' => 'PROCEDURES.NAME',
     //'DUTY_NAME' => 'DUTY.NAME',
 ]);
