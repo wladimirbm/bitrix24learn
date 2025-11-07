@@ -29,7 +29,7 @@ $query->setSelect([
 
 $assistResult = $query->exec();
 $assists = [];
-while ($assist = $assistResult->fetchObject()) {
+while ($assist = $assistResult->fetch()) {
     dump($assist);
     $procs = $assist->getProcedures();
      dump($procs);
