@@ -28,6 +28,7 @@ $query->setSelect([
     'DUTY_ID' => 'DUTY',
     //'DUTY_NAME_V' => 'DUTY.PROPERTY_VALUES.NAME',
     'PROCEDURE_NAME', // Название процедуры из инфоблока
+    'DUTY_NAME', // Название процедуры из инфоблока
     ])
     // ->registerRuntimeField(
     //     'RELATION',
@@ -64,13 +65,23 @@ $query->setSelect([
             ['ID']
         ))
     )
+ ->registerRuntimeField(
+        (new \Bitrix\Main\ORM\Fields\ExpressionField(
+            'DUTY_NAME',
+            '(SELECT NAME FROM b_iblock_element WHERE ID = %s 
+                LIMIT 1
+            ))',
+            ['ID']
+        ))
+    )
 ;
 $assistResult = $query->exec();
 
 $assists = [];
 while ($assist = $assistResult->fetch()) {
-  echo "Ассистент: {$assist['NAME']}";
+  echo "Ассистент: {$assist['FIRSTNAME']}";
     echo "Процедура: {$assist['PROCEDURE_NAME']}"; // NAME записи инфоблока
+    echo "Должность: {$assist['DUTY_NAME']}"; // NAME записи инфоблока
     dump($assist); continue;
  
     $assistId = $assist['ID'];
