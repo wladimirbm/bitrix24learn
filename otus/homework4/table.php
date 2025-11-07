@@ -32,7 +32,7 @@ $assists = [];
 while ($assist = $assistResult->fetchObject()) {
     
     $procs = $assist->getProcedures();
-    
+     dump($procs);
     // Способ 1: Перебор коллекции
     foreach ($procs as $element) {
         echo "ID: " . $element->getId();
