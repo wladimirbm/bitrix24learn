@@ -77,13 +77,8 @@ class ProceduresTable extends DataManager
 			))->configureTitle(Loc::getMessage('ELEMENT_PROP_S18_ENTITY_IBLOCK_ELEMENT_ID_FIELD'))
 				->configurePrimary(true),
 
-			 // СВЯЗЬ СО СВОЙСТВАМИ ЧЕРЕЗ ElementPropertyTable
-            // 'PROPERTIES' => (new OneToMany('PROPERTIES', ElementPropertyTable::class, 'ELEMENT'))
-            //     ->configureJoinType('LEFT'),
-            
-            // СВЯЗЬ С ЗНАЧЕНИЯМИ СВОЙСТВ
-            'PROPERTY_VALUES' => (new OneToMany('PROPERTY_VALUES', ProceduresPropertyValuesTable::class, 'ELEMENT'))
-                ->configureJoinType('LEFT'),
+			// Связь со свойствами инфоблока
+            'PROPERTIES' => (new Fields\Relations\OneToMany('PROPERTIES', ProceduresPropertyTable::class, 'ELEMENT')),
 				
 			'ASSISTENTS' => (new ManyToMany('ASSISTENTS', AssistentsTable::class))
 				->configureTableName('otus_procedures_assistent')
@@ -94,73 +89,4 @@ class ProceduresTable extends DataManager
 		return $map;
 	}
 
-	/**
-	 * @return array
-	 * @throws ArgumentException
-	 * @throws SystemException
-	 * @throws ObjectPropertyException
-	 */
-	public static function getProperties(): array
-	{
-		if (isset(static::$properties[static::IBLOCK_ID])) {
-			return static::$properties[static::IBLOCK_ID];
-		}
-
-		$dbResult = PropertyTable::query()
-			->setSelect(['ID', 'CODE', 'PROPERTY_TYPE', 'MULTIPLE', 'NAME', 'USER_TYPE'])
-			->where('IBLOCK_ID', static::IBLOCK_ID)
-			->exec();
-		while ($row = $dbResult->fetch()) {
-			static::$properties[static::IBLOCK_ID][$row['CODE']] = $row;
-		}
-
-		return static::$properties[static::IBLOCK_ID] ?? [];
-	}
-
-	/**
-	 * @return array
-	 */
-	public static function getMultipleFieldValueModifier(): array
-	{
-		return [fn($value) => array_filter(explode("\0", $value))];
-	}
-
-	/**
-	 * @return string
-	 */
-	private static function getMultipleValuesTableClass(): string
-	{
-		$className = end(explode('\\', static::class));
-		$namespace = str_replace('\\' . $className, '', static::class);
-		$className = str_replace('Table', 'MultipleTable', $className);
-
-		return $namespace . '\\' . $className;
-	}
-
-	/**
-	 * @return void
-	 */
-	private static function initMultipleValuesTableClass(): void
-	{
-		$className = end(explode('\\', static::class));
-		$namespace = str_replace('\\' . $className, '', static::class);
-		$className = str_replace('Table', 'MultipleTable', $className);
-
-		if (class_exists($namespace . '\\' . $className)) {
-			return;
-		}
-
-		$iblockId = static::IBLOCK_ID;
-
-		//         $php = <<<PHP
-		// namespace $namespace;
-
-		// class {$className} extends \Models\AbstractIblockPropertyMultipleValuesTable
-		// {
-		//     const IBLOCK_ID = {$iblockId};
-		// }
-
-		// PHP;
-		//         eval($php);
-	}
 }
