@@ -27,29 +27,41 @@ $query->setSelect([
     //'PROCEDURE_NAME', // => 'PROCEDURES..NAME',
     'DUTY_ID' => 'DUTY',
     //'DUTY_NAME_V' => 'DUTY.PROPERTY_VALUES.NAME',
-    'PROCEDURE_NAME' // Название процедуры из инфоблока
+    'PROCEDURE_NAME', // Название процедуры из инфоблока
     ])
-    ->registerRuntimeField(
-        'RELATION',
-        (new \Bitrix\Main\ORM\Fields\Relations\Reference(
-            'RELATION',
-            \Otus\Orm\ProceduresAssistentTable::class,
-            ['=this.ID' => 'ref.ASSISTENT_ID']
-        ))->configureJoinType('INNER')
-    )
-    ->registerRuntimeField(
-        'PROCEDURE',
-        (new \Bitrix\Main\ORM\Fields\Relations\Reference(
-            'PROCEDURE',
-            \Otus\Orm\ProceduresTable::class,
-            ['=this.RELATION.PROCEDURE_ID' => 'ref.ID']
-        ))->configureJoinType('INNER')
-    )
+    // ->registerRuntimeField(
+    //     'RELATION',
+    //     (new \Bitrix\Main\ORM\Fields\Relations\Reference(
+    //         'RELATION',
+    //         \Otus\Orm\ProceduresAssistentTable::class,
+    //         ['=this.ID' => 'ref.ASSISTENT_ID']
+    //     ))->configureJoinType('INNER')
+    // )
+    // ->registerRuntimeField(
+    //     'PROCEDURE',
+    //     (new \Bitrix\Main\ORM\Fields\Relations\Reference(
+    //         'PROCEDURE',
+    //         \Otus\Orm\ProceduresTable::class,
+    //         ['=this.RELATION.PROCEDURE_ID' => 'ref.ID']
+    //     ))->configureJoinType('INNER')
+    // )
+    // ->registerRuntimeField(
+    //     (new \Bitrix\Main\ORM\Fields\ExpressionField(
+    //         'PROCEDURE_NAME',
+    //         '%s',
+    //         ['PROCEDURE.NAME']
+    //     ))
+    // )
     ->registerRuntimeField(
         (new \Bitrix\Main\ORM\Fields\ExpressionField(
             'PROCEDURE_NAME',
-            '%s',
-            ['PROCEDURE.NAME']
+            '(SELECT NAME FROM b_iblock_element WHERE ID = (
+                SELECT PROCEDURE_ID 
+                FROM otus_procedures_assistent 
+                WHERE ASSISTENT_ID = %s 
+                LIMIT 1
+            ))',
+            ['ID']
         ))
     )
 ;
