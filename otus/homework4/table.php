@@ -21,9 +21,9 @@ $query->setSelect([
     'FIRSTNAME',
     'ABOUT',
     'DOCTOR_FIRSTNAME' => 'DOCTORS.FIRSTNAME', //попробовать concat()
-    'PROCEDURES' => 'PROCEDURES',
+    'PROCEDURES',// => 'PROCEDURES',
     //'PROCEDURE_NAME_V' => 'PROCEDURES.PROPERTY_VALUES.NAME',
-    'DUTY' => 'DUTY',
+    'DUTY',// => 'DUTY',
     //'DUTY_NAME_V' => 'DUTY.PROPERTY_VALUES.NAME',
 ]);
 
