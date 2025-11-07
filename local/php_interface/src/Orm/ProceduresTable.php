@@ -21,7 +21,7 @@ use Bitrix\Main\ORM\Fields\ExpressionField;
 use Bitrix\Main\DB\SqlExpression;
 use CIBlockElement;
 use Models\Lists;
-use Models\Lists\DoctorProceduresPropertyValuesTable as DoctorProceduresPropertyValuesTable; 
+use Models\Lists\DoctorProceduresPropertyValuesTable as ProceduresPropertyValuesTable; 
 
 /**
  * Class ElementPropS18Table
@@ -78,11 +78,11 @@ class ProceduresTable extends DataManager
 				->configurePrimary(true),
 
 			 // СВЯЗЬ СО СВОЙСТВАМИ ЧЕРЕЗ ElementPropertyTable
-            (new OneToMany('PROPERTIES', ElementPropertyTable::class, 'ELEMENT'))
-                ->configureJoinType('LEFT'),
+            // 'PROPERTIES' => (new OneToMany('PROPERTIES', ElementPropertyTable::class, 'ELEMENT'))
+            //     ->configureJoinType('LEFT'),
             
             // СВЯЗЬ С ЗНАЧЕНИЯМИ СВОЙСТВ
-            (new OneToMany('PROPERTY_VALUES', ElementPropertyValueTable::class, 'ELEMENT'))
+            'PROPERTY_VALUES' => (new OneToMany('PROPERTY_VALUES', ProceduresPropertyValuesTable::class, 'ELEMENT'))
                 ->configureJoinType('LEFT'),
 				
 			'ASSISTENTS' => (new ManyToMany('ASSISTENTS', AssistentsTable::class))
