@@ -70,72 +70,14 @@ class ProceduresTable extends DataManager
 				[]
 			))->configureTitle(Loc::getMessage('ELEMENT_PROP_S18_ENTITY_IBLOCK_ELEMENT_ID_FIELD'))
 				->configurePrimary(true),
+			'NAME' => (new StringField('NAME'))
+                ->configureRequired(true)
+                ->configureTitle('Название'),
 			'ASSISTENTS' => (new ManyToMany('ASSISTENTS', AssistentsTable::class))
                 ->configureTableName('otus_procedures_assistent')
                 ->configureLocalPrimary('ID', 'PROCEDURE_ID')
                 ->configureRemotePrimary('ID', 'ASSISTENT_ID'),
 		];
-
-		$multipleValuesTableClass = static::getMultipleValuesTableClass();
-		static::initMultipleValuesTableClass();
-
-
-		foreach (static::getProperties() as $property) {
-			if ($property['MULTIPLE'] === 'Y') {
-				$map[$property['CODE']] = new ExpressionField(
-					$property['CODE'],
-					sprintf(
-						'(select group_concat(`VALUE` SEPARATOR "\0") as VALUE from %s as m where m.IBLOCK_ELEMENT_ID = %s and m.IBLOCK_PROPERTY_ID = %d)',
-						static::getTableNameMulti(),
-						'%s',
-						$property['ID']
-					),
-					['IBLOCK_ELEMENT_ID'],
-					['fetch_data_modification' => [static::class, 'getMultipleFieldValueModifier']]
-				);
-
-				if ($property['USER_TYPE'] === 'EList') {
-					$map[$property['CODE'] . '_ELEMENT_NAME'] = new ExpressionField(
-						$property['CODE'] . '_ELEMENT_NAME',
-						sprintf(
-							'(select group_concat(e.NAME SEPARATOR "\0") as VALUE from %s as m join b_iblock_element as e on m.VALUE = e.ID where m.IBLOCK_ELEMENT_ID = %s and m.IBLOCK_PROPERTY_ID = %d)',
-							static::getTableNameMulti(),
-							'%s',
-							$property['ID']
-						),
-						['IBLOCK_ELEMENT_ID'],
-						['fetch_data_modification' => [static::class, 'getMultipleFieldValueModifier']]
-					);
-				}
-
-				$map[$property['CODE'] . '|SINGLE'] = new ReferenceField(
-					$property['CODE'] . '|SINGLE',
-					$multipleValuesTableClass,
-					[
-						'=this.IBLOCK_ELEMENT_ID' => 'ref.IBLOCK_ELEMENT_ID',
-						'=ref.IBLOCK_PROPERTY_ID' => new SqlExpression('?i', $property['ID'])
-					]
-				);
-
-				continue;
-			}
-
-			if ($property['PROPERTY_TYPE'] == PropertyTable::TYPE_NUMBER) {
-				$map[$property['CODE']] = new IntegerField("PROPERTY_{$property['ID']}");
-			} elseif ($property['USER_TYPE'] === 'Date') {
-				$map[$property['CODE']] = new DatetimeField("PROPERTY_{$property['ID']}");
-			} else {
-				$map[$property['CODE']] = new StringField("PROPERTY_{$property['ID']}");
-			}
-
-			if ($property['PROPERTY_TYPE'] === 'E' && ($property['USER_TYPE'] === 'EList' || is_null($property['USER_TYPE']))) {
-				$map[$property['CODE'] . '_ELEMENT'] = new ReferenceField(
-					$property['CODE'] . '_ELEMENT',
-					ElementTable::class,
-					["=this.{$property['CODE']}" => 'ref.ID']
-				);
-			}
-		}
 
 		return $map;
 	}
