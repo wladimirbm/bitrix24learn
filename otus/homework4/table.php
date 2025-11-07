@@ -21,7 +21,7 @@ $query->setSelect([
     'FIRSTNAME',
     'ABOUT',
     'DOCTOR_FIRSTNAME' => 'DOCTORS.FIRSTNAME', //попробовать concat()
-    'PROCEDURE' => 'PROCEDURES',
+    'PROCEDURES' => 'PROCEDURES',
     //'PROCEDURE_NAME_V' => 'PROCEDURES.PROPERTY_VALUES.NAME',
     'DUTY' => 'DUTY',
     //'DUTY_NAME_V' => 'DUTY.PROPERTY_VALUES.NAME',
@@ -31,6 +31,13 @@ $assistResult = $query->exec();
 $assists = [];
 while ($assist = $assistResult->fetchObject()) {
     
+    $procs = $customEntry->getProcedures();
+    
+    // Способ 1: Перебор коллекции
+    foreach ($procs as $element) {
+        echo "ID: " . $element->getId();
+        echo "NAME: " . $element->getName(); // Название записи инфоблока
+    }
      dump($assist); continue;
     
     $assistId = $assist['ID'];
