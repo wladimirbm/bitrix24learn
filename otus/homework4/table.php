@@ -8,6 +8,8 @@ $APPLICATION->SetAdditionalCSS('/otus/homework3/style.css');
 <?php
 //use Otus\Orm\BookTable;
 use Otus\Orm\AssistentsTable;
+use Otus\Orm\ProceduresTable;
+use Otus\Orm\DutyTable;
 use Bitrix\Main\Entity\Query;
 
 /**
@@ -21,16 +23,34 @@ $query->setSelect([
     'FIRSTNAME',
     'ABOUT',
     'DOCTOR_FIRSTNAME' => 'DOCTORS.FIRSTNAME', //попробовать concat()
-    'PROCEDURES',// => 'PROCEDURES',
-    //'PROCEDURE_NAME_V' => 'PROCEDURES.PROPERTY_VALUES.NAME',
-    'DUTY',// => 'DUTY',
+    'PROCEDURE_ID' => 'PROCEDURES',
+    '//PROCEDURE_NAME', // => 'PROCEDURES..NAME',
+    'DUTY_ID' => 'DUTY',
     //'DUTY_NAME_V' => 'DUTY.PROPERTY_VALUES.NAME',
-]);
+])
+;
 
 $assistResult = $query->exec();
 $assists = [];
 while ($assist = $assistResult->fetch()) {
-    dump($assist);
+    $customEntry = ProceduresTable::getById($assist['PROCEDURE_ID'])->fetchObject();
+    
+    if ($customEntry) {
+    $iblockElements = $customEntry->getIblockElements();
+    
+    // Преобразование в массив с нужными полями
+    $simpleArray = [];
+    foreach ($iblockElements as $element) {
+        $simpleArray[] = [
+            'id' => $element->getId(),
+            'name' => $element->getName(),
+            'code' => $element->getCode(),
+            'date' => $element->getDateActiveFrom()
+        ];
+    }
+}
+    dump($simpleArray);
+    dump($assist); continue;
     // $procs = $assist->getProcedures();
     //  dump($procs);
     // // Способ 1: Перебор коллекции
