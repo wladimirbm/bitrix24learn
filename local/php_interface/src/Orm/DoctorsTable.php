@@ -45,7 +45,7 @@ class DoctorsTable extends DataManager
 	public static function getMap() // добавить оратную связь с ассистентом
 	{
 		return [
-			'IBLOCK_ELEMENT_ID' => (new IntegerField('IBLOCK_ELEMENT_ID',
+			'ID' => (new IntegerField('IBLOCK_ELEMENT_ID',
 					[]
 				))->configureTitle(Loc::getMessage('ELEMENT_PROP_S16_ENTITY_IBLOCK_ELEMENT_ID_FIELD'))
 						->configurePrimary(true)
