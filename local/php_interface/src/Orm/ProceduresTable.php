@@ -18,7 +18,7 @@ use Bitrix\Main\DB\SqlExpression;
 use CIBlockElement;
 use Bitrix\Iblock\PropertyEnumerationTable;
 use Bitrix\Iblock\PropertyTable;
-use Models\AbstractIblockPropertyValuesTable;
+use Models\Lists;
 
 /**
  * Class ElementPropS18Table
