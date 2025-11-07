@@ -21,8 +21,8 @@ $query->setSelect([
     'FIRSTNAME',
     'ABOUT',
     'DOCTOR_FIRSTNAME' => 'DOCTORS.FIRSTNAME', //попробовать concat()
-    'PROCEDURE_NAME' => 'PROCEDURES.NAME',
-    'DUTY_NAME' => 'DUTY.NAME',
+    'PROCEDURE_NAME' => 'PROCEDURES.ELEMENT.NAME',
+    'DUTY_NAME' => 'DUTY.ELEMENT.NAME',
 ]);
 
 $assistResult = $query->exec();

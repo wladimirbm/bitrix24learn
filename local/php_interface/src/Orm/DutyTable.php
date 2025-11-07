@@ -42,9 +42,6 @@ class DutyTable extends DataManager
 				))->configureTitle(Loc::getMessage('ELEMENT_PROP_S17_ENTITY_IBLOCK_ELEMENT_ID_FIELD'))
 				->configurePrimary(true)
 			,
-			'NAME' => (new StringField('NAME'))
-                ->configureRequired(true)
-                ->configureTitle('Название'),
 
 		];
 	}
