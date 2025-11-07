@@ -21,8 +21,8 @@ $query->setSelect([
     'FIRSTNAME',
     'ABOUT',
     'DOCTOR_FIRSTNAME' => 'DOCTORS.FIRSTNAME', //попробовать concat()
-    //'PROCEDURE_NAME' => 'PROCEDURES.NAME',
-    //'DUTY_NAME' => 'DUTY.NAME',
+    'PROCEDURE_NAME' => 'PROCEDURES.NAME',
+    'DUTY_NAME' => 'DUTY.NAME',
 ]);
 
 $assistResult = $query->exec();
@@ -41,8 +41,8 @@ while ($assist = $assistResult->fetch()) {
         ];
     }
 
-   // $assists[$assistId]['DOCTORS'][] = $assist['DOCTOR_FIRSTNAME'];
-   // $assists[$assistId]['PROCEDURES'][] = $assist['PROCEDURE_NAME'];
+    $assists[$assistId]['DOCTORS'][] = $assist['DOCTOR_FIRSTNAME'];
+    $assists[$assistId]['PROCEDURES'][] = $assist['PROCEDURE_NAME'];
 
     /*
     $authorFullName = trim(sprintf('%s %s %s',
