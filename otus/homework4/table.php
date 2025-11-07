@@ -54,42 +54,13 @@ $query->setSelect([
     )
 ;
 $assistResult = $query->exec();
-while ($assistResult = $query->fetch()) {
-    echo "Ассистент: {$item['NAME']}";
-    echo "Процедура: {$item['PROCEDURE_NAME']}"; // NAME записи инфоблока
-}
-
 
 $assists = [];
 while ($assist = $assistResult->fetch()) {
-    $customEntry = ProceduresTable::getById($assist['PROCEDURE_ID'])->fetchObject();
-    
-    if ($customEntry) {
-    $iblockElements = $customEntry->getIblockElements();
-    
-    // Преобразование в массив с нужными полями
-    $simpleArray = [];
-    foreach ($iblockElements as $element) {
-        $simpleArray[] = [
-            'id' => $element->getId(),
-            'name' => $element->getName(),
-            'code' => $element->getCode(),
-            'date' => $element->getDateActiveFrom()
-        ];
-    }
-}
-    dump($simpleArray);
+  echo "Ассистент: {$assist['NAME']}";
+    echo "Процедура: {$assist['PROCEDURE_NAME']}"; // NAME записи инфоблока
     dump($assist); continue;
-    // $procs = $assist->getProcedures();
-    //  dump($procs);
-    // // Способ 1: Перебор коллекции
-    // foreach ($procs as $element) {
-    //     echo "ID: " . $element->getId();
-    //     echo "NAME: " . $element->get('NAME'); // Название записи инфоблока
-    //     echo "NAME: " . $element->getName(); // Название записи инфоблока
-    // }
-      continue;
-    
+ 
     $assistId = $assist['ID'];
 
     if (!isset($assists[$assistId])) {
