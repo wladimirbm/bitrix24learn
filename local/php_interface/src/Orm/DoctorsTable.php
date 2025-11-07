@@ -6,6 +6,7 @@ use Bitrix\Main\ORM\Data\DataManager;
 use Bitrix\Main\ORM\Fields\IntegerField;
 use Bitrix\Main\ORM\Fields\TextField;
 use Bitrix\Main\ORM\Fields\DateField;
+use Bitrix\Main\ORM\Fields\Relations\ManyToMany;
 
 /**
  * Class ElementPropS16Table
@@ -41,7 +42,7 @@ class DoctorsTable extends DataManager
 	 *
 	 * @return array
 	 */
-	public static function getMap()
+	public static function getMap() // добавить оратную связь с ассистентом
 	{
 		return [
 			'IBLOCK_ELEMENT_ID' => (new IntegerField('IBLOCK_ELEMENT_ID',
@@ -73,6 +74,10 @@ class DoctorsTable extends DataManager
                 ->configureTitle(Loc::getMessage('ELEMENT_PROP_S16_ENTITY_PROPERTY_69_FIELD'))
                 ->configureColumnName('PROPERTY_69')
 			,
+			'ASSISTENTS' => (new ManyToMany('ASSISTENTS', AssistentsTable::class))
+                ->configureTableName('otus_doctor_assistent')
+                ->configureLocalPrimary('ID', 'DOCTOR_ID')
+                ->configureRemotePrimary('ID', 'ASSISTENT_ID'),
 		];
 	}
 }

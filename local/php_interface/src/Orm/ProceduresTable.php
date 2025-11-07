@@ -10,6 +10,7 @@ use Bitrix\Iblock\ElementTable;
 use Bitrix\Main\Entity\StringField;
 use Bitrix\Main\Entity\ReferenceField;
 use Bitrix\Main\ORM\Fields\DatetimeField;
+use Bitrix\Main\ORM\Fields\Relations\ManyToMany;
 use Bitrix\Main\ORM\Fields\ExpressionField;
 use Bitrix\Main\DB\SqlExpression;
 use CIBlockElement;
@@ -69,6 +70,10 @@ class ProceduresTable extends DataManager
 				[]
 			))->configureTitle(Loc::getMessage('ELEMENT_PROP_S18_ENTITY_IBLOCK_ELEMENT_ID_FIELD'))
 				->configurePrimary(true),
+			'ASSISTENTS' => (new ManyToMany('ASSISTENTS', AssistentsTable::class))
+                ->configureTableName('otus_procedures_assistent')
+                ->configureLocalPrimary('ID', 'PROCEDURE_ID')
+                ->configureRemotePrimary('ID', 'ASSISTENT_ID'),
 		];
 
 		$multipleValuesTableClass = static::getMultipleValuesTableClass();
