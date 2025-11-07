@@ -31,7 +31,7 @@ $assistResult = $query->exec();
 $assists = [];
 while ($assist = $assistResult->fetchObject()) {
     
-    $procs = $customEntry->getProcedures();
+    $procs = $assist->getProcedures();
     
     // Способ 1: Перебор коллекции
     foreach ($procs as $element) {
