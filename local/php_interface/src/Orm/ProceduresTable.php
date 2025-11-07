@@ -4,20 +4,22 @@ namespace Otus\Orm;
 
 use Bitrix\Main\Localization\Loc;
 use Bitrix\Main\ORM\Data\DataManager;
-use Bitrix\Main\ORM\Fields\IntegerField;
 
 use Bitrix\Iblock\ElementTable;
+use Bitrix\Iblock\PropertyTable;
+use Bitrix\Iblock\PropertyEnumerationTable;
 use Bitrix\Main\Entity\StringField;
 use Bitrix\Main\Entity\ReferenceField;
 use Bitrix\Main\Entity\Reference;
+use Bitrix\Main\ORM;
+use Bitrix\Main\ORM\Fields;
+use Bitrix\Main\ORM\Fields\IntegerField;
 use Bitrix\Main\ORM\Fields\DatetimeField;
 use Bitrix\Main\ORM\Fields\Relations\ManyToMany;
 use Bitrix\Main\ORM\Fields\Relations\OneToMany;
 use Bitrix\Main\ORM\Fields\ExpressionField;
 use Bitrix\Main\DB\SqlExpression;
 use CIBlockElement;
-use Bitrix\Iblock\PropertyEnumerationTable;
-use Bitrix\Iblock\PropertyTable;
 use Models\Lists;
 use Models\Lists\DoctorProceduresPropertyValuesTable as DoctorProceduresPropertyValuesTable; 
 
@@ -74,15 +76,14 @@ class ProceduresTable extends DataManager
 				[]
 			))->configureTitle(Loc::getMessage('ELEMENT_PROP_S18_ENTITY_IBLOCK_ELEMENT_ID_FIELD'))
 				->configurePrimary(true),
-			'IBLOCK_PROPERTY_ID' => (new IntegerField('IBLOCK_PROPERTY_ID')),
-			// // СВЯЗЬ СО СВОЙСТВАМИ ЧЕРЕЗ ElementPropertyTable
-			// (new OneToMany('PROPERTIES', ElementPropertyTable::class, 'ELEMENT'))
-			//     ->configureJoinType('LEFT'),
 
-			// СВЯЗЬ С ЗНАЧЕНИЯМИ СВОЙСТВ
-			'ELEMENT' => (new OneToMany('PROPERTY_VALUES', DoctorProceduresPropertyValuesTable::class, 'ELEMENT'))
-				->configureJoinType('LEFT'),
-
+			 // СВЯЗЬ СО СВОЙСТВАМИ ЧЕРЕЗ ElementPropertyTable
+            (new OneToMany('PROPERTIES', ElementPropertyTable::class, 'ELEMENT'))
+                ->configureJoinType('LEFT'),
+            
+            // СВЯЗЬ С ЗНАЧЕНИЯМИ СВОЙСТВ
+            (new OneToMany('PROPERTY_VALUES', ElementPropertyValueTable::class, 'ELEMENT'))
+                ->configureJoinType('LEFT'),
 				
 			'ASSISTENTS' => (new ManyToMany('ASSISTENTS', AssistentsTable::class))
 				->configureTableName('otus_procedures_assistent')
