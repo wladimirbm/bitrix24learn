@@ -18,6 +18,7 @@ use Bitrix\Main\DB\SqlExpression;
 use CIBlockElement;
 use Bitrix\Iblock\PropertyEnumerationTable;
 use Bitrix\Iblock\PropertyTable;
+use Models\AbstractIblockPropertyValuesTable;
 
 /**
  * Class ElementPropS18Table
@@ -78,8 +79,10 @@ class ProceduresTable extends DataManager
 			//     ->configureJoinType('LEFT'),
 
 			// СВЯЗЬ С ЗНАЧЕНИЯМИ СВОЙСТВ
-			'ELEMENT' => (new OneToMany('PROPERTY_VALUES', ElementPropertyValueTable::class, 'ELEMENT'))
+			'ELEMENT' => (new OneToMany('PROPERTY_VALUES', DoctorProceduresPropertyValuesTable::class, 'ELEMENT'))
 				->configureJoinType('LEFT'),
+
+				
 			'ASSISTENTS' => (new ManyToMany('ASSISTENTS', AssistentsTable::class))
 				->configureTableName('otus_procedures_assistent')
 				->configureLocalPrimary('ID', 'PROCEDURE_ID')
