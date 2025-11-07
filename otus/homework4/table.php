@@ -22,21 +22,17 @@ $query->setSelect([
     'ABOUT',
     'DOCTOR_FIRSTNAME' => 'DOCTORS.FIRSTNAME', //попробовать concat()
     'PROCEDURE' => 'PROCEDURES',
-    'PROCEDURE_NAME',
     //'PROCEDURE_NAME_V' => 'PROCEDURES.PROPERTY_VALUES.NAME',
     'DUTY' => 'DUTY',
     //'DUTY_NAME_V' => 'DUTY.PROPERTY_VALUES.NAME',
-])->registerRuntimeField(
-        (new \Bitrix\Main\ORM\Fields\ExpressionField(
-            'PROCEDURE_NAME',
-            '%s', 
-            ['PROCEDURES.NAME']
-        ))
-    );
+]);
 
 $assistResult = $query->exec();
 $assists = [];
-while ($assist = $assistResult->fetch()) {
+while ($assist = $assistResult->fetchObject()) {
+    
+     dump($assist); continue;
+    
     $assistId = $assist['ID'];
 
     if (!isset($assists[$assistId])) {
@@ -74,7 +70,7 @@ while ($assist = $assistResult->fetch()) {
         $assists[$assistId]['EDITORS'][] = $editorFullName;
     }
     */
-    dump($assist);
+   
 }
 
 //dump($assists);
