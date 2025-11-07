@@ -4,6 +4,7 @@ namespace Otus\Orm;
 use Bitrix\Main\Localization\Loc;
 use Bitrix\Main\ORM\Data\DataManager;
 use Bitrix\Main\ORM\Fields\IntegerField;
+use Bitrix\Main\ORM\Fields\StringField;
 
 /**
  * Class ElementPropS17Table
@@ -39,8 +40,12 @@ class DutyTable extends DataManager
 			'ID' => (new IntegerField('IBLOCK_ELEMENT_ID',
 					[]
 				))->configureTitle(Loc::getMessage('ELEMENT_PROP_S17_ENTITY_IBLOCK_ELEMENT_ID_FIELD'))
-						->configurePrimary(true)
+				->configurePrimary(true)
 			,
+			'NAME' => (new StringField('NAME'))
+                ->configureRequired(true)
+                ->configureTitle('Название'),
+
 		];
 	}
 }
