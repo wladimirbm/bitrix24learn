@@ -12,10 +12,11 @@
     */
 ?>
 <h2>Создание своих таблиц БД и написание модели данных к ним</h2>
-<p><a href="table.php">Таблица</a></p>
+<p><a href="reltable.php">Таблица</a></p>
 
 <h2>Файлы</h2>
  
+
 <p><a href="/bitrix/admin/fileman_admin.php?PAGEN_1=1&SIZEN_1=20&lang=ru&site=s1&path=%2Flocal%2Fphp_interface%2Fsrc%2FOrm&show_perms_for=0&fu_action=">Файлы ORM</a></p>
 <p><a href="/bitrix/admin/fileman_admin.php?PAGEN_1=1&SIZEN_1=20&lang=ru&site=s1&path=%2Flocal%2Fphp_interface%2Fconsole&show_perms_for=0&fu_action=">Файлы создания и удаления таблиц</a></p>
 <p><a href="/bitrix/admin/fileman_admin.php?lang=ru&path=%2Fotus%2Fhomework4&site=s1">Файл ДЗ</a></p>
