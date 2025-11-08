@@ -103,7 +103,7 @@ $assists = [];
 while ($assist = $assistResult->fetchObject()) {
   echo "Ассистент: {$assist['FIRSTNAME']}";
   
-    $customEntry = ProceduresTable::getById(300)->fetchObject();
+    $customEntry = ProceduresTable::getByPrimary(300, ['ID', 'NAME'])->fetchObject();
     dump($customEntry);
 
 //    $procedures = $assistent->getProcedures();
