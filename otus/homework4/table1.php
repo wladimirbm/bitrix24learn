@@ -84,7 +84,7 @@ foreach ($assistents as $assistent) {
     } else {
         echo "  - Нет связанных процедур";
     }
-    echo "---";
+    echo "--- <hr>";
 }//dump($assists);
 
 require_once $_SERVER['DOCUMENT_ROOT'] . '/bitrix/footer.php';
