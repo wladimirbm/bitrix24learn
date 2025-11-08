@@ -71,7 +71,7 @@ $query->setSelect([
             '(SELECT NAME FROM b_iblock_element WHERE ID = %s 
                 LIMIT 1
             )',
-            ['ID']
+            ['DUTY_ID']
         ))
     )
 ;
