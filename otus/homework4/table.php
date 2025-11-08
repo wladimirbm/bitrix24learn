@@ -60,7 +60,7 @@ $query->setSelect([
                 SELECT PROCEDURE_ID 
                 FROM otus_procedures_assistent 
                 WHERE ASSISTENT_ID = %s 
-                LIMIT 1
+                
             ))',
             ['ID']
         ))
