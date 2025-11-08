@@ -104,12 +104,12 @@ while ($assist = $assistResult->fetchObject()) {
   echo "Ассистент: {$assist['FIRSTNAME']}";
   
     $customEntry = ProceduresTable::getById(300)->fetchObject();
-    echo $customEntry->getName();
-    
-   $procedures = $assistent->getProcedures();
-    foreach ($procedures as $procedure) {
-        echo "Процедура: " . $procedure->get('NAME');
-    }
+    dump($customEntry);
+
+//    $procedures = $assistent->getProcedures();
+//     foreach ($procedures as $procedure) {
+//         echo "Процедура: " . $procedure->get('NAME');
+//     }
 
     // echo "Процедура: {$assist['PROCEDURE_NAME']}"; // NAME записи инфоблока
     // echo "Должность: {$assist['DUTY_NAME']}"; // NAME записи инфоблока
