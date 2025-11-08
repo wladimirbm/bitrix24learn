@@ -100,10 +100,16 @@ $query->setSelect([
 $assistResult = $query->exec();
 
 $assists = [];
-while ($assist = $assistResult->fetch()) {
+while ($assist = $assistResult->fetchObject()) {
   echo "Ассистент: {$assist['FIRSTNAME']}";
-    echo "Процедура: {$assist['PROCEDURE_NAME']}"; // NAME записи инфоблока
-    echo "Должность: {$assist['DUTY_NAME']}"; // NAME записи инфоблока
+  
+   $procedures = $assistent->getProcedures();
+    foreach ($procedures as $procedure) {
+        echo "Процедура: " . $procedure->get('NAME');
+    }
+    
+    // echo "Процедура: {$assist['PROCEDURE_NAME']}"; // NAME записи инфоблока
+    // echo "Должность: {$assist['DUTY_NAME']}"; // NAME записи инфоблока
     dump($assist); continue;
  
     $assistId = $assist['ID'];
