@@ -8,7 +8,7 @@ $APPLICATION->SetAdditionalCSS('/otus/homework3/style.css');
 <?php
 //use Otus\Orm\BookTable;
 use Otus\Orm\AssistentsTable;
-use Otus\Orm\ProceduresTable as PRT;
+use Otus\Orm\ProceduresTable;
 use Otus\Orm\DutyTable;
 use Bitrix\Main\Entity\Query;
 
@@ -103,7 +103,7 @@ $assists = [];
 while ($assist = $assistResult->fetchObject()) {
   echo "Ассистент: {$assist['FIRSTNAME']}";
   
-    $customEntry = PRT::getByPrimary(300, ['ID', 'NAME'])->fetchObject();
+    $customEntry = ProceduresTable::getById(300)->fetchObject();
     dump($customEntry);
 
 //    $procedures = $assistent->getProcedures();
