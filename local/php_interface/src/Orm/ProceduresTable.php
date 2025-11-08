@@ -71,7 +71,7 @@ class ProceduresTable extends DataManager
 
 
 		$map = [
-			'ID' => (new IntegerField(
+			'IBLOCK_ELEMENT_ID' => (new IntegerField(
 				'IBLOCK_ELEMENT_ID',
 				[]
 			))->configureTitle(Loc::getMessage('ELEMENT_PROP_S18_ENTITY_IBLOCK_ELEMENT_ID_FIELD'))
@@ -85,7 +85,7 @@ class ProceduresTable extends DataManager
 				
 			'ASSISTENTS' => (new ManyToMany('ASSISTENTS', AssistentsTable::class))
 				->configureTableName('otus_procedures_assistent')
-				->configureLocalPrimary('ID', 'PROCEDURE_ID')
+				->configureLocalPrimary('IBLOCK_ELEMENT_ID', 'PROCEDURE_ID')
 				->configureRemotePrimary('ID', 'ASSISTENT_ID'),
 		];
 
