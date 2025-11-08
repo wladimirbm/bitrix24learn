@@ -44,7 +44,7 @@ class ProceduresElementTable extends DataManager
             new Reference(
                 'ELEMENTS',
                 ProceduresTable::class,
-                ['=this.ID' => 'ref.IBLOCK_ELEMENT_ID']
+                ['=this.ID' => 'ref.ID']
             ),
             
             // (new Fields\Relations\ManyToMany('ASSISTENTS', AssistentsTable::class))

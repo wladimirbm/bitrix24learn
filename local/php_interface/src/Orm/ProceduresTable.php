@@ -76,11 +76,11 @@ class ProceduresTable extends DataManager
 				[]
 			))->configureTitle(Loc::getMessage('ELEMENT_PROP_S18_ENTITY_IBLOCK_ELEMENT_ID_FIELD'))
 				->configurePrimary(true),
-				
+
 			 new Reference(
                 'ELEMENTS',
                 ProceduresElementTable::class,
-                ['=this.IBLOCK_ELEMENT_ID' => 'ref.ID']
+                ['=this.ID' => 'ref.ID']
 			 ),
 
 			'ASSISTENTS' => (new ManyToMany('ASSISTENTS', AssistentsTable::class))
