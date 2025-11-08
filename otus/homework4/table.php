@@ -23,9 +23,9 @@ $query->setSelect([
     'FIRSTNAME',
     'ABOUT',
     'DOCTOR_FIRSTNAME' => 'DOCTORS.FIRSTNAME', //попробовать concat()
-    'PROCEDURE_ID' => 'PROCEDURES',
+    'PROCEDURES',// => 'PROCEDURES',
     //'PROCEDURE_NAME', // => 'PROCEDURES..NAME',
-    'DUTY_ID' => 'DUTY',
+    'DUTY' => 'DUTY',
     //'DUTY_NAME_V' => 'DUTY.PROPERTY_VALUES.NAME',
     'PROCEDURE_NAME', // Название процедуры из инфоблока
     'DUTY_NAME', // Название процедуры из инфоблока
