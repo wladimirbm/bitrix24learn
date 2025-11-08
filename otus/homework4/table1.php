@@ -31,6 +31,8 @@ $query = \Otus\Orm\AssistentsTable::query()
         'ID',
         'FIRSTNAME', 
         'ABOUT',
+        'DOCTOR_ID' => 'DOCTORS.ID',
+        'DOCTOR_FIRSTNAME' => 'DOCTORS.FIRSTNAME',
         'PROCEDURE_ID' => 'RELATION.PROCEDURE_ID',
         'PROCEDURE_NAME' // Будет создано через ExpressionField
     ])
@@ -76,6 +78,7 @@ while ($item = $query->fetch()) {
 // Выводим результат
 foreach ($assistents as $assistent) {
     echo "Ассистент: {$assistent['firstname']} (ID: {$assistent['id']})";
+    echo "Доктор: {$assistent['DOCTOR_FIRSTNAME']} (ID: {$assistent['DOCTOR_ID']})";
     
     if (!empty($assistent['procedures'])) {
         foreach ($assistent['procedures'] as $procedure) {
