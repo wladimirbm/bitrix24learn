@@ -37,7 +37,7 @@ $query = \Otus\Orm\AssistentsTable::query()
         'DOCTOR_FIRSTNAME' => 'DOCTORS.FIRSTNAME',
         'PROCEDURE_ID' => 'RELATION.PROCEDURE_ID',
         'PROCEDURE_NAME', // Будет создано через ExpressionField
-        'DUTY_NAME' => 'DUTY.NAME', // Будет создано через ExpressionField
+        'DUTY_NAME', // Будет создано через ExpressionField
     ])
     ->registerRuntimeField(
         'RELATION',
