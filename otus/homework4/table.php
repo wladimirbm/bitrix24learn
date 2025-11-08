@@ -53,26 +53,46 @@ $query->setSelect([
     //         ['PROCEDURE.NAME']
     //     ))
     // )
+
+
+//     ->registerRuntimeField(
+//         (new \Bitrix\Main\ORM\Fields\ExpressionField(
+//             'PROCEDURE_NAME',
+//             '(SELECT NAME FROM b_iblock_element WHERE ID = (
+//                 SELECT PROCEDURE_ID 
+//                 FROM otus_procedures_assistent 
+//                 WHERE ASSISTENT_ID = %s 
+//                 LIMIT 1
+//             ))',
+//             ['ID']
+//         ))
+//     )
+//  ->registerRuntimeField(
+//         (new \Bitrix\Main\ORM\Fields\ExpressionField(
+//             'DUTY_NAME',
+//             '(SELECT NAME FROM b_iblock_element WHERE ID = %s 
+//                 LIMIT 1
+//             )',
+//             ['DUTY_ID']
+//         ))
+//     )
+
+
     ->registerRuntimeField(
-        (new \Bitrix\Main\ORM\Fields\ExpressionField(
-            'PROCEDURE_NAME',
-            '(SELECT NAME FROM b_iblock_element WHERE ID = (
-                SELECT PROCEDURE_ID 
-                FROM otus_procedures_assistent 
-                WHERE ASSISTENT_ID = %s 
-                LIMIT 1
-            ))',
-            ['ID']
-        ))
+        'RELATION',
+        (new \Bitrix\Main\ORM\Fields\Relations\Reference(
+            'RELATION',
+            \Otus\Orm\ProceduresAssistentTable::class,
+            ['=this.ID' => 'ref.ASSISTENT_ID']
+        ))->configureJoinType('INNER')
     )
- ->registerRuntimeField(
-        (new \Bitrix\Main\ORM\Fields\ExpressionField(
-            'DUTY_NAME',
-            '(SELECT NAME FROM b_iblock_element WHERE ID = %s 
-                LIMIT 1
-            )',
-            ['DUTY_ID']
-        ))
+    ->registerRuntimeField(
+        'PROCEDURE',
+        (new \Bitrix\Main\ORM\Fields\Relations\Reference(
+            'PROCEDURE',
+            \Otus\Orm\ProceduresTable::class,
+            ['=this.RELATION.PROCEDURE_ID' => 'ref.ID']
+        ))->configureJoinType('INNER')
     )
 ;
 $assistResult = $query->exec();
