@@ -26,15 +26,13 @@ foreach ($fields as $fieldName => $field) {
     echo "- $fieldName (тип: " . get_class($field) . ")\n";
 }
 
-
-//$query = new Query(AssistentsTable::class);
 $query = \Otus\Orm\AssistentsTable::query()
     ->setSelect([
         'ID',
         'FIRSTNAME', 
         'ABOUT',
         'PROCEDURE_ID' => 'RELATION.PROCEDURE_ID',
-        'PROCEDURE_NAME' => 'PROCEDURE.NAME' // Стандартное поле NAME
+        'PROCEDURE_NAME' // Будет создано через ExpressionField
     ])
     ->registerRuntimeField(
         'RELATION',
@@ -45,14 +43,12 @@ $query = \Otus\Orm\AssistentsTable::query()
         ))->configureJoinType('INNER')
     )
     ->registerRuntimeField(
-        'PROCEDURE',
-        (new \Bitrix\Main\ORM\Fields\Relations\Reference(
-            'PROCEDURE',
-            \Otus\Orm\ProceduresTable::class,
-            ['=this.RELATION.PROCEDURE_ID' => 'ref.ID']
-        ))->configureJoinType('INNER')
+        (new \Bitrix\Main\ORM\Fields\ExpressionField(
+            'PROCEDURE_NAME',
+            '(SELECT NAME FROM b_iblock_element WHERE ID = %s)',
+            ['RELATION.PROCEDURE_ID']
+        ))
     )
-    // УБИРАЕМ ФИЛЬТР - получаем все записи
     ->exec();
 
 $assistents = [];
@@ -60,7 +56,6 @@ $assistents = [];
 while ($item = $query->fetch()) {
     $assistentId = $item['ID'];
     
-    // Если ассистент еще не добавлен в массив
     if (!isset($assistents[$assistentId])) {
         $assistents[$assistentId] = [
             'id' => $item['ID'],
@@ -70,8 +65,7 @@ while ($item = $query->fetch()) {
         ];
     }
     
-    // Добавляем процедуру к ассистенту
-    if ($item['PROCEDURE_ID']) {
+    if ($item['PROCEDURE_ID'] && $item['PROCEDURE_NAME']) {
         $assistents[$assistentId]['procedures'][] = [
             'id' => $item['PROCEDURE_ID'],
             'name' => $item['PROCEDURE_NAME']
@@ -91,7 +85,6 @@ foreach ($assistents as $assistent) {
         echo "  - Нет связанных процедур";
     }
     echo "---";
-}
-//dump($assists);
+}//dump($assists);
 
 require_once $_SERVER['DOCUMENT_ROOT'] . '/bitrix/footer.php';
