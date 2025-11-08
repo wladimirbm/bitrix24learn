@@ -62,7 +62,7 @@ $query = AssistentsTable::query()
 $assistents = [];
 
 while ($item = $query->fetch()) {
-    dump($item); continue;
+    //dump($item); continue;
     $assistentId = $item['ID'];
     
     if (!isset($assistents[$assistentId])) {
