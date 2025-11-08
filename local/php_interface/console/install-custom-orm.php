@@ -13,7 +13,7 @@ define("NO_AGENT_STATISTIC", "Y");
 define("DisableEventsCheck", true);
 define("NO_AGENT_CHECK", true);
 
-$_SERVER['DOCUMENT_ROOT'] = realpath('/home/bitrix/www');
+$_SERVER['DOCUMENT_ROOT'] = realpath('/home/c/cc61466/public_html');
 //echo $_SERVER['DOCUMENT_ROOT'];
 require_once($_SERVER['DOCUMENT_ROOT'] . '/bitrix/modules/main/include/prolog_before.php');
 
