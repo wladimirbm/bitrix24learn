@@ -17,6 +17,16 @@ use Bitrix\Main\Entity\Query;
  */
 
 
+// ДИАГНОСТИКА - какие поля доступны в ProceduresTable
+$entity = \Otus\Orm\ProceduresTable::getEntity();
+$fields = $entity->getFields();
+
+echo "Доступные поля в ProceduresTable:\n";
+foreach ($fields as $fieldName => $field) {
+    echo "- $fieldName (тип: " . get_class($field) . ")\n";
+}
+
+
 //$query = new Query(AssistentsTable::class);
 $query = \Otus\Orm\AssistentsTable::query()
     ->setSelect([
