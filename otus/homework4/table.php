@@ -31,8 +31,8 @@ $query->setSelect([
     //'DUTY_NAME_V' => 'DUTY.PROPERTY_VALUES.NAME',
     // 'PROCEDURE_NAME', // Название процедуры из инфоблока
     // 'DUTY_NAME', // Название процедуры из инфоблока
-      'PROCEDURE_ID' => 'RELATION.PROCEDURE_ID',
-        'PROCEDURE_NAME' => 'PROCEDURE.NAME',
+  //    'PROCEDURE_ID' => 'RELATION.PROCEDURE_ID',
+        'PROCEDURE_NAME' => 'PROCEDURES.NAME',
     ])
     // ->registerRuntimeField(
     //     'RELATION',
@@ -82,22 +82,22 @@ $query->setSelect([
 //     )
 
 
-    ->registerRuntimeField(
-        'RELATION',
-        (new \Bitrix\Main\ORM\Fields\Relations\Reference(
-            'RELATION',
-            \Otus\Orm\ProceduresAssistentTable::class,
-            ['=this.ID' => 'ref.ASSISTENT_ID']
-        ))->configureJoinType('INNER')
-    )
-    ->registerRuntimeField(
-        'PROCEDURE',
-        (new \Bitrix\Main\ORM\Fields\Relations\Reference(
-            'PROCEDURE',
-            \Otus\Orm\ProceduresTable::class,
-            ['=this.RELATION.PROCEDURE_ID' => 'ref.ID']
-        ))->configureJoinType('INNER')
-    )
+    // ->registerRuntimeField(
+    //     'RELATION',
+    //     (new \Bitrix\Main\ORM\Fields\Relations\Reference(
+    //         'RELATION',
+    //         \Otus\Orm\ProceduresAssistentTable::class,
+    //         ['=this.ID' => 'ref.ASSISTENT_ID']
+    //     ))->configureJoinType('INNER')
+    // )
+    // ->registerRuntimeField(
+    //     'PROCEDURE',
+    //     (new \Bitrix\Main\ORM\Fields\Relations\Reference(
+    //         'PROCEDURE',
+    //         \Otus\Orm\ProceduresTable::class,
+    //         ['=this.RELATION.PROCEDURE_ID' => 'ref.ID']
+    //     ))->configureJoinType('INNER')
+    // )
 ;
 $assistResult = $query->exec();
 
