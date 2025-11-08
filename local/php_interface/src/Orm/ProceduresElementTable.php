@@ -34,7 +34,7 @@ class ProceduresElementTable extends DataManager
             (new Fields\StringField('ACTIVE'))
                 ->configureTitle('Активность'),
             
-            (new Fields\DatetimeField('DATE_ACTIVE_FROM'))
+            (new Fields\DatetimeField('ACTIVE_FROM'))
                 ->configureTitle('Дата активности'),
             
             (new Fields\IntegerField('SORT'))
