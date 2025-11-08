@@ -30,6 +30,7 @@ $query = AssistentsTable::query()
         'DOCTOR_ID' => 'DOCTORS.ID',
         'DOCTOR_FIRSTNAME' => 'DOCTORS.FIRSTNAME',
         'DOCTOR_LASTNAME' => 'DOCTORS.LASTNAME',
+        'PROCEDURE_ELEMENTS' => 'PROCEDURES.ELEMENTS',
         'PROCEDURE_ID' => 'RELATION.PROCEDURE_ID',
         'PROCEDURE_NAME', //через ExpressionField
         'DUTY_NAME', // через ExpressionField
@@ -61,7 +62,7 @@ $query = AssistentsTable::query()
 $assistents = [];
 
 while ($item = $query->fetch()) {
-    //dump($item);
+    dump($item); continue;
     $assistentId = $item['ID'];
     
     if (!isset($assistents[$assistentId])) {
