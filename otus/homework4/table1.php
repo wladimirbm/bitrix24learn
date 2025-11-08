@@ -9,24 +9,17 @@ $APPLICATION->SetAdditionalCSS('/otus/homework3/style.css');
 //use Otus\Orm\BookTable;
 use Otus\Orm\AssistentsTable;
 use Otus\Orm\ProceduresTable;
+use Otus\Orm\ProceduresAssistentTable;
 use Otus\Orm\DutyTable;
 use Bitrix\Main\Entity\Query;
+use Bitrix\Main\ORM\Fields\Relations\Reference;
+use Bitrix\Main\ORM\Fields\ExpressionField;
 
 /**
  * @var CMain $APPLICATION
  */
 
-
-// ДИАГНОСТИКА - какие поля доступны в ProceduresTable
-$entity = \Otus\Orm\ProceduresTable::getEntity();
-$fields = $entity->getFields();
-
-echo "Доступные поля в ProceduresTable:\n";
-foreach ($fields as $fieldName => $field) {
-    echo "- $fieldName (тип: " . get_class($field) . ")\n";
-}
-
-$query = \Otus\Orm\AssistentsTable::query()
+$query = AssistentsTable::query()
     ->setSelect([
         'ID',
         'LASTNAME', 
@@ -38,26 +31,26 @@ $query = \Otus\Orm\AssistentsTable::query()
         'DOCTOR_FIRSTNAME' => 'DOCTORS.FIRSTNAME',
         'DOCTOR_LASTNAME' => 'DOCTORS.LASTNAME',
         'PROCEDURE_ID' => 'RELATION.PROCEDURE_ID',
-        'PROCEDURE_NAME', // Будет создано через ExpressionField
-        'DUTY_NAME', // Будет создано через ExpressionField
+        'PROCEDURE_NAME', //через ExpressionField
+        'DUTY_NAME', // через ExpressionField
     ])
     ->registerRuntimeField(
         'RELATION',
-        (new \Bitrix\Main\ORM\Fields\Relations\Reference(
+        (new Reference(
             'RELATION',
-            \Otus\Orm\ProceduresAssistentTable::class,
+            ProceduresAssistentTable::class,
             ['=this.ID' => 'ref.ASSISTENT_ID']
         ))->configureJoinType('INNER')
     )
     ->registerRuntimeField(
-        (new \Bitrix\Main\ORM\Fields\ExpressionField(
+        (new ExpressionField(
             'PROCEDURE_NAME',
             '(SELECT NAME FROM b_iblock_element WHERE ID = %s)',
             ['RELATION.PROCEDURE_ID']
         ))
     )
     ->registerRuntimeField(
-        (new \Bitrix\Main\ORM\Fields\ExpressionField(
+        (new ExpressionField(
             'DUTY_NAME',
             '(SELECT NAME FROM b_iblock_element WHERE ID = %s)',
             ['DUTY_ID']
@@ -68,7 +61,7 @@ $query = \Otus\Orm\AssistentsTable::query()
 $assistents = [];
 
 while ($item = $query->fetch()) {
-    dump($item);
+    //dump($item);
     $assistentId = $item['ID'];
     
     if (!isset($assistents[$assistentId])) {
@@ -98,9 +91,8 @@ while ($item = $query->fetch()) {
         ];
     }
 }
-dump($assistents);
+//dump($assistents);
 
-// Выводим результат
 ?>
 <table><thead>
     <tr>
@@ -123,7 +115,7 @@ foreach ($assistents as $assistent) {
             echo "(ID: {$procedure['id']}): {$procedure['name']} <br>";
         }
     } else {
-        echo "  - Нет связанных процедур";
+        echo "Нет связанных процедур";
     }  
     echo "</td>";
     echo "<td>";
@@ -132,11 +124,12 @@ foreach ($assistents as $assistent) {
             echo "(ID: {$doctors['id']}): {$doctors['lastname']} {$doctors['firstname']} <br>";
         }
     } else {
-        echo "  - Нет связанных докторов";
+        echo "Нет связанных докторов";
     }
     echo "</td>";
     echo "</tr>";
-}//dump($assists);
+}
+//dump($assists);
 echo "</tbody>";
 echo "</table>";
 
