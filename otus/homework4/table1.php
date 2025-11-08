@@ -32,11 +32,12 @@ $query = \Otus\Orm\AssistentsTable::query()
         'FIRSTNAME', 
         'ABOUT',
         'DUTY_ID',
+        'DUTY',
         'DOCTOR_ID' => 'DOCTORS.ID',
         'DOCTOR_FIRSTNAME' => 'DOCTORS.FIRSTNAME',
         'PROCEDURE_ID' => 'RELATION.PROCEDURE_ID',
         'PROCEDURE_NAME', // Будет создано через ExpressionField
-        'DUTY_NAME', // Будет создано через ExpressionField
+        'DUTY_NAME' => 'DUTY.NAME', // Будет создано через ExpressionField
     ])
     ->registerRuntimeField(
         'RELATION',
@@ -66,7 +67,7 @@ $assistents = [];
 
 while ($item = $query->fetch()) {
     $assistentId = $item['ID'];
-    
+    dump($item);
     if (!isset($assistents[$assistentId])) {
         $assistents[$assistentId] = [
             'id' => $item['ID'],
