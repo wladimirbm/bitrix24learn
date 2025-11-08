@@ -68,6 +68,7 @@ $query = \Otus\Orm\AssistentsTable::query()
 $assistents = [];
 
 while ($item = $query->fetch()) {
+    dump($item);
     $assistentId = $item['ID'];
     
     if (!isset($assistents[$assistentId])) {
@@ -113,7 +114,7 @@ dump($assistents);
 foreach ($assistents as $assistent) {
     echo '<tr class="row">';
     echo "<td>(ID: {$assistent['id']}): {$assistent['lastname']} {$assistent['firstname']}</td>";
-    echo "<td>(ID: {$assistent['DUTY_ID']}): {$assistent['DUTY_NAME']}</td>";
+    echo "<td>(ID: {$assistent['DUTY']}): {$assistent['DUTY_NAME']}</td>";
    
     echo "<td>";
     if (!empty($assistent['procedures'])) {
