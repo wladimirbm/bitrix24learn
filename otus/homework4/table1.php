@@ -29,12 +29,14 @@ foreach ($fields as $fieldName => $field) {
 $query = \Otus\Orm\AssistentsTable::query()
     ->setSelect([
         'ID',
+        'LASTNAME', 
         'FIRSTNAME', 
         'ABOUT',
         'DUTY_ID',
         'DUTY',
         'DOCTOR_ID' => 'DOCTORS.ID',
         'DOCTOR_FIRSTNAME' => 'DOCTORS.FIRSTNAME',
+        'DOCTOR_LASTNAME' => 'DOCTORS.LASTNAME',
         'PROCEDURE_ID' => 'RELATION.PROCEDURE_ID',
         'PROCEDURE_NAME', // Будет создано через ExpressionField
         'DUTY_NAME', // Будет создано через ExpressionField
@@ -67,38 +69,73 @@ $assistents = [];
 
 while ($item = $query->fetch()) {
     $assistentId = $item['ID'];
-    dump($item);
+    
     if (!isset($assistents[$assistentId])) {
         $assistents[$assistentId] = [
             'id' => $item['ID'],
             'firstname' => $item['FIRSTNAME'],
+            'lastname' => $item['LASTNAME'],
             'about' => $item['ABOUT'],
-            'procedures' => []
+            'duty' => $item['DUTY_NAME'],
+            'doctors' => [],
+            'procedures' => [],
         ];
     }
     
-    if ($item['PROCEDURE_ID'] && $item['PROCEDURE_NAME']) {
-        $assistents[$assistentId]['procedures'][] = [
+    if ($item['PROCEDURE_ID'] && $item['PROCEDURE_NAME'] && empty($assistents[$assistentId]['procedures'][$item['PROCEDURE_ID']])) {
+        $assistents[$assistentId]['procedures'][$item['PROCEDURE_ID']] = [
             'id' => $item['PROCEDURE_ID'],
             'name' => $item['PROCEDURE_NAME']
         ];
+    }    
+    if ($item['DOCTOR_ID'] && $item['DOCTOR_FIRSTNAME'] && empty($assistents[$assistentId]['doctors'][$item['DOCTOR_ID']])) {
+        $assistents[$assistentId]['doctors'][$item['DOCTOR_ID']] = [
+            'id' => $item['DOCTOR_ID'],
+            'firstname' => $item['DOCTOR_FIRSTNAME'],
+            'lastname' => $item['DOCTOR_LASTNAME']
+        ];
     }
 }
+dump($assistents);
 
 // Выводим результат
+?>
+<table><thead>
+    <tr>
+    <th>Ассистент</th>
+    <th>Должность</th>
+    <th>Процедуры</th>
+    <th>Доктора</th>
+    </tr>
+</thead>
+<tbody>
+<?php
 foreach ($assistents as $assistent) {
-    echo "<br>Ассистент: {$assistent['firstname']} (ID: {$assistent['id']})";
-    echo "Должность: {$assistent['DUTY_NAME']} (ID: {$assistent['DUTY_ID']})";
-    echo "Доктор: {$assistent['DOCTOR_FIRSTNAME']} (ID: {$assistent['DOCTOR_ID']})";
-    
+    echo '<tr class="row">';
+    echo "<td>(ID: {$assistent['id']}): {$assistent['lastname']} {$assistent['firstname']}</td>";
+    echo "<td>(ID: {$assistent['DUTY_ID']}): {$assistent['DUTY_NAME']}</td>";
+   
+    echo "<td>";
     if (!empty($assistent['procedures'])) {
         foreach ($assistent['procedures'] as $procedure) {
-            echo "  - Процедура: {$procedure['name']} (ID: {$procedure['id']})";
+            echo "(ID: {$procedure['id']}): {$procedure['name']} <br>";
         }
     } else {
         echo "  - Нет связанных процедур";
+    }  
+    echo "</td>";
+    echo "<td>";
+    if (!empty($assistent['doctors'])) {
+        foreach ($assistent['doctors'] as $doctors) {
+            echo "(ID: {$doctors['id']}): {$doctors['name']} <br>";
+        }
+    } else {
+        echo "  - Нет связанных докторов";
     }
-    echo "--- <hr>";
+    echo "</td>";
+    echo "</tr>";
 }//dump($assists);
+echo "</tbody>";
+echo "</table>";
 
 require_once $_SERVER['DOCUMENT_ROOT'] . '/bitrix/footer.php';
