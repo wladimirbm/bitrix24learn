@@ -30,7 +30,7 @@ $query = AssistentsTable::query()
         'DOCTOR_ID' => 'DOCTORS.ID',
         'DOCTOR_FIRSTNAME' => 'DOCTORS.FIRSTNAME',
         'DOCTOR_LASTNAME' => 'DOCTORS.LASTNAME',
-        'PROCEDURE_ELEMENTS' => 'PROCEDURES.ELEMENTS',
+        'PROCEDURE_ELEMENTS_NAME' => 'PROCEDURES.ELEMENTS.NAME',
         'PROCEDURE_ID' => 'RELATION.PROCEDURE_ID',
         'PROCEDURE_NAME', //через ExpressionField
         'DUTY_NAME', // через ExpressionField
