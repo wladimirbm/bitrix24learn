@@ -10,12 +10,12 @@ use Bitrix\Iblock\PropertyTable;
 use Bitrix\Iblock\PropertyEnumerationTable;
 use Bitrix\Main\Entity\StringField;
 use Bitrix\Main\Entity\ReferenceField;
-use Bitrix\Main\Entity\Reference;
 use Bitrix\Main\ORM;
 use Bitrix\Main\ORM\Fields;
 use Bitrix\Main\ORM\Fields\IntegerField;
 use Bitrix\Main\ORM\Fields\DatetimeField;
 use Bitrix\Main\ORM\Fields\Relations\ManyToMany;
+use Bitrix\Main\ORM\Fields\Relations\Reference;
 use Bitrix\Main\ORM\Fields\Relations\OneToMany;
 use Bitrix\Main\ORM\Fields\ExpressionField;
 use Bitrix\Main\DB\SqlExpression;
@@ -76,16 +76,10 @@ class ProceduresTable extends DataManager
 				[]
 			))->configureTitle(Loc::getMessage('ELEMENT_PROP_S18_ENTITY_IBLOCK_ELEMENT_ID_FIELD'))
 				->configurePrimary(true),
-
-			// (new Fields\StringField('NAME'))
-            //     ->configureRequired(true)
-            //     ->configureTitle('Название процедуры'),
-			// Связь со свойствами инфоблока
-            //'PROPERTIES' => (new Fields\Relations\OneToMany('PROPERTIES', ProceduresPropertyTable::class, 'ELEMENT')),
 				
-			 new Fields\Relations\Reference(
-                'ELEMENT',
-                ProceduresTable::class,
+			 new Reference(
+                'ELEMENTS',
+                ProceduresElementTable::class,
                 ['=this.IBLOCK_ELEMENT_ID' => 'ref.ID']
 			 ),
 
