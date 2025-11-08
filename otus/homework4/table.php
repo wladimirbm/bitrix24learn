@@ -26,9 +26,11 @@ $query->setSelect([
     'PROCEDURES',// => 'PROCEDURES',
     //'PROCEDURE_NAME', // => 'PROCEDURES..NAME',
     'DUTY' => 'DUTY',
+    'PROCEDURE_ID' => 'RELATION.PROCEDURE_ID',
+    'PROCEDURE_NAME' => 'PROCEDURE.NAME'
     //'DUTY_NAME_V' => 'DUTY.PROPERTY_VALUES.NAME',
-    'PROCEDURE_NAME', // Название процедуры из инфоблока
-    'DUTY_NAME', // Название процедуры из инфоблока
+    //'PROCEDURE_NAME', // Название процедуры из инфоблока
+    //'DUTY_NAME', // Название процедуры из инфоблока
     ])
     // ->registerRuntimeField(
     //     'RELATION',
