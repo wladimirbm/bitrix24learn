@@ -77,6 +77,7 @@ while ($item = $query->fetch()) {
             'firstname' => $item['FIRSTNAME'],
             'lastname' => $item['LASTNAME'],
             'about' => $item['ABOUT'],
+            'duty_id' => $item['DUTY_ID'],
             'duty' => $item['DUTY_NAME'],
             'doctors' => [],
             'procedures' => [],
@@ -114,7 +115,7 @@ dump($assistents);
 foreach ($assistents as $assistent) {
     echo '<tr class="row">';
     echo "<td>(ID: {$assistent['id']}): {$assistent['lastname']} {$assistent['firstname']}</td>";
-    echo "<td>(ID: {$assistent['DUTY']}): {$assistent['DUTY_NAME']}</td>";
+    echo "<td>(ID: {$assistent['duty_id']}): {$assistent['duty']}</td>";
    
     echo "<td>";
     if (!empty($assistent['procedures'])) {
@@ -128,7 +129,7 @@ foreach ($assistents as $assistent) {
     echo "<td>";
     if (!empty($assistent['doctors'])) {
         foreach ($assistent['doctors'] as $doctors) {
-            echo "(ID: {$doctors['id']}): {$doctors['name']} <br>";
+            echo "(ID: {$doctors['id']}): {$doctors['lastname']} {$doctors['firstname']} <br>";
         }
     } else {
         echo "  - Нет связанных докторов";
