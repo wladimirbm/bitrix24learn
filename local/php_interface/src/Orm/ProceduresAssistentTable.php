@@ -25,7 +25,7 @@ class ProceduresAssistentTable extends DataManager
             new Fields\Relations\Reference(
                 'PROCEDURE',
                 ProceduresTable::class,
-                ['=this.PROCEDURE_ID' => 'ref.ID']
+                ['=this.PROCEDURE_ID' => 'ref.IBLOCK_ELEMENT_ID']
             ),
             
             // Ссылка на ассистента
