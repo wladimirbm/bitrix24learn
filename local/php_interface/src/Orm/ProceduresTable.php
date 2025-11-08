@@ -83,6 +83,12 @@ class ProceduresTable extends DataManager
 			// Связь со свойствами инфоблока
             //'PROPERTIES' => (new Fields\Relations\OneToMany('PROPERTIES', ProceduresPropertyTable::class, 'ELEMENT')),
 				
+			 new Fields\Relations\Reference(
+                'ELEMENT',
+                ProceduresTable::class,
+                ['=this.IBLOCK_ELEMENT_ID' => 'ref.ID']
+			 ),
+
 			'ASSISTENTS' => (new ManyToMany('ASSISTENTS', AssistentsTable::class))
 				->configureTableName('otus_procedures_assistent')
 				->configureLocalPrimary('ID', 'PROCEDURE_ID')
