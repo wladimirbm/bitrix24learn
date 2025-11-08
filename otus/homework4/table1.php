@@ -31,10 +31,12 @@ $query = \Otus\Orm\AssistentsTable::query()
         'ID',
         'FIRSTNAME', 
         'ABOUT',
+        'DUTY_ID',
         'DOCTOR_ID' => 'DOCTORS.ID',
         'DOCTOR_FIRSTNAME' => 'DOCTORS.FIRSTNAME',
         'PROCEDURE_ID' => 'RELATION.PROCEDURE_ID',
-        'PROCEDURE_NAME' // Будет создано через ExpressionField
+        'PROCEDURE_NAME', // Будет создано через ExpressionField
+        'DUTY_NAME', // Будет создано через ExpressionField
     ])
     ->registerRuntimeField(
         'RELATION',
@@ -49,6 +51,13 @@ $query = \Otus\Orm\AssistentsTable::query()
             'PROCEDURE_NAME',
             '(SELECT NAME FROM b_iblock_element WHERE ID = %s)',
             ['RELATION.PROCEDURE_ID']
+        ))
+    )
+    ->registerRuntimeField(
+        (new \Bitrix\Main\ORM\Fields\ExpressionField(
+            'DUTY_NAME',
+            '(SELECT NAME FROM b_iblock_element WHERE ID = %s)',
+            ['DUTY_ID']
         ))
     )
     ->exec();
@@ -77,7 +86,8 @@ while ($item = $query->fetch()) {
 
 // Выводим результат
 foreach ($assistents as $assistent) {
-    echo "Ассистент: {$assistent['firstname']} (ID: {$assistent['id']})";
+    echo "<br>Ассистент: {$assistent['firstname']} (ID: {$assistent['id']})";
+    echo "Должность: {$assistent['DUTY_NAME']} (ID: {$assistent['DUTY_ID']})";
     echo "Доктор: {$assistent['DOCTOR_FIRSTNAME']} (ID: {$assistent['DOCTOR_ID']})";
     
     if (!empty($assistent['procedures'])) {
