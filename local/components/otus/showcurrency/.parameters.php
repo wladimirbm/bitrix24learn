@@ -8,12 +8,12 @@ use Bitrix\Currency\CurrencyTable;
 $arCurrencies = [];
 if (Loader::includeModule('currency')) {
     $dbCurrencies = CurrencyTable::getList([
-        'select' => ['CURRENCY', 'FULL_NAME'],
+        'select' => ['CURRENCY'],
         'order' => ['SORT' => 'ASC', 'CURRENCY' => 'ASC']
     ]);
     
     while ($currency = $dbCurrencies->fetch()) {
-        $arCurrencies[$currency['CURRENCY']] = $currency['CURRENCY'] . ' - ' . $currency['FULL_NAME'];
+        $arCurrencies[$currency['CURRENCY']] = $currency['CURRENCY'];// . ' - ' . $currency['AMOUNT'] . ' - ' . $currency['DATE_UPDATE'];
     }
 }
 
