@@ -4,6 +4,8 @@ if (!defined('B_PROLOG_INCLUDED') || B_PROLOG_INCLUDED !== true) die();
 use Bitrix\Main\Loader;
 use Bitrix\Currency\CurrencyTable;
 use Bitrix\Main\Context;
+use Bitrix\Currency\CurrencyLangTable;
+
 
 class OtusShowCurrencyComponent extends CBitrixComponent
 {
@@ -11,7 +13,7 @@ class OtusShowCurrencyComponent extends CBitrixComponent
     {
         $arParams['CURRENCY'] = trim($arParams['CURRENCY'] ?? '');
         $arParams['CACHE_TIME'] = isset($arParams['CACHE_TIME']) ? (int)$arParams['CACHE_TIME'] : 3600;
-        
+
         return $arParams;
     }
 
@@ -56,9 +58,18 @@ class OtusShowCurrencyComponent extends CBitrixComponent
         if (!$currency) {
             throw new Exception('Валюта не найдена');
         }
+        $result = CurrencyLangTable::getList([
+            'select' => ['*'],
+            'filter' => ['=CURRENCY' => $currency['CURRENCY']]
+        ]);
+
+        while ($currencyLang = $result->fetch()) {
+            $curfullname[$currencyLang['LID']] = $currencyLang['FULL_NAME'];
+        }
 
         $this->arResult['CURRENCY'] = [
             'CODE' => $currency['CURRENCY'],
+            'CURRENCY_NAME' => $curfullname,
             'AMOUNT' => $currency['AMOUNT'],
             'AMOUNT_CNT' => $currency['AMOUNT_CNT'],
             'RATE' => $currency['AMOUNT'] / $currency['AMOUNT_CNT'],

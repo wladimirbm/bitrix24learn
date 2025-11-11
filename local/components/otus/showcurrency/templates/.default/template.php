@@ -15,7 +15,8 @@ $this->setFrameMode(true);
         </div>
     <?php elseif (isset($arResult['CURRENCY'])): ?>
         <div class="currency-info">
-            <h3>Курс валюты: <?= htmlspecialcharsbx($arResult['CURRENCY']['CODE']) ?></h3>
+        <?php dump($arResult['CURRENCY']['CURRENCY_NAME']); ?>    
+        <h3>Курс валюты: <?= htmlspecialcharsbx($arResult['CURRENCY']['CODE']) ?></h3>
             <div class="currency-rate">
                 <strong><?= $arResult['CURRENCY']['FORMATTED_RATE'] ?> ₽</strong>
             </div>
