@@ -1,0 +1,3 @@
+<?php
+$MESS['OTUS_SHOWCURRENCY_CURRENCY_PARAM'] = 'Валюта';
+$MESS['OTUS_SHOWCURRENCY_CACHE_PARAM'] = 'Время кеширования';
