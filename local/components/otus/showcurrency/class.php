@@ -57,6 +57,7 @@ class OtusShowCurrencyComponent extends CBitrixComponent
         if (!$currency) {
             throw new Exception('Валюта не найдена');
         }
+        
         $result = CurrencyLangTable::getList([
             'select' => ['*'],
             'filter' => ['=CURRENCY' => $currency['CURRENCY']]
