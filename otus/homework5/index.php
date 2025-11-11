@@ -17,11 +17,7 @@
 <h2>Файлы</h2>
  
 
-<p><a href="/bitrix/admin/fileman_admin.php?PAGEN_1=1&SIZEN_1=20&lang=ru&site=s1&path=%2Flocal%2Fphp_interface%2Fsrc%2FOrm&show_perms_for=0&fu_action=">Файлы ORM</a></p>
-<p><a href="/bitrix/admin/fileman_admin.php?PAGEN_1=1&SIZEN_1=20&lang=ru&site=s1&path=%2Flocal%2Fphp_interface%2Fconsole&show_perms_for=0&fu_action=">Файлы создания и удаления таблиц</a></p>
-<p><a href="/bitrix/admin/perfmon_tables.php?lang=ru#otus">Созданные таблицы</a></p>
-<p><a href="/bitrix/admin/fileman_admin.php?lang=ru&path=%2Fotus%2Fhomework4&site=s1">Файл ДЗ</a></p>
-
+<p><a href="/bitrix/admin/fileman_admin.php?PAGEN_1=1&SIZEN_1=20&lang=ru&site=s1&path=%2Flocal%2Fcomponents%2Fotus%2Fshowcurrency&show_perms_for=0&fu_action=">Файлы компонента</a></p>
  
 
 <?require($_SERVER["DOCUMENT_ROOT"]."/bitrix/footer.php");?> 
