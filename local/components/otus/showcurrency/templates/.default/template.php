@@ -1,12 +1,4 @@
-<?php
-if (!defined('B_PROLOG_INCLUDED') || B_PROLOG_INCLUDED !== true) die();
-
-/** @var array $arParams */
-/** @var array $arResult */
-/** @global CMain $APPLICATION */
-
-$this->setFrameMode(true);
-?>
+<?php if (!defined('B_PROLOG_INCLUDED') || B_PROLOG_INCLUDED !== true) die(); ?>
 
 <div class="otus-currency-component">
     <?php if (isset($arResult['ERROR'])): ?>
@@ -15,8 +7,7 @@ $this->setFrameMode(true);
         </div>
     <?php elseif (isset($arResult['CURRENCY'])): ?>
         <div class="currency-info">
-        <?php dump($arResult['CURRENCY']['CURRENCY_NAME']); ?>    
-        <h3>Курс валюты: <?= htmlspecialcharsbx($arResult['CURRENCY']['CODE']) ?></h3>
+        <h3>Курс валюты: <?= htmlspecialcharsbx($arResult['CURRENCY']['CODE']) ?> - <?= $arResult['CURRENCY']['CURRENCY_NAME'] ?></h3>
             <div class="currency-rate">
                 <strong><?= $arResult['CURRENCY']['FORMATTED_RATE'] ?> ₽</strong>
             </div>
@@ -28,7 +19,7 @@ $this->setFrameMode(true);
         </div>
     <?php else: ?>
         <div class="alert alert-info">
-            Данные о валюте не найдены
+            Валбта не найдены
         </div>
     <?php endif; ?>
 </div>

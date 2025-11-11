@@ -49,7 +49,6 @@ class OtusShowCurrencyComponent extends CBitrixComponent
             throw new Exception('Валюта не выбрана');
         }
 
-        // Получаем данные валюты
         $currency = CurrencyTable::getList([
             'filter' => ['=CURRENCY' => $this->arParams['CURRENCY']],
             'select' => ['CURRENCY', 'AMOUNT', 'AMOUNT_CNT', 'SORT', 'DATE_UPDATE']
@@ -69,7 +68,7 @@ class OtusShowCurrencyComponent extends CBitrixComponent
 
         $this->arResult['CURRENCY'] = [
             'CODE' => $currency['CURRENCY'],
-            'CURRENCY_NAME' => $curfullname,
+            'CURRENCY_NAME' => $curfullname['ru'],
             'AMOUNT' => $currency['AMOUNT'],
             'AMOUNT_CNT' => $currency['AMOUNT_CNT'],
             'RATE' => $currency['AMOUNT'] / $currency['AMOUNT_CNT'],

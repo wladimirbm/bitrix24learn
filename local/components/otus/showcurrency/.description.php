@@ -10,7 +10,7 @@ $arComponentDescription = [
         'ID' => 'otus',
         'NAME' => 'OTUS',
         'CHILD' => [
-            'ID' => 'content',
+            'ID' => 'show',
             'NAME' => 'Отображение валюты'
         ]
     ],
