@@ -50,7 +50,7 @@ $APPLICATION->SetTitle("Список Домашних работ");
     </h2>
 </div>
 <div>
-    <h2><a href="homework5/">Домашняя работа 5 (Компонент списка таблицы БД // ДЗ)</a>
+    <h2><a href="homework5/">Домашняя работа 5 (Компонент списка таблицы БД // ДЗ)</a> 
         <div class="prog done"></div>
     </h2>
 </div>
