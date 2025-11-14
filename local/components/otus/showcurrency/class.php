@@ -60,7 +60,7 @@ class OtusShowCurrencyComponent extends CBitrixComponent
         
         $result = CurrencyLangTable::getList([
             'select' => ['*'],
-            'filter' => ['=CURRENCY' => $currency['CURRENCY']]
+            'filter' => ['=CURRENCY' => $currency['CURRENCY'],'=LID' => 'ru']
         ]);
 
         while ($currencyLang = $result->fetch()) {
