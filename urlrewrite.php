@@ -24,12 +24,28 @@ $arUrlRewrite=array (
     'PATH' => '/pub/calendar_event.php',
     'SORT' => 100,
   ),
+  159 => 
+  array (
+    'CONDITION' => '#^/disk/file/(?<unique_code>[0-9a-zA-Z]{20})/edit(\\/?)#',
+    'RULE' => 'action=disk.api.unifiedlinkcontroller.edit&uniqueCode=$1&',
+    'ID' => NULL,
+    'PATH' => '/bitrix/services/main/ajax.php',
+    'SORT' => 100,
+  ),
   5 => 
   array (
     'CONDITION' => '#^/disk/(?<action>[0-9a-zA-Z]+)/(?<fileId>[0-9]+)/\\?#',
     'RULE' => 'action=$1&fileId=$2&',
     'ID' => 'bitrix:disk.services',
     'PATH' => '/bitrix/services/disk/index.php',
+    'SORT' => 100,
+  ),
+  160 => 
+  array (
+    'CONDITION' => '#^/disk/file/(?<unique_code>[0-9a-zA-Z]{20})(\\/?)#',
+    'RULE' => 'action=disk.api.unifiedlinkcontroller.view&uniqueCode=$1&',
+    'ID' => NULL,
+    'PATH' => '/bitrix/services/main/ajax.php',
     'SORT' => 100,
   ),
   74 => 
@@ -446,6 +462,14 @@ $arUrlRewrite=array (
     'RULE' => NULL,
     'ID' => 'bitrix:mobile.webdav.file.list',
     'PATH' => '/extranet/mobile/webdav/index.php',
+    'SORT' => 100,
+  ),
+  161 => 
+  array (
+    'CONDITION' => '#^/task/comments/([0-9]+)#',
+    'RULE' => 'taskId=$1',
+    'ID' => NULL,
+    'PATH' => '/tasks/comments.php',
     'SORT' => 100,
   ),
   2 => 
@@ -1142,6 +1166,14 @@ $arUrlRewrite=array (
     'RULE' => '',
     'ID' => 'bitrix:crm.deal',
     'PATH' => '/crm/deal/index.php',
+    'SORT' => 100,
+  ),
+  162 => 
+  array (
+    'CONDITION' => '#^vibe/edit/#',
+    'RULE' => '',
+    'ID' => 'bitrix:landing.start',
+    'PATH' => 'vibe/edit/index.php',
     'SORT' => 100,
   ),
   78 => 

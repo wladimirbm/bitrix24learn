@@ -10,7 +10,7 @@ $APPLICATION->SetAdditionalCSS('/otus/homework3/style.css');
 	".default", 
 	[
 		"COMPONENT_TEMPLATE" => ".default",
-		"CURRENCY" => "RUB",
+		"CURRENCY" => "EUR",
 		"CACHE_TYPE" => "A",
 		"CACHE_TIME" => "3600"
 	],
