@@ -3,14 +3,11 @@
     $APPLICATION->SetTitle("Домашняя работа 6 (Написание своего модуля // ДЗ)");
 ?>
 <H1><?$APPLICATION->ShowTitle()?></H1>
-<?php
-    /*
-    dump($_SERVER);
-    echo "<hr><pre>";
-    print_r($_SERVER);
-    echo "</pre>";
-    */
+
+<?php 
+echo str_pad(RAND(1, 29), 2, "0", STR_PAD_LEFT) . '.' . str_pad(RAND(1, 12), 2, "0", STR_PAD_LEFT) . '.' . RAND(1960, 2000);
 ?>
+
 <h2>Написание своего модуля</h2>
 <p><a href="/crm/deal/list/">Сделки</a></p>
 <p><a href="/crm/lead/list/">Лиды</a></p>
