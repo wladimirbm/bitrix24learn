@@ -184,9 +184,9 @@ class DoctorGrid extends \CBitrixComponent implements Controllerable
         if (!empty($filterData['FIND'])) {
             $filter = array(
                 'LOGIC' => 'OR',
-                ['%LASTNAME' => $filterData['FIND']],
-                ['%FIRSTNAME' => $filterData['FIRSTNAME']],
-                ['%MIDDLENAME' => $filterData['MIDDLENAME']]
+                ['%LASTNAME' => $filterData['FIND'],
+                '%FIRSTNAME' => $filterData['FIRSTNAME'],
+                '%MIDDLENAME' => $filterData['MIDDLENAME']]
             );
         }
 
