@@ -116,7 +116,7 @@ class DoctorGrid extends \CBitrixComponent implements Controllerable
                     'LASTNAME',
                     'MIDDLENAME',
                     'BIRTHDAY',
-                    //'PROCEDURE_ID' => 'PROCEDURES.ID',
+                    'PROCEDURE_ID' => 'PROCEDURES.ID',
                     'PROCEDURE_NAME' => 'PROCEDURES.NAME',
                     'PROCEDURE_PRICE' => 'PROCEDURES.PRICE',
                     //'DUTY_ID' => 'DUTY_ID',
