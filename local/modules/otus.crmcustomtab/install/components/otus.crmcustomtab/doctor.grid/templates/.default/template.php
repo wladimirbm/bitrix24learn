@@ -81,7 +81,7 @@ $APPLICATION->IncludeComponent(
             ['NAME' => 50, 'VALUE' => 50],
         ],
     ],
-    $component,
+    $component
 );
 if (!empty($arParams['AJAX_LOADER'])) { ?>
     <script>

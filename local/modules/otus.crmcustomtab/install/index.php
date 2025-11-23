@@ -221,9 +221,9 @@ class otus_crmcustomtab extends CModule
     private function getEntities(): array
     {
         return [
-            DoctorsTable::class,
             DutyTable::class,
             ProceduresTable::class,
+            DoctorsTable::class,
         ];
     }
 

@@ -60,7 +60,7 @@ class DoctorsTable extends DataManager
                 ->configureTitle(Loc::getMessage('OTUS_CRMCUSTOMTAB_DOCTOR_TABLE_BIRTHDAY')),
 
 			(new IntegerField('DUTY_ID'))
-			//->configureUnique()
+				->configureTitle(Loc::getMessage('OTUS_CRMCUSTOMTAB_DOCTOR_TABLE_DUTY'))
 			,
 
 			'DUTY' => (new Reference('DUTY', DutyTable::class, Join::on('this.DUTY_ID', 'ref.ID')))

@@ -116,10 +116,10 @@ class DoctorGrid extends \CBitrixComponent implements Controllerable
                     'LASTNAME',
                     'MIDDLENAME',
                     'BIRTHDAY',
-                    'PROCEDURE_ID' => 'PROCEDURES.ID',
+                    //'PROCEDURE_ID' => 'PROCEDURES.ID',
                     'PROCEDURE_NAME' => 'PROCEDURES.NAME',
                     'PROCEDURE_PRICE' => 'PROCEDURES.PRICE',
-                    'DUTY_ID' => 'DUTY.ID',
+                    //'DUTY_ID' => 'DUTY_ID',
                     'DUTY_NAME' => 'DUTY.NAME',
                 ],
                 'order' => $sort['sort'],
@@ -188,7 +188,7 @@ class DoctorGrid extends \CBitrixComponent implements Controllerable
                 ];
             }
             if ($doctor['PROCEDURE_ID']) {
-                $groupedDoctors[$doctorId]['PROCEDURES'][] = $doctor['PROCEDURE_NAME'] . ' (' . $doctor['PROCEDURE_NAME'] . ' руб.)';
+                $groupedDoctors[$doctorId]['PROCEDURES'][] = $doctor['PROCEDURE_NAME'] . ' (' . $doctor['PROCEDURE_PRICE'] . ' руб.)';
             }
         }
 
@@ -196,7 +196,7 @@ class DoctorGrid extends \CBitrixComponent implements Controllerable
             $gridList[] = [
                 'data' => [
                     'ID' => $doctor['ID'],
-                    'DOCTOR' => $doctor['TITLE'],
+                    'DOCTOR' => $doctor['DOCTOR'],
                     'BIRTHDAY' => $doctor['BIRTHDAY']->format('d.m.Y'),
                     'DUTY' => $doctor['DUTY'],
                     'PROCEDURE' => implode(', ', $doctor['PROCEDURE']),

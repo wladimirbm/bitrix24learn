@@ -111,13 +111,15 @@ class TestDataInstaller
     }
 
     public static function addDoctors(): void
-    {
+    { 
+        //str_pad(RAND(1, 29), 2, "0", STR_PAD_LEFT)
+        //str_pad(RAND(1, 12), 2, "0", STR_PAD_LEFT)
         $doctors = [
             [
                 'LASTNAME' => 'Первый',
                 'FIRSTNAME' => 'Миша',
                 'MIDDLENAME' => 'Николаевич',
-                'BIRTHDATE' => RAND(1, 29) . '.' . RAND(1, 12) . '.' . RAND(1960, 2000),
+                'BIRTHDATE' => str_pad(RAND(1, 29), 2, "0", STR_PAD_LEFT) . '.' . str_pad(RAND(1, 12), 2, "0", STR_PAD_LEFT) . '.' . RAND(1960, 2000),
                 'ABOUT' => 'Хороший человек.',
                 'DUTY_ID' => RAND(1, 10),
                 'PROCEDURES' => [RAND(1, 10), RAND(1, 10)],
@@ -126,7 +128,7 @@ class TestDataInstaller
                 'LASTNAME' => 'Второй',
                 'FIRSTNAME' => 'Иван',
                 'MIDDLENAME' => 'Николаевич',
-                'BIRTHDATE' => RAND(1, 29) . '.' . RAND(1, 12) . '.' . RAND(1960, 2000),
+                'BIRTHDATE' => str_pad(RAND(1, 29), 2, "0", STR_PAD_LEFT) . '.' . str_pad(RAND(1, 12), 2, "0", STR_PAD_LEFT) . '.' . RAND(1960, 2000),
                 'ABOUT' => 'Хороший человек.',
                 'DUTY_ID' => RAND(1, 10),
                 'PROCEDURES' => [RAND(1, 10), RAND(1, 10)],
@@ -135,7 +137,7 @@ class TestDataInstaller
                 'LASTNAME' => 'Третий',
                 'FIRSTNAME' => 'Коля',
                 'MIDDLENAME' => 'Николаевич',
-                'BIRTHDATE' => RAND(1, 29) . '.' . RAND(1, 12) . '.' . RAND(1960, 2000),
+                'BIRTHDATE' => str_pad(RAND(1, 29), 2, "0", STR_PAD_LEFT) . '.' . str_pad(RAND(1, 12), 2, "0", STR_PAD_LEFT) . '.' . RAND(1960, 2000),
                 'ABOUT' => 'Хороший человек.',
                 'DUTY_ID' => RAND(1, 10),
                 'PROCEDURES' => [RAND(1, 10), RAND(1, 10)],
@@ -144,7 +146,7 @@ class TestDataInstaller
                 'LASTNAME' => 'Четвернтый',
                 'FIRSTNAME' => 'Толя',
                 'MIDDLENAME' => 'Николаевич',
-                'BIRTHDATE' => RAND(1, 29) . '.' . RAND(1, 12) . '.' . RAND(1960, 2000),
+                'BIRTHDATE' => str_pad(RAND(1, 29), 2, "0", STR_PAD_LEFT) . '.' . str_pad(RAND(1, 12), 2, "0", STR_PAD_LEFT) . '.' . RAND(1960, 2000),
                 'ABOUT' => 'Хороший человек.',
                 'DUTY_ID' => RAND(1, 10),
                 'PROCEDURES' => [RAND(1, 10), RAND(1, 10)],
@@ -153,7 +155,7 @@ class TestDataInstaller
                 'LASTNAME' => 'Пятый',
                 'FIRSTNAME' => 'Семен',
                 'MIDDLENAME' => 'Николаевич',
-                'BIRTHDATE' => RAND(1, 29) . '.' . RAND(1, 12) . '.' . RAND(1960, 2000),
+                'BIRTHDATE' => str_pad(RAND(1, 29), 2, "0", STR_PAD_LEFT) . '.' . str_pad(RAND(1, 12), 2, "0", STR_PAD_LEFT) . '.' . RAND(1960, 2000),
                 'ABOUT' => 'Хороший человек.',
                 'DUTY_ID' => RAND(1, 10),
                 'PROCEDURES' => [RAND(1, 10), RAND(1, 10)],
@@ -162,7 +164,7 @@ class TestDataInstaller
                 'LASTNAME' => 'Шестой',
                 'FIRSTNAME' => 'Петр',
                 'MIDDLENAME' => 'Николаевич',
-                'BIRTHDATE' => RAND(1, 29) . '.' . RAND(1, 12) . '.' . RAND(1960, 2000),
+                'BIRTHDATE' => str_pad(RAND(1, 29), 2, "0", STR_PAD_LEFT) . '.' . str_pad(RAND(1, 12), 2, "0", STR_PAD_LEFT) . '.' . RAND(1960, 2000),
                 'ABOUT' => 'Хороший человек.',
                 'DUTY_ID' => RAND(1, 10),
                 'PROCEDURES' => [RAND(1, 10), RAND(1, 10)],
@@ -171,7 +173,7 @@ class TestDataInstaller
                 'LASTNAME' => 'Седьмой',
                 'FIRSTNAME' => 'Дима',
                 'MIDDLENAME' => 'Николаевич',
-                'BIRTHDATE' => RAND(1, 29) . '.' . RAND(1, 12) . '.' . RAND(1960, 2000),
+                'BIRTHDATE' => str_pad(RAND(1, 29), 2, "0", STR_PAD_LEFT) . '.' . str_pad(RAND(1, 12), 2, "0", STR_PAD_LEFT) . '.' . RAND(1960, 2000),
                 'ABOUT' => 'Хороший человек.',
                 'DUTY_ID' => RAND(1, 10),
                 'PROCEDURES' => [RAND(1, 10), RAND(1, 10)],
@@ -180,7 +182,7 @@ class TestDataInstaller
                 'LASTNAME' => 'Восьмая',
                 'FIRSTNAME' => 'Анна',
                 'MIDDLENAME' => 'Николаевич',
-                'BIRTHDATE' => RAND(1, 29) . '.' . RAND(1, 12) . '.' . RAND(1960, 2000),
+                'BIRTHDATE' => str_pad(RAND(1, 29), 2, "0", STR_PAD_LEFT) . '.' . str_pad(RAND(1, 12), 2, "0", STR_PAD_LEFT) . '.' . RAND(1960, 2000),
                 'ABOUT' => 'Хороший человек.',
                 'DUTY_ID' => RAND(1, 10),
                 'PROCEDURES' => [RAND(1, 10), RAND(1, 10)],
@@ -189,7 +191,7 @@ class TestDataInstaller
                 'LASTNAME' => 'Девятая',
                 'FIRSTNAME' => 'Мила',
                 'MIDDLENAME' => 'Николаевич',
-                'BIRTHDATE' => RAND(1, 29) . '.' . RAND(1, 12) . '.' . RAND(1960, 2000),
+                'BIRTHDATE' => str_pad(RAND(1, 29), 2, "0", STR_PAD_LEFT) . '.' . str_pad(RAND(1, 12), 2, "0", STR_PAD_LEFT) . '.' . RAND(1960, 2000),
                 'ABOUT' => 'Хороший человек.',
                 'DUTY_ID' => RAND(1, 10),
                 'PROCEDURES' => [RAND(1, 10), RAND(1, 10)],
@@ -198,7 +200,7 @@ class TestDataInstaller
                 'LASTNAME' => 'Десятая',
                 'FIRSTNAME' => 'Настя',
                 'MIDDLENAME' => 'Николаевич',
-                'BIRTHDATE' => RAND(1, 29) . '.' . RAND(1, 12) . '.' . RAND(1960, 2000),
+                'BIRTHDATE' => str_pad(RAND(1, 29), 2, "0", STR_PAD_LEFT) . '.' . str_pad(RAND(1, 12), 2, "0", STR_PAD_LEFT) . '.' . RAND(1960, 2000),
                 'ABOUT' => 'Хороший человек.',
                 'DUTY_ID' => RAND(1, 10),
                 'PROCEDURES' => [RAND(1, 10), RAND(1, 10)],
