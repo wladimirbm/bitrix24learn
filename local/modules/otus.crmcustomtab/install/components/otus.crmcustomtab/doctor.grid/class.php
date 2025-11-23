@@ -199,7 +199,7 @@ class DoctorGrid extends \CBitrixComponent implements Controllerable
                     'DOCTOR' => $doctor['DOCTOR'],
                     'BIRTHDAY' => $doctor['BIRTHDAY']->format('d.m.Y'),
                     'DUTY' => $doctor['DUTY'],
-                    'PROCEDURE' => implode(', ', $doctor['PROCEDURE']),
+                    'PROCEDURES' => implode(', ', $doctor['PROCEDURES']),
 
                 ],
                 'actions' => $this->getElementActions(),
