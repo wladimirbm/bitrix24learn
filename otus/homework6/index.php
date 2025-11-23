@@ -17,7 +17,6 @@
 <p><a href="/crm/contact/list/">Контакты</a></p>
 <p><a href="/crm/company/list/">Компании</a></p>
 
-
 <h2>Файлы</h2>
 
 <p><a href="/bitrix/admin/partner_modules.php?lang=ru">Установка/Удаление</a></p>
