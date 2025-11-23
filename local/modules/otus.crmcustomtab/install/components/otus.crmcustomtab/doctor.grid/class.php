@@ -160,17 +160,17 @@ class DoctorGrid extends \CBitrixComponent implements Controllerable
             $filter['%MIDDLENAME'] = $filterData['MIDDLENAME'];
         }
         if (!empty($filterData['PROCEDURE'])) {
-            $filter['%PROCEDURE.NAME'] = $filterData['PROCEDURE'];
+            $filter['%PROCEDURES.NAME'] = $filterData['PROCEDURE'];
         }
         if (!empty($filterData['DUTY'])) {
             $filter['%DUTY.NAME'] = $filterData['DUTY'];
         }
         if (!empty($filterData['PRICE_from'])) {
-            $filter['>=PROCEDURE.PRICE'] = $filterData['PRICE_from'];
+            $filter['>=PROCEDURES.PRICE'] = $filterData['PRICE_from'];
         }
 
         if (!empty($filterData['PRICE_to'])) {
-            $filter['>=PROCEDURE.PRICE'] = $filterData['PRICE_to'];
+            $filter['>=PROCEDURES.PRICE'] = $filterData['PRICE_to'];
         }
 
         if (!empty($filterData['BIRTHDAY_from'])) {
