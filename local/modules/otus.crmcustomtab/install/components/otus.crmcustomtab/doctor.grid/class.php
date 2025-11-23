@@ -188,7 +188,7 @@ class DoctorGrid extends \CBitrixComponent implements Controllerable
                 ['%FIRSTNAME' => $filterData['FIND']],
                 ['%MIDDLENAME' => $filterData['FIND']],
                 ['%DUTY.NAME' => $filterData['FIND']],
-                ['%PROCEDURE.NAME' => $filterData['FIND']],
+                ['%PROCEDURES.NAME' => $filterData['FIND']],
             );
         }
 
