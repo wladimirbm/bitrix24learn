@@ -160,10 +160,10 @@ class DoctorGrid extends \CBitrixComponent implements Controllerable
             $filter['%MIDDLENAME'] = $filterData['MIDDLENAME'];
         }
         if (!empty($filterData['PROCEDURE'])) {
-            $filter['%PROCEDURE_NAME'] = $filterData['PROCEDURE'];
+            $filter['%PROCEDURE.NAME'] = $filterData['PROCEDURE'];
         }
         if (!empty($filterData['DUTY'])) {
-            $filter['%DUTY_NAME'] = $filterData['DUTY'];
+            $filter['%DUTY.NAME'] = $filterData['DUTY'];
         }
         if (!empty($filterData['PRICE_from'])) {
             $filter['>=PROCEDURE_PRICE'] = $filterData['PRICE_from'];
@@ -185,8 +185,8 @@ class DoctorGrid extends \CBitrixComponent implements Controllerable
             $filter[] = array(
                 'LOGIC' => 'OR',
                 ['%LASTNAME' => $filterData['FIND']],
-                ['%FIRSTNAME' => $filterData['FIRSTNAME']],
-                ['%MIDDLENAME' => $filterData['MIDDLENAME']],
+                ['%FIRSTNAME' => $filterData['FIND']],
+                ['%MIDDLENAME' => $filterData['FIND']],
             );
         }
 
