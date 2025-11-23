@@ -32,9 +32,21 @@ class DoctorGrid extends \CBitrixComponent implements Controllerable
                 'default' => true,
             ],
             [
-                'id' => 'DOCTOR',
-                'name' => Loc::getMessage('DOCTOR_GRID_DOCTOR_FIO_LABEL'),
-                'sort' => 'DOCTOR',
+                'id' => 'LASTNAME',
+                'name' => Loc::getMessage('DOCTOR_GRID_DOCTOR_LASTNAME_LABEL'),
+                'sort' => 'LASTNAME',
+                'default' => true,
+            ],
+            [
+                'id' => 'FIRSTNAME',
+                'name' => Loc::getMessage('DOCTOR_GRID_DOCTOR_FIRSTNAME_LABEL'),
+                'sort' => 'FIRSTNAME',
+                'default' => true,
+            ],
+            [
+                'id' => 'MIDDLENAME',
+                'name' => Loc::getMessage('DOCTOR_GRID_DOCTOR_MIDDLENAME_LABEL'),
+                'sort' => 'MIDDLENAME',
                 'default' => true,
             ],
             [
@@ -139,17 +151,23 @@ class DoctorGrid extends \CBitrixComponent implements Controllerable
         $filter = [];
 
         if (!empty($filterData['FIND'])) {
-            $filter['%FIRSTNAME%'] = $filterData['FIND'];
+            $filter['%FIRSTNAME'] = $filterData['FIND'];
         }
 
-        if (!empty($filterData['DOCTOR'])) {
-            $filter['%FIRSTNAME%'] = $filterData['DOCTOR'];
+        if (!empty($filterData['FIRSTNAME'])) {
+            $filter['%FIRSTNAME'] = $filterData['FIRSTNAME'];
+        }
+        if (!empty($filterData['LASTNAME'])) {
+            $filter['%LASTNAME'] = $filterData['LASTNAME'];
+        }
+        if (!empty($filterData['MIDDLENAME'])) {
+            $filter['%MIDDLENAME'] = $filterData['MIDDLENAME'];
         }
         if (!empty($filterData['PROCEDURE'])) {
-            $filter['%PROCEDURE_NAME%'] = $filterData['PROCEDURE'];
+            $filter['%PROCEDURE_NAME'] = $filterData['PROCEDURE'];
         }
         if (!empty($filterData['DUTY'])) {
-            $filter['%DUTY_NAME%'] = $filterData['DUTY'];
+            $filter['%DUTY_NAME'] = $filterData['DUTY'];
         }
         if (!empty($filterData['PRICE_from'])) {
             $filter['>=PROCEDURE_PRICE'] = $filterData['PRICE_from'];
@@ -181,7 +199,9 @@ class DoctorGrid extends \CBitrixComponent implements Controllerable
             if (!isset($groupedDoctors[$doctorId])) {
                 $groupedDoctors[$doctorId] = [
                     'ID' => $doctor['ID'],
-                    'DOCTOR' => $doctor['FIRSTNAME'] . ' ' . $doctor['FIRSTNAME'] . ' ' . $doctor['FIRSTNAME'],
+                    'LASTNAME' => $doctor['LASTNAME'],
+                    'FIRSTNAME' => $doctor['FIRSTNAME'],
+                    'MIDDLENAME' => $doctor['MIDDLENAME'],
                     'BIRTHDAY' => $doctor['BIRTHDAY'],
                     'DUTY' => $doctor['DUTY_NAME'],
                     'PROCEDURES' => [],
@@ -196,7 +216,9 @@ class DoctorGrid extends \CBitrixComponent implements Controllerable
             $gridList[] = [
                 'data' => [
                     'ID' => $doctor['ID'],
-                    'DOCTOR' => $doctor['DOCTOR'],
+                    'LASTNAME' => $doctor['LASTNAME'],
+                    'FIRSTNAME' => $doctor['FIRSTNAME'],
+                    'MIDDLENAME' => $doctor['MIDDLENAME'],
                     'BIRTHDAY' => $doctor['BIRTHDAY']->format('d.m.Y'),
                     'DUTY' => $doctor['DUTY'],
                     'PROCEDURES' => implode(', ', $doctor['PROCEDURES']),
@@ -213,8 +235,20 @@ class DoctorGrid extends \CBitrixComponent implements Controllerable
     {
         return [
             [
-                'id' => 'DOCTOR',
-                'name' => Loc::getMessage('DOCTOR_GRID_DOCTOR_FIO_LABEL'),
+                'id' => 'LASTNAME',
+                'name' => Loc::getMessage('DOCTOR_GRID_DOCTOR_LASTNAME_LABEL'),
+                'type' => 'string',
+                'default' => true,
+            ],
+            [
+                'id' => 'FIRSTNAME',
+                'name' => Loc::getMessage('DOCTOR_GRID_DOCTOR_FIRSTNAME_LABEL'),
+                'type' => 'string',
+                'default' => true,
+            ],
+            [
+                'id' => 'MIDDLENAME',
+                'name' => Loc::getMessage('DOCTOR_GRID_DOCTOR_MIDDLENAME_LABEL'),
                 'type' => 'string',
                 'default' => true,
             ],
