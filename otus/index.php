@@ -24,7 +24,7 @@ $APPLICATION->SetTitle("Список Домашних работ");
     }
 
     h2 {
-        display: table-cell;
+        display: table-cell; margin:10px;border-bottom: 1px dashed #ccc;
     }
 </style>
 <H1><? $APPLICATION->ShowTitle() ?></H1>
@@ -55,8 +55,8 @@ $APPLICATION->SetTitle("Список Домашних работ");
     </h2>
 </div>
 <div>
-    <h2><a href="homework6/">Домашняя работа 6 (Написание своего модуля // ДЗ) - на проверку</a>
-        <div class="prog proc"></div>
+    <h2><a href="homework6/">Домашняя работа 6 (Написание своего модуля // ДЗ)</a>
+        <div class="prog done"></div>
     </h2>
 </div>
 <div>
@@ -66,6 +66,11 @@ $APPLICATION->SetTitle("Список Домашних работ");
 </div>
 <div>
     <h2><a href="homework8/">Домашняя работа 8 (Учимся подключать свои скрипты, взаимодействовать с компонентами из фронтенда // ДЗ) - в процессе</a>
+        <div class="prog proc"></div>
+    </h2>
+</div>
+<div>
+    <h2><a href="homework9/">Домашняя работа 9 (Написание своих активити для БП // ДЗ) - в процессе</a>
         <div class="prog proc"></div>
     </h2>
 </div>

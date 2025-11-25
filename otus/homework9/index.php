@@ -1,0 +1,16 @@
+<?require($_SERVER["DOCUMENT_ROOT"]."/bitrix/header.php");?>
+<?php 
+    $APPLICATION->SetTitle("Домашняя работа 9 (Написание своих активити для БП // ДЗ)");
+?>
+<H1><?$APPLICATION->ShowTitle()?></H1>
+
+<h2>Написание своих активити для БП</h2>
+
+<p><a href="/crm/">CRM</a></p>
+
+<h2>Файлы</h2>
+<p><a href="/bitrix/admin/perfmon_tables.php?lang=ru#mod_">Таблицы</a></p>
+
+
+
+<?require($_SERVER["DOCUMENT_ROOT"]."/bitrix/footer.php");?> 
