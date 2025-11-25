@@ -5,7 +5,7 @@ BX.onCustomEvent = function (
   eventParams,
   secureParams
 ) {
-    console.log('main.onCustomEvent' + eventName, eventObject, eventParams, secureParams); 
+    console.log('main.onCustomEvent - ' + eventName, eventObject, eventParams, secureParams); 
   // onMenuItemHover например выбрасывает в другом порядке
   let realEventName = BX.type.isString(eventName)
     ? eventName
