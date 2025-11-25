@@ -1,4 +1,5 @@
 let originalBxOnCustomEvent = BX.onCustomEvent;
+
 BX.onCustomEvent = function (
   eventObject,
   eventName,
@@ -25,16 +26,17 @@ BX.onCustomEvent = function (
   });
   originalBxOnCustomEvent.apply(null, arguments);
 };
-/*
-BX.addCustomEvent("ontimemanwindowopen", function () {
-  console.log("ontimemanwindowopen");
+
+
+BX.addCustomEvent("onTimeManDataRecieved", function () {
+  console.log("onTimeManDataRecieved");
 });
 
 Dreamsite.all = function () {
   BX.addCustomEvent("SidePanel.Slider:onLoad", function () {
-    $.get("/local/tools/get_offices.php", function (data) {
-      $(".task-detail-comments").prepend(data);
-    });
+    // $.get("/local/tools/get_offices.php", function (data) {
+    //   $(".task-detail-comments").prepend(data);
+    // });
+    $(".task-detail-comments").prepend("<H1>HELLO!!!</H1>");
   });
 };
-*/

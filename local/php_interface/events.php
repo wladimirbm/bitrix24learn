@@ -41,13 +41,13 @@ class CustomEvents
        //    $asset->addString('<script>BX.ready(function () { Dreamsite.crm(' . CUtil::PhpToJSObject($settings) . '); });</script>');
        // }
 
-        if (preg_match('/\/crm\/company\/details\/.*/', GetPagePath())) {
-            //$asset->addString('<link rel="stylesheet" type="text/css" href="/local/js/dreamsite/datatables/datatables.min.css"/><script type="text/javascript" src="/local/js/dreamsite/datatables/datatables.min.js"></script>');
+        //if (preg_match('/\/crm\/company\/details\/.*/', GetPagePath())) {
+            $asset->addString('<link rel="stylesheet" type="text/css" href="/local/js/dreamsite/datatables/datatables.min.css"/><script type="text/javascript" src="/local/js/dreamsite/datatables/datatables.min.js"></script>');
            // $asset->addString('<script>BX.ready(function () { Custom.crmCompany(); });</script>');
-        }
+        //}
 
         //На всех страницах
-        //$asset->addString('<script>BX.ready(function () { Dreamsite.all(); });</script>');
+        $asset->addString('<script>BX.ready(function () { Dreamsite.all(); });</script>');
     }
 
 
