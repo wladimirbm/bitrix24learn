@@ -1,8 +1,8 @@
 /bitrix/*
-/vendor/
-/upload/
 !/bitrix/.settings_extra.php
 !/bitrix/js/main/core/core.js
+/vendor/
+/upload/
 /logs/
 /__bx_log.log
 /.vscode/
