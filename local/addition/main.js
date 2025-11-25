@@ -25,7 +25,7 @@ BX.onCustomEvent = function (
   });
   originalBxOnCustomEvent.apply(null, arguments);
 };
-
+/*
 BX.addCustomEvent("ontimemanwindowopen", function () {
   console.log("ontimemanwindowopen");
 });
@@ -37,3 +37,4 @@ Dreamsite.all = function () {
     });
   });
 };
+*/
