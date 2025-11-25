@@ -24,6 +24,12 @@ BX.onCustomEvent = function (
     eventParams: eventParams,
     secureParams: secureParams,
   });
+
+
+  if(eventName=="onTimeManDataRecieved") { 
+    if(eventParams[0]['STATE'] == "CLOSED") { alert("END TIME"); }
+    if(eventParams[0]['STATE'] == "OPENED") { alert("START TIME"); }
+}
   originalBxOnCustomEvent.apply(null, arguments);
 };
 
