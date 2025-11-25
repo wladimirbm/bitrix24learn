@@ -5,6 +5,7 @@ BX.onCustomEvent = function (
   eventParams,
   secureParams
 ) {
+    console.log('main.onCustomEvent',eventObject, eventName, eventParams, secureParams); 
   // onMenuItemHover например выбрасывает в другом порядке
   let realEventName = BX.type.isString(eventName)
     ? eventName
@@ -28,6 +29,7 @@ BX.onCustomEvent = function (
 BX.addCustomEvent("ontimemanwindowopen", function () {
   console.log("ontimemanwindowopen");
 });
+
 Dreamsite.all = function () {
   BX.addCustomEvent("SidePanel.Slider:onLoad", function () {
     $.get("/local/tools/get_offices.php", function (data) {
