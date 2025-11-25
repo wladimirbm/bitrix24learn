@@ -14,18 +14,19 @@ if (file_exists(__DIR__ . '/../app/autoloader.php')) {
 ?>
 
 <?php
-use \Bitrix\Main\EventManager;
-EventManager::getInstance()->addEventHandler(
-    'main',
-    'OnProlog',
-    [CustomEvents::class, 'OnProlog']
-);
 
-EventManager::getInstance()->AddEventHandler(
-    "main",
-    "OnBeforeProlog",
-    [CustomEvents::class, "OnBeforePrologHandler"]
-);
+// use \Bitrix\Main\EventManager;
+// EventManager::getInstance()->addEventHandler(
+//     'main',
+//     'OnProlog',
+//     [CustomEvents::class, 'OnProlog']
+// );
+
+// EventManager::getInstance()->AddEventHandler(
+//     "main",
+//     "OnBeforeProlog",
+//     [CustomEvents::class, "OnBeforePrologHandler"]
+// );
 
 class CustomEvents
 {
