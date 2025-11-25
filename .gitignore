@@ -2,6 +2,7 @@
 /vendor/
 /upload/
 !/bitrix/.settings_extra.php
+!/bitrix/js/main/core/core.js
 /logs/
 /__bx_log.log
 /.vscode/
