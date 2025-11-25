@@ -14,7 +14,7 @@ if (file_exists(__DIR__ . '/../app/autoloader.php')) {
 ?>
 
 <?php
-$eventManager = \Bitrix\Main\EventManager::getInstance();
+use \Bitrix\Main\EventManager;
 EventManager::getInstance()->addEventHandler(
     'main',
     'OnProlog',
