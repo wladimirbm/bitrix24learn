@@ -1,13 +1,14 @@
 <?php
+//Подключение своих CSS и JS к Битрикс24
 
-//use \Bitrix\Main\EventManager;
-\Bitrix\Main\EventManager::getInstance()->addEventHandler(
+use Bitrix\Main\EventManager;
+EventManager::getInstance()->addEventHandler(
     'main',
     'OnProlog',
     [CustomEvents::class, 'OnProlog']
 );
 
-\Bitrix\Main\EventManager::getInstance()->AddEventHandler(
+EventManager::getInstance()->AddEventHandler(
     "main",
     "OnBeforeProlog",
     [CustomEvents::class, "OnBeforePrologHandler"]
@@ -34,15 +35,15 @@ class CustomEvents
 
         $asset = \Bitrix\Main\Page\Asset::getInstance();
 
-        $settings = [];
+        $settings=[];
 
-        // if (preg_match('/\/crm.*/', GetPagePath())) {
-        //    $asset->addString('<script>BX.ready(function () { Dreamsite.crm(' . CUtil::PhpToJSObject($settings) . '); });</script>');
-        // }
+       // if (preg_match('/\/crm.*/', GetPagePath())) {
+       //    $asset->addString('<script>BX.ready(function () { Dreamsite.crm(' . CUtil::PhpToJSObject($settings) . '); });</script>');
+       // }
 
         if (preg_match('/\/crm\/company\/details\/.*/', GetPagePath())) {
             //$asset->addString('<link rel="stylesheet" type="text/css" href="/local/js/dreamsite/datatables/datatables.min.css"/><script type="text/javascript" src="/local/js/dreamsite/datatables/datatables.min.js"></script>');
-            // $asset->addString('<script>BX.ready(function () { Custom.crmCompany(); });</script>');
+           // $asset->addString('<script>BX.ready(function () { Custom.crmCompany(); });</script>');
         }
 
         //На всех страницах
@@ -53,5 +54,7 @@ class CustomEvents
     public static function OnBeforePrologHandler()
     {
         CJSCore::Init(array('jquery2'));
+
     }
+
 }
