@@ -10,7 +10,7 @@
 
 <h2>Файлы</h2>
 <p><a href="/bitrix/admin/perfmon_tables.php?lang=ru#mod_">Таблицы</a></p>
-<p><a href="/bitrix/admin/fileman_admin.php?lang=ru&path=%2Flocal%2Fmodules%2Fotus.crmcustomtab&site=s1">Файлы</a></p>
+
 
 
 <?require($_SERVER["DOCUMENT_ROOT"]."/bitrix/footer.php");?> 
