@@ -47,7 +47,7 @@ class CustomEvents
         }
 
         //На всех страницах
-        $asset->addString('<script>BX.ready(function () { Dreamsite.all(); });</script>');
+        //$asset->addString('<script>BX.ready(function () { Dreamsite.all(); });</script>');
     }
 
 
