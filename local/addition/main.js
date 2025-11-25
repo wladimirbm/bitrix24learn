@@ -32,11 +32,11 @@ BX.addCustomEvent("onTimeManDataRecieved", function () {
   console.log("onTimeManDataRecieved");
 });
 
-Dreamsite.all = function () {
-  BX.addCustomEvent("SidePanel.Slider:onLoad", function () {
-    // $.get("/local/tools/get_offices.php", function (data) {
-    //   $(".task-detail-comments").prepend(data);
-    // });
-    $(".task-detail-comments").prepend("<H1>HELLO!!!</H1>");
-  });
-};
+// Dreamsite.all = function () {
+//   BX.addCustomEvent("SidePanel.Slider:onLoad", function () {
+//     // $.get("/local/tools/get_offices.php", function (data) {
+//     //   $(".task-detail-comments").prepend(data);
+//     // });
+//     $(".task-detail-comments").prepend("<H1>HELLO!!!</H1>");
+//   });
+// };
