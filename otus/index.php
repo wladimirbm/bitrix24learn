@@ -24,7 +24,9 @@ $APPLICATION->SetTitle("Список Домашних работ");
     }
 
     h2 {
-        display: table-cell; margin:10px;border-bottom: 1px dashed #ccc;
+        display: block;
+        padding: 5px;
+        border-bottom: 1px dashed #ccc;
     }
 </style>
 <H1><? $APPLICATION->ShowTitle() ?></H1>
@@ -50,7 +52,7 @@ $APPLICATION->SetTitle("Список Домашних работ");
     </h2>
 </div>
 <div>
-    <h2><a href="homework5/">Домашняя работа 5 (Компонент списка таблицы БД // ДЗ)</a> 
+    <h2><a href="homework5/">Домашняя работа 5 (Компонент списка таблицы БД // ДЗ)</a>
         <div class="prog done"></div>
     </h2>
 </div>
