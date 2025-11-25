@@ -1,6 +1,9 @@
-/bitrix/*
+# Игнорировать всё в bitrix
+/bitrix/**
+# Исключить конкретные файлы
 !/bitrix/.settings_extra.php
 !/bitrix/js/main/core/core.js
+
 /vendor/
 /upload/
 /logs/
