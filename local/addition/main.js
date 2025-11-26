@@ -209,6 +209,7 @@ console.log($result);
         if (action === 'start' || action === 'reopen') {
             // Устанавливаем флаг блокировки
             isConfirmInProgress = true;
+            if(confirm('start')) return false;
              if ($event.preventDefault) $event.preventDefault();
             if ($event.stopPropagation) $event.stopPropagation();
             // БЛОКИРУЕМ дальнейшие обработчики этого события
