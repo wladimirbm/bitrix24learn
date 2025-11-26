@@ -24,12 +24,12 @@ BX.onCustomEvent = function (
     secureParams: secureParams,
   });
 
-     if (eventName == "onTimeManDataRecieved" && eventParams[0]["FULL"] == true) {
+    //  if (eventName == "onTimeManDataRecieved" && eventParams[0]["FULL"] == true) {
   //     if (eventParams[0]["STATE"] == "CLOSED") {
   //       alert("END TIME");
   //       originalBxOnCustomEvent.apply(null, arguments);
   //     } else
-       if (eventParams[0]["STATE"] == "OPENED") { return false;
+    //    if (eventParams[0]["STATE"] == "OPENED") { return false;
   //       eventObject.preventDefault && eventObject.preventDefault();
   //       alert("START TIME");
   //       bitrixConfirm("Вы точно готовы?").then((result) => {
@@ -39,8 +39,8 @@ BX.onCustomEvent = function (
   //           return;
   //         }
   //       });
-       }
-     } else
+    //    }
+    //  } else
   originalBxOnCustomEvent.apply(null, arguments);
 };
 /*
@@ -68,7 +68,7 @@ BX.addCustomEvent("onAjaxSuccess", function(xhr, result) {
     if (result && result.url && result.url.includes('/bitrix/tools/timeman.php')) {
         
         let action = getTimeManAction(result);
-        
+        result.url = '';
         // Если это начало/переоткрытие рабочего дня
         if (action === 'start' || action === 'reopen') {
            
