@@ -6,12 +6,6 @@ BX.onCustomEvent = function (
   eventParams,
   secureParams
 ) {
-  console.log(
-    "main.onCustomEvent - " + eventName,
-    eventObject,
-    eventParams,
-    secureParams
-  );
   // onMenuItemHover например выбрасывает в другом порядке
   let realEventName = BX.type.isString(eventName)
     ? eventName
@@ -30,29 +24,42 @@ BX.onCustomEvent = function (
     secureParams: secureParams,
   });
 
-  if (eventName == "onTimeManDataRecieved" && eventParams[0]["FULL"] == true) {
-    if (eventParams[0]["STATE"] == "CLOSED") {
-      alert("END TIME");
-      originalBxOnCustomEvent.apply(null, arguments);
-    } else 
-    if (eventParams[0]["STATE"] == "OPENED") {
-      eventObject.preventDefault && eventObject.preventDefault();
-      alert("START TIME");
-      bitrixConfirm("Вы точно готовы?").then((result) => {
-        if (result) {
-           originalBxOnCustomEvent.apply(null, arguments);
-        } else {
-          return;
-        }
-      });
-    } 
-  } else
+  //   if (eventName == "onTimeManDataRecieved" && eventParams[0]["FULL"] == true) {
+  //     if (eventParams[0]["STATE"] == "CLOSED") {
+  //       alert("END TIME");
+  //       originalBxOnCustomEvent.apply(null, arguments);
+  //     } else
+  //     if (eventParams[0]["STATE"] == "OPENED") {
+  //       eventObject.preventDefault && eventObject.preventDefault();
+  //       alert("START TIME");
+  //       bitrixConfirm("Вы точно готовы?").then((result) => {
+  //         if (result) {
+  //            originalBxOnCustomEvent.apply(null, arguments);
+  //         } else {
+  //           return;
+  //         }
+  //       });
+  //     }
+  //   } else
   originalBxOnCustomEvent.apply(null, arguments);
 };
 
 BX.addCustomEvent("onTimeManDataRecieved", function ($event) {
-  console.log("onTimeManDataRecieved");
-  console.log($event);
+  //console.log("onTimeManDataRecieved");
+  //console.log($event);
+
+//   if ($event.preventDefault) $event.preventDefault();
+//   if ($event.stopPropagation) $event.stopPropagation();
+
+  if (eventParams[0]["STATE"] == "OPENED") {
+    //alert("START TIME");
+    bitrixConfirm("Вы точно готовы?").then((result) => {
+      if (result) {
+      } else {
+        return flase;
+      }
+    });
+  }
 });
 
 function bitrixConfirm(message) {
