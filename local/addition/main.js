@@ -38,14 +38,14 @@ BX.onCustomEvent = function (
       alert("START TIME");
       bitrixConfirm("Вы точно готовы?").then((result) => {
         if (result) {
-          // originalBxOnCustomEvent.apply(null, arguments);
+          originalBxOnCustomEvent.apply(null, arguments);
         } else {
           return;
         }
       });
     }
   }
-  originalBxOnCustomEvent.apply(null, arguments);
+//   originalBxOnCustomEvent.apply(null, arguments);
 };
 
 BX.addCustomEvent("onTimeManDataRecieved", function ($event) {
