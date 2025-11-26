@@ -1,6 +1,16 @@
 <?php
 //Подключение своих CSS и JS к Битрикс24
 
+
+\JSCore::RegisterExt('otusCW', [
+    'js' => '/local/js/otus/confirm_workday/main.js',
+    'css' => '',
+    'lang' => '/local/js/otus/confirm_workday/lang/'. LANGUAGE_ID .'/otuscw.php',
+    'core' => ['core']
+
+]);
+\JSCore::Init('otusCW');
+
 use Bitrix\Main\EventManager;
 EventManager::getInstance()->addEventHandler(
     'main',

@@ -36,13 +36,20 @@ BX.onCustomEvent = function (
     }
     if (eventParams[0]["STATE"] == "OPENED") {
       alert("START TIME");
+      var popup = BX.PopupWindowManager.create("popup-message", BX("element"), {
+        content: "Hello World!",
+        darkMode: true,
+        autoHide: true,
+      });
+      popup.show();
     }
   }
   originalBxOnCustomEvent.apply(null, arguments);
 };
 
-BX.addCustomEvent("onTimeManDataRecieved", function () {
+BX.addCustomEvent("onTimeManDataRecieved", function ($event) {
   console.log("onTimeManDataRecieved");
+  console.log($event);
 });
 
 // Dreamsite.all = function () {
