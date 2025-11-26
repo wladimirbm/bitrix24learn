@@ -64,10 +64,10 @@ BX.addCustomEvent("onTimeManDataRecieved", function ($event) {
   }
 });
 */
-
+// Глобальный флаг для блокировки
 let isConfirmInProgress = false;
 
-BX.addCustomEvent("onAjaxSuccess", async function(xhr, result) {
+BX.addCustomEvent("onAjaxSuccess", function(xhr, result) {
     // Пропускаем если уже показываем подтверждение
     if (isConfirmInProgress) return;
     
@@ -81,31 +81,44 @@ BX.addCustomEvent("onAjaxSuccess", async function(xhr, result) {
             // Устанавливаем флаг блокировки
             isConfirmInProgress = true;
             
-            try {
-                // ЖДЕМ ответа от пользователя (блокируем выполнение)
-                const confirmed = await showBlockingMessageBox(action);
-                
+            // БЛОКИРУЕМ дальнейшие обработчики этого события
+            // Показываем MessageBox который остановит выполнение
+            showBlockingMessageBox(action).then((confirmed) => {
                 if (!confirmed) {
-                    // При отмене - БЛОКИРУЕМ дальнейшую обработку
+                    // При отмене - НЕ выполняем стандартную логику
                     console.log('Действие отменено:', action);
                     BX.UI.Notification.Center.notify({
                         content: 'Действие отменено',
                         autoHideDelay: 3000
                     });
-                    
-                    // Возвращаем false для прерывания цепочки обработчиков
-                    return false;
+                } else {
+                    // При подтверждении - ВРУЧНУЮ запускаем стандартную логику
+                    console.log('Действие подтверждено:', action);
+                    executeStandardTimeManLogic(result);
                 }
                 
-                // При подтверждении - разрешаем стандартную обработку
-                console.log('Действие подтверждено:', action);
-                
-            } finally {
                 isConfirmInProgress = false;
-            }
+            });
+            
+            // ВОЗВРАЩАЕМ FALSE чтобы заблокировать другие обработчики
+            return false;
         }
     }
 });
+
+// Функция для выполнения стандартной логики при подтверждении
+function executeStandardTimeManLogic(result) {
+    // Здесь нужно вручную вызвать то, что должно происходить при начале дня
+    // Это зависит от того, как работает твой таймменеджер
+    
+    // Пример: обновляем данные на странице
+    if (window.BXTimeman && BXTimeman.updateData) {
+        BXTimeman.updateData(result);
+    }
+    
+    // Или вызываем кастомное событие
+    BX.onCustomEvent('onWorkDayStarted', [result]);
+}
 
 // БЛОКИРУЮЩАЯ функция подтверждения через MessageBox
 function showBlockingMessageBox(action) {
@@ -116,7 +129,6 @@ function showBlockingMessageBox(action) {
             
         const okButtonText = action === 'reopen' ? 'Продолжить' : 'Начать день';
         
-        // MessageBox действительно блокирует выполнение!
         BX.UI.Dialogs.MessageBox.confirm(
             message,
             function() {
@@ -127,8 +139,8 @@ function showBlockingMessageBox(action) {
                 // Колбэк при отмене (Cancel)
                 resolve(false);
             },
-            okButtonText,    // Текст кнопки OK
-            'Отмена'         // Текст кнопки Cancel
+            okButtonText,
+            'Отмена'
         );
     });
 }
