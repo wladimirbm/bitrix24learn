@@ -54,10 +54,10 @@ class CBPCreateCompanyByInnactivity extends BaseActivity
         // $rootActivity = $this->GetRootActivity();
         // $token = $rootActivity->GetVariable("TOKEN"); 
         // $secret =  $rootActivity->GetVariable("SECRET"); 
-        
+ /*       
         $dadata = new Dadata($token, $secret);
         $dadata->init();
-/*
+
         $fields = array("query" => $this->InnField, "count" => 5);
         $response = $dadata->suggest("party", $fields);
   */      
