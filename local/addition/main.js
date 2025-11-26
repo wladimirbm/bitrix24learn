@@ -108,7 +108,7 @@ function executeOriginalResumeHandler() {
             // Обновляем страницу или интерфейс
             if (result && result.FULL) {
                 // Можно обновить только компонент таймменеджера
-                BX.reload();
+                //BX.reload();
             }
         },
         onfailure: function(error) {
