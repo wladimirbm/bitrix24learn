@@ -36,12 +36,13 @@ BX.onCustomEvent = function (
     }
     if (eventParams[0]["STATE"] == "OPENED") {
       alert("START TIME");
-      var popup = BX.PopupWindowManager.create("popup-message", BX("element"), {
-        content: "Hello World!",
-        darkMode: true,
-        autoHide: true,
+      bitrixConfirm("Вы точно готовы?").then((result) => {
+        if (result) {
+          // originalBxOnCustomEvent.apply(null, arguments);
+        } else {
+          return;
+        }
       });
-      popup.show();
     }
   }
   originalBxOnCustomEvent.apply(null, arguments);
@@ -51,6 +52,61 @@ BX.addCustomEvent("onTimeManDataRecieved", function ($event) {
   console.log("onTimeManDataRecieved");
   console.log($event);
 });
+
+function bitrixConfirm(message) {
+  return new Promise((resolve) => {
+    var popup = new BX.PopupWindow("bitrix-confirm", null, {
+      content: BX.create("div", {
+        children: [
+          BX.create("div", {
+            html: message,
+            style: {
+              padding: "20px",
+              minWidth: "400px",
+              marginBottom: "20px",
+              fontSize: "14px",
+              color: "#535c69",
+            },
+          }),
+          BX.create("div", {
+            style: {
+              display: "flex",
+              justifyContent: "flex-end",
+              gap: "10px",
+              padding: "0 20px 20px",
+            },
+            children: [
+              new BX.UI.Button({
+                text: "Отмена",
+                color: BX.UI.Button.Color.LINK,
+                onclick: function () {
+                  popup.close();
+                  resolve(false);
+                },
+              }).getContainer(),
+              new BX.UI.Button({
+                text: "Подтвердить",
+                color: BX.UI.Button.Color.SUCCESS,
+                onclick: function () {
+                  popup.close();
+                  resolve(true);
+                },
+              }).getContainer(),
+            ],
+          }),
+        ],
+      }),
+      titleBar: "Подтверждение действия",
+      closeIcon: true,
+      closeByEsc: true,
+      overlay: true,
+      autoHide: false,
+      draggable: false,
+    });
+
+    popup.show();
+  });
+}
 
 // Dreamsite.all = function () {
 //   BX.addCustomEvent("SidePanel.Slider:onLoad", function () {
