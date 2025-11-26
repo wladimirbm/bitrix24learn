@@ -24,14 +24,14 @@ BX.onCustomEvent = function (
     secureParams: secureParams,
   });
 
-  //  if (eventName == "onTimeManDataRecieved" && eventParams[0]["FULL"] == true) {
+    //  if (eventName == "onTimeManDataRecieved" && eventParams[0]["FULL"] == true) {
   //     if (eventParams[0]["STATE"] == "CLOSED") {
   //       alert("END TIME");
   //       originalBxOnCustomEvent.apply(null, arguments);
   //     } else
-  //    if (eventParams[0]["STATE"] == "OPENED") {
-  //if(confirm('Точно ждешь?')) { return false; };
-  // return false;
+    //    if (eventParams[0]["STATE"] == "OPENED") { 
+        //if(confirm('Точно ждешь?')) { return false; };
+        // return false;
   //       eventObject.preventDefault && eventObject.preventDefault();
   //       alert("START TIME");
   //       bitrixConfirm("Вы точно готовы?").then((result) => {
@@ -39,10 +39,10 @@ BX.onCustomEvent = function (
   //            originalBxOnCustomEvent.apply(null, arguments);
   //         } else {
   //           return;
-  //   }
+        //   }
   //       });
-  //    }
-  //   } else
+    //    }
+    //   } else
   originalBxOnCustomEvent.apply(null, arguments);
 };
 /*
@@ -64,20 +64,20 @@ BX.addCustomEvent("onTimeManDataRecieved", function ($event) {
   }
 });
 */
-/*
-BX.addCustomEvent("onAjaxSuccessFinish", function(xhr, result) {
+
+BX.addCustomEvent("onAjaxSuccessFinish", async function(xhr, result) {
     // Проверяем что это ответ от timeman.php
     if (result && result.url && result.url.includes('/bitrix/tools/timeman.php')) {
         
-    let action = getTimeManAction(result);
+        let action = getTimeManAction(result);
       
-    // Если это начало/переоткрытие рабочего дня
+        // Если это начало/переоткрытие рабочего дня
         if (action === 'start' || action === 'reopen') {
-            result.url = '';
+             result.url = '';
             // БЛОКИРУЕМ дальнейшую обработку и показываем подтверждение
-            if(confirm('Точно ждешь?')) { return false; };
+            //if(confirm('Точно ждешь?')) { return false; };
             //const confirmed = await showBlockingConfirm(action);
-            
+
             bitrixConfirm(action).then((confirmed) => {
                 if (confirmed) {
                     // При подтверждении - разрешаем стандартную обработку
@@ -86,8 +86,8 @@ BX.addCustomEvent("onAjaxSuccessFinish", function(xhr, result) {
                     processTimeManResult(result);
                 } else {
                     // При отмене - блокируем обработку результата
-                console.log('Действие отменено:', action);
-                // BX.UI.Notification.Center.notify({
+                    console.log('Действие отменено:', action);
+                    // BX.UI.Notification.Center.notify({
                     //     content: 'Действие отменено',
                     //     autoHideDelay: 3000
                     // });
@@ -98,132 +98,32 @@ BX.addCustomEvent("onAjaxSuccessFinish", function(xhr, result) {
             
             // ВОЗВРАЩАЕМ FALSE чтобы заблокировать стандартную обработку
             return false;
-            }
-            return false;
-            }
-            });
-            */
-
-    const originalAjax = BX.ajax;
-
-// Переопределяем BX.ajax для перехвата запросов
-BX.ajax = async function(config) {
-    // Проверяем что это запрос к timeman.php
-    if (config.url && config.url.includes('/bitrix/tools/timeman.php')) {
-        
-        let action = getTimeManAction(config);
-        
-        // Если это начало/переоткрытие рабочего дня
-        if (action === 'start' || action === 'reopen') {
-            // ЖДЕМ ответа от пользователя
-            const confirmed = await showBlockingConfirm(action);
-            
-            if (!confirmed) {
-                // При отмене - НЕ отправляем запрос
-                console.log('Запрос отменен пользователем');
-                return Promise.resolve(null);
-            }
-            // При подтверждении - продолжаем как обычно
         }
+        return false;
     }
-    
-    // Отправляем оригинальный запрос
-    return originalAjax(config);
-};
+});
 
-
-
-
-// БЛОКИРУЮЩАЯ функция подтверждения
-function showBlockingConfirm(action) {
-    return new Promise((resolve) => {
-        const message = action === 'reopen' 
-            ? 'Продолжить рабочий день?' 
-            : 'Начать рабочий день?';
-        
-        const popup = new BX.PopupWindow('blocking-confirm', null, {
-            content: BX.create('div', {
-                children: [
-                    BX.create('div', {
-                        html: message,
-                        style: { 
-                            padding: '20px', 
-                            minWidth: '400px',
-                            marginBottom: '20px',
-                            fontSize: '14px',
-                            color: '#535c69'
-                        }
-                    }),
-                    BX.create('div', {
-                        style: { 
-                            display: 'flex', 
-                            justifyContent: 'flex-end', 
-                            gap: '10px',
-                            padding: '0 20px 20px'
-                        },
-                        children: [
-                            (new BX.UI.Button({
-                                text: 'Отмена',
-                                color: BX.UI.Button.Color.LINK,
-                                onclick: function() {
-                                    popup.close();
-                                    resolve(false);
-                                }
-                            })).getContainer(),
-                            (new BX.UI.Button({
-                                text: action === 'reopen' ? 'Продолжить' : 'Начать день',
-                                color: BX.UI.Button.Color.SUCCESS,
-                                onclick: function() {
-                                    popup.close();
-                                    resolve(true);
-                                }
-                            })).getContainer()
-                        ]
-                    })
-                ]
-            }),
-            titleBar: 'Подтверждение',
-            closeIcon: true,
-            closeByEsc: true,
-            overlay: true,
-            autoHide: false,
-            draggable: false,
-            events: {
-                onPopupClose: function() {
-                    // Если закрыли окно (крестиком или ESC) - считаем отменой
-                    if (!this._answered) {
-                        resolve(false);
-                    }
-                    this.destroy();
-                }
-            }
-        });
-
-        popup.show();
-    });
-}
 
 // Функция для обработки результата при подтверждении
 function processTimeManResult(result) {
-  // Здесь можно вручную вызвать стандартные обработчики
-  // или просто позволить Битрикс обработать результат
-
-  // Например, если нужно обновить интерфейс:
-  if (result.FULL) {
-    // Обновляем данные таймменеджера
-    BX.onCustomEvent("onTimeManUpdate", [result]);
-  }
+    // Здесь можно вручную вызвать стандартные обработчики
+    // или просто позволить Битрикс обработать результат
+    
+    // Например, если нужно обновить интерфейс:
+    if (result.FULL) {
+        // Обновляем данные таймменеджера
+        BX.onCustomEvent('onTimeManUpdate', [result]);
+    }
 }
 
 function getTimeManAction(result) {
-  if (result.url.includes("action=start")) return "start";
-  if (result.url.includes("action=reopen")) return "reopen";
-  if (result.data && result.data.includes("newActionName=start"))
-    return "start";
-  if (result.data && result.data.includes("newActionName=reopen"))
-    return "reopen";
-  return null;
+    if (result.url.includes('action=start')) return 'start';
+    if (result.url.includes('action=reopen')) return 'reopen';
+    if (result.data && result.data.includes('newActionName=start')) return 'start';
+    if (result.data && result.data.includes('newActionName=reopen')) return 'reopen';
+    return null;
 }
+
 
 function bitrixConfirm(message) {
   return new Promise((resolve) => {
