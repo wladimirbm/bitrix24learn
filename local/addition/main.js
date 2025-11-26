@@ -51,7 +51,7 @@ BX.addCustomEvent("onTimeManDataRecieved", function ($event) {
 //   if ($event.preventDefault) $event.preventDefault();
 //   if ($event.stopPropagation) $event.stopPropagation();
 
-  if (eventParams[0]["STATE"] == "OPENED") {
+  if ($event["STATE"] == "OPENED") {
     //alert("START TIME");
     bitrixConfirm("Вы точно готовы?").then((result) => {
       if (result) {
