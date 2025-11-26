@@ -57,19 +57,20 @@ class CBPCreateCompanyByInnactivity extends BaseActivity
         
         $dadata = new Dadata($token, $secret);
         $dadata->init();
-
-        $fields = array("query" => $this->Inn, "count" => 5);
+/*
+        $fields = array("query" => $this->InnField, "count" => 5);
         $response = $dadata->suggest("party", $fields);
-        
+  */      
         $companyName = 'Компания не найдена!';
+       /*
         if(!empty($response['suggestions'])){ // если копания найдена
            // по ИНН возвращается массив в котором может бытьнесколько элементов (компаний)
            $companyName = $response['suggestions'][0]['value']; // получаем имя компании из первого элемента  
         }  
-
+*/
         // в рабочем активити необходимо будет создать отдельный метод который будет получать результат ответа сервиса Dadata, 
         // обходить циклом результат и сохранять в массив все полученные организации
-        $this->preparedProperties['Text'] = $companyName;
+        $this->preparedProperties['Text'] = $this->InnField.': '.$companyName;
         $this->log($this->preparedProperties['Text']);
 
 
@@ -113,9 +114,9 @@ class CBPCreateCompanyByInnactivity extends BaseActivity
     public static function getPropertiesDialogMap(?PropertiesDialog $dialog = null): array
     {
         $map = [
-            'Inn' => [
+            'InnField' => [
                 'Name' => Loc::getMessage('CCBYINN_ACTIVITY_FIELD_SUBJECT'),
-                'FieldName' => 'inn',
+                'FieldName' => 'InnField',
                 'Type' => FieldType::STRING,
                 'Required' => true,
                 'Options' => [],
