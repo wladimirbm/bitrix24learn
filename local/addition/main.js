@@ -23,7 +23,7 @@ BX.onCustomEvent = function (
     eventParams: eventParams,
     secureParams: secureParams,
   });
-
+return false;
   if (eventName == "onTimeManDataRecieved" && eventParams[0]["FULL"] == true && eventParams[0]["STATE"] == "OPENED") {
     // if (eventParams[0]["STATE"] == "CLOSED") {
     //   alert("END TIME");
@@ -42,6 +42,7 @@ BX.onCustomEvent = function (
           function () {
             // При подтверждении - запускаем стандартную логику возобновления
             originalBxOnCustomEvent.apply(null, arguments);
+            return false;
           },
           function () {
             // При отмене - ничего не делаем
@@ -50,6 +51,7 @@ BX.onCustomEvent = function (
               content: "Начало отменено",
               autoHideDelay: 3000,
             });
+            return false;
           },
           "Начать", // Текст кнопки OK
           "Отмена" // Текст кнопки Cancel
