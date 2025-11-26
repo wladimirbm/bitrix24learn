@@ -19,7 +19,8 @@ class CBPCreateCompanyByInnactivity extends BaseActivity
         parent::__construct($name);
 
         $this->arProperties = [
-            'Inn' => '',
+            'InnField' => 'Поле с ИНН',
+            //'MaxCountCreate' => 'Сколько компаний создать',
 
             // return
             'Text' => null,
