@@ -72,7 +72,7 @@ BX.addCustomEvent("onAjaxSuccessFinish", function(result) {
         console.log('action', action);
        
         if (action === 'start' || action === 'reopen') {
-            request.cancel = true;
+            result.cancel = true;
             bitrixConfirm(action).then((confirmed) => {
                 if (!confirmed) {
                     console.log('Действие отменено:', action);
