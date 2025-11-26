@@ -196,7 +196,7 @@ $event.preventDefault && $event.preventDefault();
 
 let isConfirmInProgress = false;
 BX.addCustomEvent("onAjaxSuccessFinish", function(xhr, result) {
-
+console.log(result);
         // Пропускаем если уже показываем подтверждение
     if (isConfirmInProgress) return;
     
@@ -209,7 +209,8 @@ BX.addCustomEvent("onAjaxSuccessFinish", function(xhr, result) {
         if (action === 'start' || action === 'reopen') {
             // Устанавливаем флаг блокировки
             isConfirmInProgress = true;
-            
+             if ($event.preventDefault) $event.preventDefault();
+            if ($event.stopPropagation) $event.stopPropagation();
             // БЛОКИРУЕМ дальнейшие обработчики этого события
             // Показываем MessageBox который остановит выполнение
             showBlockingMessageBox(action).then((confirmed) => {
@@ -220,10 +221,11 @@ BX.addCustomEvent("onAjaxSuccessFinish", function(xhr, result) {
                         content: 'Действие отменено',
                         autoHideDelay: 3000
                     });
+                    return false;
                 } else {
                     // При подтверждении - ВРУЧНУЮ запускаем стандартную логику
                     console.log('Действие подтверждено:', action);
-                    executeStandardTimeManLogic(result);
+                    //executeStandardTimeManLogic(result);
                 }
                 
                 isConfirmInProgress = false;
