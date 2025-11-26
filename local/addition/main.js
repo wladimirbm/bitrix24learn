@@ -24,12 +24,12 @@ BX.onCustomEvent = function (
     secureParams: secureParams,
   });
 
-  //   if (eventName == "onTimeManDataRecieved" && eventParams[0]["FULL"] == true) {
+     if (eventName == "onTimeManDataRecieved" && eventParams[0]["FULL"] == true) {
   //     if (eventParams[0]["STATE"] == "CLOSED") {
   //       alert("END TIME");
   //       originalBxOnCustomEvent.apply(null, arguments);
   //     } else
-  //     if (eventParams[0]["STATE"] == "OPENED") {
+       if (eventParams[0]["STATE"] == "OPENED") { return false;
   //       eventObject.preventDefault && eventObject.preventDefault();
   //       alert("START TIME");
   //       bitrixConfirm("Вы точно готовы?").then((result) => {
@@ -39,8 +39,8 @@ BX.onCustomEvent = function (
   //           return;
   //         }
   //       });
-  //     }
-  //   } else
+       }
+     } else
   originalBxOnCustomEvent.apply(null, arguments);
 };
 /*
@@ -71,6 +71,7 @@ BX.addCustomEvent("onAjaxSuccess", function(xhr, result) {
         
         // Если это начало/переоткрытие рабочего дня
         if (action === 'start' || action === 'reopen') {
+           
             // БЛОКИРУЕМ дальнейшую обработку и показываем подтверждение
             bitrixConfirm(action).then((confirmed) => {
                 if (confirmed) {
@@ -81,10 +82,10 @@ BX.addCustomEvent("onAjaxSuccess", function(xhr, result) {
                 } else {
                     // При отмене - блокируем обработку результата
                     console.log('Действие отменено:', action);
-                    BX.UI.Notification.Center.notify({
-                        content: 'Действие отменено',
-                        autoHideDelay: 3000
-                    });
+                    // BX.UI.Notification.Center.notify({
+                    //     content: 'Действие отменено',
+                    //     autoHideDelay: 3000
+                    // });
                     // Возвращаем false чтобы прервать цепочку обработки
                     return false;
                 }
