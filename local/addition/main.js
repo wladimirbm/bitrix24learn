@@ -65,55 +65,72 @@ BX.addCustomEvent("onTimeManDataRecieved", function ($event) {
 });
 */
 
-BX.addCustomEvent("onAjaxSuccessFinish", async function(xhr, result) {
+let isConfirmInProgress = false;
+
+BX.addCustomEvent("onAjaxSuccess", async function(xhr, result) {
+    // Пропускаем если уже показываем подтверждение
+    if (isConfirmInProgress) return;
+    
     // Проверяем что это ответ от timeman.php
     if (result && result.url && result.url.includes('/bitrix/tools/timeman.php')) {
         
         let action = getTimeManAction(result);
-      
+        
         // Если это начало/переоткрытие рабочего дня
         if (action === 'start' || action === 'reopen') {
-             result.url = '';
-            // БЛОКИРУЕМ дальнейшую обработку и показываем подтверждение
-            //if(confirm('Точно ждешь?')) { return false; };
-            //const confirmed = await showBlockingConfirm(action);
-
-            bitrixConfirm(action).then((confirmed) => {
-                if (confirmed) {
-                    // При подтверждении - разрешаем стандартную обработку
-                    console.log('Подтверждено, продолжаем стандартную логику');
-                    // Можно вызвать обработчики вручную если нужно
-                    processTimeManResult(result);
-                } else {
-                    // При отмене - блокируем обработку результата
+            // Устанавливаем флаг блокировки
+            isConfirmInProgress = true;
+            
+            try {
+                // ЖДЕМ ответа от пользователя (блокируем выполнение)
+                const confirmed = await showBlockingMessageBox(action);
+                
+                if (!confirmed) {
+                    // При отмене - БЛОКИРУЕМ дальнейшую обработку
                     console.log('Действие отменено:', action);
-                    // BX.UI.Notification.Center.notify({
-                    //     content: 'Действие отменено',
-                    //     autoHideDelay: 3000
-                    // });
-                    // Возвращаем false чтобы прервать цепочку обработки
+                    BX.UI.Notification.Center.notify({
+                        content: 'Действие отменено',
+                        autoHideDelay: 3000
+                    });
+                    
+                    // Возвращаем false для прерывания цепочки обработчиков
                     return false;
                 }
-            });
-            
-            // ВОЗВРАЩАЕМ FALSE чтобы заблокировать стандартную обработку
-            return false;
+                
+                // При подтверждении - разрешаем стандартную обработку
+                console.log('Действие подтверждено:', action);
+                
+            } finally {
+                isConfirmInProgress = false;
+            }
         }
-        return false;
     }
 });
 
-
-// Функция для обработки результата при подтверждении
-function processTimeManResult(result) {
-    // Здесь можно вручную вызвать стандартные обработчики
-    // или просто позволить Битрикс обработать результат
-    
-    // Например, если нужно обновить интерфейс:
-    if (result.FULL) {
-        // Обновляем данные таймменеджера
-        BX.onCustomEvent('onTimeManUpdate', [result]);
-    }
+// БЛОКИРУЮЩАЯ функция подтверждения через MessageBox
+function showBlockingMessageBox(action) {
+    return new Promise((resolve) => {
+        const message = action === 'reopen' 
+            ? 'Продолжить рабочий день?' 
+            : 'Начать рабочий день?';
+            
+        const okButtonText = action === 'reopen' ? 'Продолжить' : 'Начать день';
+        
+        // MessageBox действительно блокирует выполнение!
+        BX.UI.Dialogs.MessageBox.confirm(
+            message,
+            function() {
+                // Колбэк при подтверждении (OK)
+                resolve(true);
+            },
+            function() {
+                // Колбэк при отмене (Cancel)
+                resolve(false);
+            },
+            okButtonText,    // Текст кнопки OK
+            'Отмена'         // Текст кнопки Cancel
+        );
+    });
 }
 
 function getTimeManAction(result) {
@@ -124,7 +141,7 @@ function getTimeManAction(result) {
     return null;
 }
 
-
+/*
 function bitrixConfirm(message) {
   return new Promise((resolve) => {
     var popup = new BX.PopupWindow("bitrix-confirm", null, {
@@ -179,7 +196,7 @@ function bitrixConfirm(message) {
     popup.show();
   });
 }
-
+*/
 // Dreamsite.all = function () {
 //   BX.addCustomEvent("SidePanel.Slider:onLoad", function () {
 //     // $.get("/local/tools/get_offices.php", function (data) {
