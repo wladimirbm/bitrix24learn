@@ -30,7 +30,7 @@ BX.onCustomEvent = function (
   //       originalBxOnCustomEvent.apply(null, arguments);
   //     } else
        if (eventParams[0]["STATE"] == "OPENED") { 
-        if(confirm('Точно ждешь?')) { return false; };
+        //if(confirm('Точно ждешь?')) { return false; };
         return false;
   //       eventObject.preventDefault && eventObject.preventDefault();
   //       alert("START TIME");
@@ -65,15 +65,15 @@ BX.addCustomEvent("onTimeManDataRecieved", function ($event) {
 });
 */
 
-BX.addCustomEvent("onAjaxSuccess", function(xhr, result) {
+BX.addCustomEvent("onAjaxSuccessFinish", function(xhr, result) {
     // Проверяем что это ответ от timeman.php
     if (result && result.url && result.url.includes('/bitrix/tools/timeman.php')) {
         
         let action = getTimeManAction(result);
-        //result.url = '';
+      
         // Если это начало/переоткрытие рабочего дня
         if (action === 'start' || action === 'reopen') {
-           
+             result.url = '';
             // БЛОКИРУЕМ дальнейшую обработку и показываем подтверждение
             if(confirm('Точно ждешь?')) { return false; };
             //const confirmed = await showBlockingConfirm(action);
