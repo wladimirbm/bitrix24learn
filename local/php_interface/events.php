@@ -1,6 +1,6 @@
 <?php
 //Подключение своих CSS и JS к Битрикс24
-
+/*
 
 \CJSCore::RegisterExt('otusCW', [
     'js' => '/local/js/otus/confirm_workday/main.js',
@@ -46,7 +46,7 @@ class CustomEvents
         $asset = \Bitrix\Main\Page\Asset::getInstance();
 
         $settings=[];
-
+*/
        // if (preg_match('/\/crm.*/', GetPagePath())) {
        //    $asset->addString('<script>BX.ready(function () { Dreamsite.crm(' . CUtil::PhpToJSObject($settings) . '); });</script>');
        // }
@@ -58,7 +58,7 @@ class CustomEvents
 
         //На всех страницах
         //$asset->addString('<script>BX.ready(function () { Dreamsite.all(); });</script>');
-    }
+/*    }
 
 
     public static function OnBeforePrologHandler()
@@ -68,3 +68,4 @@ class CustomEvents
     }
 
 }
+    */

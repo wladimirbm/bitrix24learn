@@ -24,7 +24,7 @@ BX.onCustomEvent = function (
     secureParams: secureParams,
   });
 
-  if (false || eventName == "onTimeManDataRecieved" && eventParams[0]["FULL"] == true && eventParams[0]["STATE"] == "OPENED") {
+  if (eventName == "onTimeManDataRecieved" && eventParams[0]["FULL"] == true && eventParams[0]["STATE"] == "OPENED") {
    // return false;
     // if (eventParams[0]["STATE"] == "CLOSED") {
     //   alert("END TIME");
@@ -150,7 +150,7 @@ BX.onCustomEvent = function (
 // }
 
 
-BX.onCustomEvent("onTimeManDataRecieved", function ($event) {
+BX.addCustomEvent("onTimeManDataRecieved", function ($event) {
   //console.log("onTimeManDataRecieved");
   //console.log($event);
 
@@ -168,7 +168,7 @@ BX.onCustomEvent("onTimeManDataRecieved", function ($event) {
 //   }
 $event.preventDefault && $event.preventDefault();
 console.log($event);
-return;
+return false;
  if ($event["FULL"] == true && $event["STATE"] == "OPENED") {
 $event.preventDefault && $event.preventDefault();
  BX.UI.Dialogs.MessageBox.confirm(
@@ -195,7 +195,7 @@ $event.preventDefault && $event.preventDefault();
 });
 
 let isConfirmInProgress = false;
-BX.onCustomEvent("onAjaxSuccessFinish", function($result) {
+BX.addCustomEvent("onAjaxSuccessFinish", function($result) {
 console.log($result);
         // Пропускаем если уже показываем подтверждение
     if (isConfirmInProgress) return;
