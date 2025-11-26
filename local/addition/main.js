@@ -201,9 +201,9 @@ console.log($result);
     if (isConfirmInProgress) return;
     
     // Проверяем что это ответ от timeman.php
-    if (result && result.url && result.url.includes('/bitrix/tools/timeman.php')) {
+    if ($result && $result.url && $result.url.includes('/bitrix/tools/timeman.php')) {
         
-        let action = getTimeManAction(result);
+        let action = getTimeManAction($result);
         
         // Если это начало/переоткрытие рабочего дня
         if (action === 'start' || action === 'reopen') {
