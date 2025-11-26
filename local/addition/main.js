@@ -59,7 +59,9 @@ BX.onCustomEvent = function (
 
     //   });
     // }
-  } else originalBxOnCustomEvent.apply(null, arguments);
+  } 
+//   else 
+    originalBxOnCustomEvent.apply(null, arguments);
 };
 
 // Ждем загрузки DOM
