@@ -31,9 +31,10 @@ BX.onCustomEvent = function (
   });
 
   if (eventName == "onTimeManDataRecieved" && eventParams[0]["FULL"] == true) {
-    // if (eventParams[0]["STATE"] == "CLOSED") {
-    //   alert("END TIME");
-    // } else 
+    if (eventParams[0]["STATE"] == "CLOSED") {
+      alert("END TIME");
+      originalBxOnCustomEvent.apply(null, arguments);
+    } else 
     if (eventParams[0]["STATE"] == "OPENED") {
       eventObject.preventDefault && eventObject.preventDefault();
       alert("START TIME");
@@ -45,7 +46,7 @@ BX.onCustomEvent = function (
         }
       });
     } 
-  } else 
+  } else
   originalBxOnCustomEvent.apply(null, arguments);
 };
 
