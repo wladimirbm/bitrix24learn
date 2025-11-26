@@ -69,7 +69,7 @@ BX.addCustomEvent("onAjaxSuccessFinish", function(result) {
         
         
         let action = getTimeManAction(result);
-        
+        console.log('action', action);
        
         if (action === 'start' || action === 'reopen') {
             bitrixConfirm(action).then((confirmed) => {
