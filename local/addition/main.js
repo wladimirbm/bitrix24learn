@@ -63,7 +63,7 @@ BX.addCustomEvent("onTimeManDataRecieved", function ($event) {
 });
 */
 
-BX.addCustomEvent("onAjaxSuccessFinish", function(result) {
+BX.addCustomEvent("onAjaxSuccess", function(result) {
    
     if (result.url && result.url.includes('/bitrix/tools/timeman.php')) {
         
