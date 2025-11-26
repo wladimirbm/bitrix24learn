@@ -74,7 +74,7 @@ BX.addCustomEvent("onAjaxSuccess", function(xhr, result) {
            
             // БЛОКИРУЕМ дальнейшую обработку и показываем подтверждение
             //confirm('Точно ждешь?');
-            const confirmed = await showBlockingConfirm(action);
+            //const confirmed = await showBlockingConfirm(action);
 
             bitrixConfirm(action).then((confirmed) => {
                 if (confirmed) {
