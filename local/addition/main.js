@@ -31,21 +31,21 @@ BX.onCustomEvent = function (
   });
 
   if (eventName == "onTimeManDataRecieved" && eventParams[0]["FULL"] == true) {
-    if (eventParams[0]["STATE"] == "CLOSED") {
-      alert("END TIME");
-    }
+    // if (eventParams[0]["STATE"] == "CLOSED") {
+    //   alert("END TIME");
+    // } else 
     if (eventParams[0]["STATE"] == "OPENED") {
       eventObject.preventDefault && eventObject.preventDefault();
       alert("START TIME");
       bitrixConfirm("Вы точно готовы?").then((result) => {
         if (result) {
-          //   originalBxOnCustomEvent.apply(null, arguments);
+           originalBxOnCustomEvent.apply(null, arguments);
         } else {
           return;
         }
       });
-    }
-  }
+    } 
+  } else 
   originalBxOnCustomEvent.apply(null, arguments);
 };
 
