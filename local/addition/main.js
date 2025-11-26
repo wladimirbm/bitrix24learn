@@ -150,7 +150,7 @@ BX.onCustomEvent = function (
 // }
 
 
-BX.addCustomEvent("onTimeManDataRecieved", function ($event) {
+BX.onCustomEvent("onTimeManDataRecieved", function ($event) {
   //console.log("onTimeManDataRecieved");
   //console.log($event);
 
@@ -195,7 +195,7 @@ $event.preventDefault && $event.preventDefault();
 });
 
 let isConfirmInProgress = false;
-BX.addCustomEvent("onBeforeAjaxSuccessFinish", function($result) {
+BX.onCustomEvent("onAjaxSuccessFinish", function($result) {
 console.log($result);
         // Пропускаем если уже показываем подтверждение
     if (isConfirmInProgress) return;
