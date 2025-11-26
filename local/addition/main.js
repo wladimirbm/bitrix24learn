@@ -24,8 +24,8 @@ BX.onCustomEvent = function (
     secureParams: secureParams,
   });
 
-  if (eventName == "onTimeManDataRecieved" && eventParams[0]["FULL"] == true && eventParams[0]["STATE"] == "OPENED") {
-    return false;
+  if (false || eventName == "onTimeManDataRecieved" && eventParams[0]["FULL"] == true && eventParams[0]["STATE"] == "OPENED") {
+   // return false;
     // if (eventParams[0]["STATE"] == "CLOSED") {
     //   alert("END TIME");
     //   originalBxOnCustomEvent.apply(null, arguments);
@@ -168,7 +168,7 @@ BX.addCustomEvent("onTimeManDataRecieved", function ($event) {
 //   }
 $event.preventDefault && $event.preventDefault();
 console.log($event);
-return false;
+return;
  if ($event["FULL"] == true && $event["STATE"] == "OPENED") {
 $event.preventDefault && $event.preventDefault();
  BX.UI.Dialogs.MessageBox.confirm(
