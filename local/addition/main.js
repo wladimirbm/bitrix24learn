@@ -45,6 +45,82 @@ BX.onCustomEvent = function (
     //   } else
   originalBxOnCustomEvent.apply(null, arguments);
 };
+
+// Ждем загрузки DOM
+BX.ready(function() {
+    // Перехватываем клик по кнопке Возобновить
+    document.addEventListener('click', function(event) {
+        const target = event.target;
+        
+        // Проверяем что это кнопка Возобновить рабочего дня
+        const resumeButton = target.closest('.tm-control-panel__action, .ui-btn');
+        
+        if (resumeButton && (
+            resumeButton.textContent.includes('Возобновить') || 
+            resumeButton.querySelector('.ui-icon-set.--o-refresh')
+        )) {
+            console.log('Найдена кнопка Возобновить - блокируем стандартное поведение');
+            
+            // БЛОКИРУЕМ стандартное поведение
+            event.preventDefault();
+            event.stopPropagation();
+            event.stopImmediatePropagation();
+            
+            // Показываем наше подтверждение
+            BX.UI.Dialogs.MessageBox.confirm(
+                'Возобновить рабочий день?',
+                function() {
+                    // При подтверждении - запускаем стандартную логику возобновления
+                    executeOriginalResumeHandler();
+                },
+                function() {
+                    // При отмене - ничего не делаем
+                    console.log('Возобновление рабочего дня отменено');
+                    BX.UI.Notification.Center.notify({
+                        content: 'Возобновление отменено',
+                        autoHideDelay: 3000
+                    });
+                },
+                'Возобновить',  // Текст кнопки OK
+                'Отмена'        // Текст кнопки Cancel
+            );
+            
+            return false;
+        }
+    }, true); // Используем capture phase чтобы перехватить первым
+});
+
+// Функция для выполнения стандартной логики возобновления
+function executeOriginalResumeHandler() {
+    console.log('Запускаем стандартную логику возобновления рабочего дня');
+    
+    // Отправляем AJAX запрос как делает оригинальная кнопка
+    BX.ajax({
+        url: '/bitrix/tools/timeman.php?action=reopen&site_id=s1&sessid=' + BX.bitrix_sessid(),
+        method: 'POST',
+        data: {
+            newActionName: 'reopen',
+            device: 'browser'
+        },
+        dataType: 'json',
+        onsuccess: function(result) {
+            console.log('Рабочий день возобновлен', result);
+            // Обновляем страницу или интерфейс
+            if (result && result.FULL) {
+                // Можно обновить только компонент таймменеджера
+                BX.reload();
+            }
+        },
+        onfailure: function(error) {
+            console.error('Ошибка возобновления рабочего дня', error);
+            BX.UI.Notification.Center.notify({
+                content: 'Ошибка возобновления',
+                autoHideDelay: 3000
+            });
+        }
+    });
+}
+
 /*
 BX.addCustomEvent("onTimeManDataRecieved", function ($event) {
   //console.log("onTimeManDataRecieved");
@@ -64,6 +140,8 @@ BX.addCustomEvent("onTimeManDataRecieved", function ($event) {
   }
 });
 */
+
+/*
 // Глобальный флаг для блокировки
 let isConfirmInProgress = false;
 
