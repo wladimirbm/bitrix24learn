@@ -63,33 +63,50 @@ BX.addCustomEvent("onTimeManDataRecieved", function ($event) {
 });
 */
 
-BX.addCustomEvent("onAjaxSuccess", function(result) {
-   
-    if (result.url && result.url.includes('/bitrix/tools/timeman.php')) {
-        
+BX.addCustomEvent("onAjaxSuccess", function(xhr, result) {
+    // Проверяем что это ответ от timeman.php
+    if (result && result.url && result.url.includes('/bitrix/tools/timeman.php')) {
         
         let action = getTimeManAction(result);
-        console.log('action', action);
-       
+        
+        // Если это начало/переоткрытие рабочего дня
         if (action === 'start' || action === 'reopen') {
-            result.cancel = true;
+            // БЛОКИРУЕМ дальнейшую обработку и показываем подтверждение
             bitrixConfirm(action).then((confirmed) => {
-                if (!confirmed) {
-                    console.log('Действие отменено:', action);
-                    // Можно показать уведомление
-                    // BX.UI.Notification.Center.notify({
-                    //     content: 'Действие отменено',
-                    //     autoHideDelay: 3000
-                    // });
+                if (confirmed) {
+                    // При подтверждении - разрешаем стандартную обработку
+                    console.log('Подтверждено, продолжаем стандартную логику');
+                    // Можно вызвать обработчики вручную если нужно
+                    processTimeManResult(result);
                 } else {
-                    console.log('Действие подтверждено:', action);
+                    // При отмене - блокируем обработку результата
+                    console.log('Действие отменено:', action);
+                    BX.UI.Notification.Center.notify({
+                        content: 'Действие отменено',
+                        autoHideDelay: 3000
+                    });
+                    // Возвращаем false чтобы прервать цепочку обработки
+                    return false;
                 }
             });
             
+            // ВОЗВРАЩАЕМ FALSE чтобы заблокировать стандартную обработку
             return false;
         }
     }
 });
+
+// Функция для обработки результата при подтверждении
+function processTimeManResult(result) {
+    // Здесь можно вручную вызвать стандартные обработчики
+    // или просто позволить Битрикс обработать результат
+    
+    // Например, если нужно обновить интерфейс:
+    if (result.FULL) {
+        // Обновляем данные таймменеджера
+        BX.onCustomEvent('onTimeManUpdate', [result]);
+    }
+}
 
 function getTimeManAction(result) {
     if (result.url.includes('action=start')) return 'start';
