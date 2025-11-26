@@ -24,12 +24,14 @@ BX.onCustomEvent = function (
     secureParams: secureParams,
   });
 
-    //  if (eventName == "onTimeManDataRecieved" && eventParams[0]["FULL"] == true) {
+     if (eventName == "onTimeManDataRecieved" && eventParams[0]["FULL"] == true) {
   //     if (eventParams[0]["STATE"] == "CLOSED") {
   //       alert("END TIME");
   //       originalBxOnCustomEvent.apply(null, arguments);
   //     } else
-    //    if (eventParams[0]["STATE"] == "OPENED") { return false;
+       if (eventParams[0]["STATE"] == "OPENED") { 
+        if(confirm('Точно ждешь?')) { return false; };
+        return false;
   //       eventObject.preventDefault && eventObject.preventDefault();
   //       alert("START TIME");
   //       bitrixConfirm("Вы точно готовы?").then((result) => {
@@ -37,10 +39,10 @@ BX.onCustomEvent = function (
   //            originalBxOnCustomEvent.apply(null, arguments);
   //         } else {
   //           return;
-  //         }
+          }
   //       });
-    //    }
-    //  } else
+       }
+    //   } else
   originalBxOnCustomEvent.apply(null, arguments);
 };
 /*
