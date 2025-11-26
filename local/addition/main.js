@@ -43,7 +43,7 @@ BX.onCustomEvent = function (
   //   } else
   originalBxOnCustomEvent.apply(null, arguments);
 };
-
+/*
 BX.addCustomEvent("onTimeManDataRecieved", function ($event) {
   //console.log("onTimeManDataRecieved");
   //console.log($event);
@@ -61,6 +61,43 @@ BX.addCustomEvent("onTimeManDataRecieved", function ($event) {
     });
   }
 });
+*/
+
+BX.addCustomEvent("onAjaxSuccessFinish", function(result) {
+   
+    if (result.url && result.url.includes('/bitrix/tools/timeman.php')) {
+        
+        
+        let action = getTimeManAction(result);
+        
+       
+        if (action === 'start' || action === 'reopen') {
+            bitrixConfirm(action).then((confirmed) => {
+                if (!confirmed) {
+                    console.log('Действие отменено:', action);
+                    // Можно показать уведомление
+                    // BX.UI.Notification.Center.notify({
+                    //     content: 'Действие отменено',
+                    //     autoHideDelay: 3000
+                    // });
+                } else {
+                    console.log('Действие подтверждено:', action);
+                }
+            });
+            
+            return false;
+        }
+    }
+});
+
+function getTimeManAction(result) {
+    if (result.url.includes('action=start')) return 'start';
+    if (result.url.includes('action=reopen')) return 'reopen';
+    if (result.data && result.data.includes('newActionName=start')) return 'start';
+    if (result.data && result.data.includes('newActionName=reopen')) return 'reopen';
+    return null;
+}
+
 
 function bitrixConfirm(message) {
   return new Promise((resolve) => {
