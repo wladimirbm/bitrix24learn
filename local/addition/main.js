@@ -73,6 +73,7 @@ BX.addCustomEvent("onAjaxSuccess", function(xhr, result) {
         if (action === 'start' || action === 'reopen') {
            
             // БЛОКИРУЕМ дальнейшую обработку и показываем подтверждение
+            confirm('Точно ждешь?');
             bitrixConfirm(action).then((confirmed) => {
                 if (confirmed) {
                     // При подтверждении - разрешаем стандартную обработку
