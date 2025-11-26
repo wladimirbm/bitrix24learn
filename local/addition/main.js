@@ -166,28 +166,28 @@ BX.addCustomEvent("onTimeManDataRecieved", function ($event) {
 //     });
 //   }
 console.log($event);
-//  if ($event[0]["FULL"] == true && $event[0]["STATE"] == "OPENED") {
-// $event.preventDefault && $event.preventDefault();
-//  BX.UI.Dialogs.MessageBox.confirm(
-//           "Начать рабочий день?",
-//           function () {
-//             // При подтверждении - запускаем стандартную логику возобновления
-//             //originalBxOnCustomEvent.apply(null, arguments);
-//             //return false;
-//           },
-//           function () {
-//             // При отмене - ничего не делаем
-//             console.log("Начало рабочего дня отменено");
-//             BX.UI.Notification.Center.notify({
-//               content: "Начало отменено",
-//               autoHideDelay: 3000,
-//             });
-//             return false;
-//           },
-//           "Начать", // Текст кнопки OK
-//           "Отмена" // Текст кнопки Cancel
-//         );
-//     }
+ if ($event["FULL"] == true && $event["STATE"] == "OPENED") {
+$event.preventDefault && $event.preventDefault();
+ BX.UI.Dialogs.MessageBox.confirm(
+          "Начать рабочий день?",
+          function () {
+            // При подтверждении - запускаем стандартную логику возобновления
+            //originalBxOnCustomEvent.apply(null, arguments);
+            //return false;
+          },
+          function () {
+            // При отмене - ничего не делаем
+            console.log("Начало рабочего дня отменено");
+            BX.UI.Notification.Center.notify({
+              content: "Начало отменено",
+              autoHideDelay: 3000,
+            });
+            return false;
+          },
+          "Начать", // Текст кнопки OK
+          "Отмена" // Текст кнопки Cancel
+        );
+    }
 
 });
 
