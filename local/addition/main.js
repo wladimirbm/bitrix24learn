@@ -194,6 +194,47 @@ $event.preventDefault && $event.preventDefault();
 
 });
 
+BX.addCustomEvent("onAjaxSuccessFinish", function(xhr, result) {
+
+        // Пропускаем если уже показываем подтверждение
+    if (isConfirmInProgress) return;
+    
+    // Проверяем что это ответ от timeman.php
+    if (result && result.url && result.url.includes('/bitrix/tools/timeman.php')) {
+        
+        let action = getTimeManAction(result);
+        
+        // Если это начало/переоткрытие рабочего дня
+        if (action === 'start' || action === 'reopen') {
+            // Устанавливаем флаг блокировки
+            isConfirmInProgress = true;
+            
+            // БЛОКИРУЕМ дальнейшие обработчики этого события
+            // Показываем MessageBox который остановит выполнение
+            showBlockingMessageBox(action).then((confirmed) => {
+                if (!confirmed) {
+                    // При отмене - НЕ выполняем стандартную логику
+                    console.log('Действие отменено:', action);
+                    BX.UI.Notification.Center.notify({
+                        content: 'Действие отменено',
+                        autoHideDelay: 3000
+                    });
+                } else {
+                    // При подтверждении - ВРУЧНУЮ запускаем стандартную логику
+                    console.log('Действие подтверждено:', action);
+                    executeStandardTimeManLogic(result);
+                }
+                
+                isConfirmInProgress = false;
+            });
+            
+            // ВОЗВРАЩАЕМ FALSE чтобы заблокировать другие обработчики
+            return false;
+        }
+    }
+
+});
+
 
 /*
 // Глобальный флаг для блокировки
@@ -237,6 +278,7 @@ BX.addCustomEvent("onAjaxSuccess", function(xhr, result) {
         }
     }
 });
+*/ 
 
 // Функция для выполнения стандартной логики при подтверждении
 function executeStandardTimeManLogic(result) {
@@ -284,7 +326,7 @@ function getTimeManAction(result) {
     if (result.data && result.data.includes('newActionName=reopen')) return 'reopen';
     return null;
 }
-*/
+
 
 function bitrixConfirm(message) {
   return new Promise((resolve) => {
