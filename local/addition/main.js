@@ -24,102 +24,125 @@ BX.onCustomEvent = function (
     secureParams: secureParams,
   });
 
-    //  if (eventName == "onTimeManDataRecieved" && eventParams[0]["FULL"] == true) {
-  //     if (eventParams[0]["STATE"] == "CLOSED") {
-  //       alert("END TIME");
-  //       originalBxOnCustomEvent.apply(null, arguments);
-  //     } else
-    //    if (eventParams[0]["STATE"] == "OPENED") { 
-        //if(confirm('Точно ждешь?')) { return false; };
-        // return false;
-  //       eventObject.preventDefault && eventObject.preventDefault();
-  //       alert("START TIME");
-  //       bitrixConfirm("Вы точно готовы?").then((result) => {
-  //         if (result) {
-  //            originalBxOnCustomEvent.apply(null, arguments);
-  //         } else {
-  //           return;
-        //   }
-  //       });
-    //    }
-    //   } else
-  originalBxOnCustomEvent.apply(null, arguments);
+  if (eventName == "onTimeManDataRecieved" && eventParams[0]["FULL"] == true && eventParams[0]["STATE"] == "OPENED") {
+    // if (eventParams[0]["STATE"] == "CLOSED") {
+    //   alert("END TIME");
+    //   originalBxOnCustomEvent.apply(null, arguments);
+    // } else if (eventParams[0]["STATE"] == "OPENED") {
+    //   eventObject.preventDefault && eventObject.preventDefault();
+    //   alert("START TIME");
+    //   bitrixConfirm("Вы точно готовы?").then((result) => {
+    //     if (result) {
+    //       originalBxOnCustomEvent.apply(null, arguments);
+    //     } else {
+    //       return false;
+    //     }
+         BX.UI.Dialogs.MessageBox.confirm(
+          "Начать рабочий день?",
+          function () {
+            // При подтверждении - запускаем стандартную логику возобновления
+            originalBxOnCustomEvent.apply(null, arguments);
+          },
+          function () {
+            // При отмене - ничего не делаем
+            console.log("Начало рабочего дня отменено");
+            BX.UI.Notification.Center.notify({
+              content: "Начало отменено",
+              autoHideDelay: 3000,
+            });
+          },
+          "Начать", // Текст кнопки OK
+          "Отмена" // Текст кнопки Cancel
+        );
+
+    //   });
+    // }
+  } else originalBxOnCustomEvent.apply(null, arguments);
 };
 
 // Ждем загрузки DOM
-BX.ready(function() {
-    // Перехватываем клик по кнопке Возобновить
-    document.addEventListener('click', function(event) {
-        const target = event.target;
-        
-        // Проверяем что это кнопка Возобновить рабочего дня
-        const resumeButton = target.closest('.tm-control-panel__action, .ui-btn');
-        
-        if (resumeButton && (
-            resumeButton.textContent.includes('Возобновить') || 
-            resumeButton.querySelector('.ui-icon-set.--o-refresh')
-        )) {
-            console.log('Найдена кнопка Возобновить - блокируем стандартное поведение');
-            
-            // БЛОКИРУЕМ стандартное поведение
-            event.preventDefault();
-            event.stopPropagation();
-            event.stopImmediatePropagation();
-            
-            // Показываем наше подтверждение
-            BX.UI.Dialogs.MessageBox.confirm(
-                'Возобновить рабочий день?',
-                function() {
-                    // При подтверждении - запускаем стандартную логику возобновления
-                    executeOriginalResumeHandler();
-                },
-                function() {
-                    // При отмене - ничего не делаем
-                    console.log('Возобновление рабочего дня отменено');
-                    BX.UI.Notification.Center.notify({
-                        content: 'Возобновление отменено',
-                        autoHideDelay: 3000
-                    });
-                },
-                'Возобновить',  // Текст кнопки OK
-                'Отмена'        // Текст кнопки Cancel
-            );
-            
-            return false;
-        }
-    }, true); // Используем capture phase чтобы перехватить первым
-});
+// BX.ready(function () {
+//   // Перехватываем клик по кнопке Возобновить
+//   document.addEventListener(
+//     "click",
+//     function (event) {
+//       const target = event.target;
+
+//       // Проверяем что это кнопка Возобновить рабочего дня
+//       const resumeButton = target.closest(".tm-control-panel__action, .ui-btn");
+
+//       if (
+//         resumeButton &&
+//         (resumeButton.textContent.includes("Возобновить") ||
+//           resumeButton.querySelector(".ui-icon-set.--o-refresh"))
+//       ) {
+//         console.log(
+//           "Найдена кнопка Возобновить - блокируем стандартное поведение"
+//         );
+
+//         // БЛОКИРУЕМ стандартное поведение
+//         event.preventDefault();
+//         event.stopPropagation();
+//         event.stopImmediatePropagation();
+
+//         // Показываем наше подтверждение
+//         BX.UI.Dialogs.MessageBox.confirm(
+//           "Возобновить рабочий день?",
+//           function () {
+//             // При подтверждении - запускаем стандартную логику возобновления
+//             executeOriginalResumeHandler();
+//           },
+//           function () {
+//             // При отмене - ничего не делаем
+//             console.log("Возобновление рабочего дня отменено");
+//             BX.UI.Notification.Center.notify({
+//               content: "Возобновление отменено",
+//               autoHideDelay: 3000,
+//             });
+//           },
+//           "Возобновить", // Текст кнопки OK
+//           "Отмена" // Текст кнопки Cancel
+//         );
+
+//         return false;
+//       }
+//     },
+//     true
+//   ); // Используем capture phase чтобы перехватить первым
+// });
 
 // Функция для выполнения стандартной логики возобновления
-function executeOriginalResumeHandler() {
-    console.log('Запускаем стандартную логику возобновления рабочего дня');
-    
-    // Отправляем AJAX запрос как делает оригинальная кнопка
-    BX.ajax({
-        url: '/bitrix/tools/timeman.php?action=reopen&site_id=s1&sessid=' + BX.bitrix_sessid(),
-        method: 'POST',
-        data: {
-            newActionName: 'reopen',
-            device: 'browser'
-        },
-        dataType: 'json',
-        onsuccess: function(result) {
-            console.log('Рабочий день возобновлен', result);
-            // Обновляем страницу или интерфейс
-            if (result && result.FULL) {
-                // Можно обновить только компонент таймменеджера
-                //BX.reload();
-            }
-        },
-        onfailure: function(error) {
-            console.error('Ошибка возобновления рабочего дня', error);
-            BX.UI.Notification.Center.notify({
-                content: 'Ошибка возобновления',
-                autoHideDelay: 3000
-            });
-        }
-    });
-}
+// function executeOriginalResumeHandler() {
+//   console.log("Запускаем стандартную логику возобновления рабочего дня");
+
+//   // Отправляем AJAX запрос как делает оригинальная кнопка
+//   BX.ajax({
+//     url:
+//       "/bitrix/tools/timeman.php?action=reopen&site_id=s1&sessid=" +
+//       BX.bitrix_sessid(),
+//     method: "POST",
+//     data: {
+//       newActionName: "reopen",
+//       device: "browser",
+//     },
+//     dataType: "json",
+//     onsuccess: function (result) {
+//       console.log("Рабочий день возобновлен", result);
+//       // Обновляем страницу или интерфейс
+//       if (result && result.FULL) {
+//         // Можно обновить только компонент таймменеджера
+//         //BX.reload();
+//       }
+//     },
+//     onfailure: function (error) {
+//       console.error("Ошибка возобновления рабочего дня", error);
+//       BX.UI.Notification.Center.notify({
+//         content: "Ошибка возобновления",
+//         autoHideDelay: 3000,
+//       });
+//     },
+//   });
+// }
 
 /*
 BX.addCustomEvent("onTimeManDataRecieved", function ($event) {
@@ -230,8 +253,8 @@ function getTimeManAction(result) {
     if (result.data && result.data.includes('newActionName=reopen')) return 'reopen';
     return null;
 }
+*/
 
-/*
 function bitrixConfirm(message) {
   return new Promise((resolve) => {
     var popup = new BX.PopupWindow("bitrix-confirm", null, {
@@ -286,7 +309,7 @@ function bitrixConfirm(message) {
     popup.show();
   });
 }
-*/
+
 // Dreamsite.all = function () {
 //   BX.addCustomEvent("SidePanel.Slider:onLoad", function () {
 //     // $.get("/local/tools/get_offices.php", function (data) {
