@@ -103,7 +103,7 @@ BX.addCustomEvent("onAjaxSuccessFinish", function(xhr, result) {
             }
             });
             */
-BX.addCustomEvent("onAjaxSuccessFinish", function(xhr, result) { 
+BX.addCustomEvent("onAjaxSuccessFinish", function(xhr, config) { 
     const originalAjax = BX.ajax;
 
 // Переопределяем BX.ajax для перехвата запросов
