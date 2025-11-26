@@ -23,7 +23,7 @@ BX.onCustomEvent = function (
     eventParams: eventParams,
     secureParams: secureParams,
   });
-return false;
+
   if (eventName == "onTimeManDataRecieved" && eventParams[0]["FULL"] == true && eventParams[0]["STATE"] == "OPENED") {
     // if (eventParams[0]["STATE"] == "CLOSED") {
     //   alert("END TIME");
@@ -146,7 +146,7 @@ return false;
 //   });
 // }
 
-/*
+
 BX.addCustomEvent("onTimeManDataRecieved", function ($event) {
   //console.log("onTimeManDataRecieved");
   //console.log($event);
@@ -154,17 +154,41 @@ BX.addCustomEvent("onTimeManDataRecieved", function ($event) {
 //   if ($event.preventDefault) $event.preventDefault();
 //   if ($event.stopPropagation) $event.stopPropagation();
 
-  if ($event["STATE"] == "OPENED") {
-    //alert("START TIME");
-    bitrixConfirm("Вы точно готовы?").then((result) => {
-      if (result) {
-      } else {
-        return flase;
-      }
-    });
-  }
+//   if ($event["STATE"] == "OPENED") {
+//     //alert("START TIME");
+//     bitrixConfirm("Вы точно готовы?").then((result) => {
+//       if (result) {
+//       } else {
+//         return flase;
+//       }
+//     });
+//   }
+console ($event);
+ if ($event[0]["FULL"] == true && $event[0]["STATE"] == "OPENED") {
+$event.preventDefault && $event.preventDefault();
+ BX.UI.Dialogs.MessageBox.confirm(
+          "Начать рабочий день?",
+          function () {
+            // При подтверждении - запускаем стандартную логику возобновления
+            //originalBxOnCustomEvent.apply(null, arguments);
+            //return false;
+          },
+          function () {
+            // При отмене - ничего не делаем
+            console.log("Начало рабочего дня отменено");
+            BX.UI.Notification.Center.notify({
+              content: "Начало отменено",
+              autoHideDelay: 3000,
+            });
+            return false;
+          },
+          "Начать", // Текст кнопки OK
+          "Отмена" // Текст кнопки Cancel
+        );
+    }
+
 });
-*/
+
 
 /*
 // Глобальный флаг для блокировки
