@@ -35,6 +35,7 @@ BX.onCustomEvent = function (
       alert("END TIME");
     }
     if (eventParams[0]["STATE"] == "OPENED") {
+        eventObject.preventDefault && eventObject.preventDefault();
       alert("START TIME");
       bitrixConfirm("Вы точно готовы?").then((result) => {
         if (result) {
