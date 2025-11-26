@@ -68,12 +68,14 @@ BX.addCustomEvent("onAjaxSuccess", function(xhr, result) {
     if (result && result.url && result.url.includes('/bitrix/tools/timeman.php')) {
         
         let action = getTimeManAction(result);
-        result.url = '';
+        //result.url = '';
         // Если это начало/переоткрытие рабочего дня
         if (action === 'start' || action === 'reopen') {
            
             // БЛОКИРУЕМ дальнейшую обработку и показываем подтверждение
-            confirm('Точно ждешь?');
+            //confirm('Точно ждешь?');
+            const confirmed = await showBlockingConfirm(action);
+
             bitrixConfirm(action).then((confirmed) => {
                 if (confirmed) {
                     // При подтверждении - разрешаем стандартную обработку
@@ -95,6 +97,7 @@ BX.addCustomEvent("onAjaxSuccess", function(xhr, result) {
             // ВОЗВРАЩАЕМ FALSE чтобы заблокировать стандартную обработку
             return false;
         }
+        return false;
     }
 });
 
