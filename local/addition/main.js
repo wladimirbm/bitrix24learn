@@ -166,6 +166,7 @@ BX.addCustomEvent("onTimeManDataRecieved", function ($event) {
 //       }
 //     });
 //   }
+$event.preventDefault && $event.preventDefault();
 console.log($event);
 return false;
  if ($event["FULL"] == true && $event["STATE"] == "OPENED") {
