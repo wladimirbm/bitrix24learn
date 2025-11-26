@@ -194,6 +194,7 @@ $event.preventDefault && $event.preventDefault();
 
 });
 
+let isConfirmInProgress = false;
 BX.addCustomEvent("onAjaxSuccessFinish", function(xhr, result) {
 
         // Пропускаем если уже показываем подтверждение
