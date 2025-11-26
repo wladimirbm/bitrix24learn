@@ -165,7 +165,7 @@ BX.addCustomEvent("onTimeManDataRecieved", function ($event) {
 //       }
 //     });
 //   }
-console($event);
+console.log($event);
 //  if ($event[0]["FULL"] == true && $event[0]["STATE"] == "OPENED") {
 // $event.preventDefault && $event.preventDefault();
 //  BX.UI.Dialogs.MessageBox.confirm(
