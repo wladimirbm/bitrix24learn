@@ -195,8 +195,8 @@ $event.preventDefault && $event.preventDefault();
 });
 
 let isConfirmInProgress = false;
-BX.addCustomEvent("onAjaxSuccessFinish", function(xhr, result) {
-console.log(result);
+BX.addCustomEvent("onAjaxSuccessFinish", function($result) {
+console.log($result);
         // Пропускаем если уже показываем подтверждение
     if (isConfirmInProgress) return;
     
