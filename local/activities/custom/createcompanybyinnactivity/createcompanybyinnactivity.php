@@ -90,6 +90,7 @@ class CBPCreateCompanyByInnactivity extends BaseActivity
             if ($arComp = $rsCompany->Fetch()) {
                 $companyID = $arComp['ID'];
                 $this->preparedProperties['Text'] = 'Найдена компания ID: ' . $companyID;
+                $companyID = $company->Update($companyID, $arNewCompany);
                 $this->log($this->preparedProperties['Text']);
             } else {
                 $companyID = $company->Add($arNewCompany);
