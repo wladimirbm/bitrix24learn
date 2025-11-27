@@ -112,7 +112,7 @@ class CBPCreateCompanyByInnactivity extends BaseActivity
             $result = $iblockElement->Update($documentId, $fields);
 
             $properties = [
-                'CUSTOMER' => $companyID,
+                'CUSTOMER' => [$companyID],
             ];
 
             $result = CIBlockElement::SetPropertyValuesEx(
