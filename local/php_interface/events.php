@@ -8,12 +8,12 @@ CJSCore::RegisterExt('otusCW', [
 ]);
 CJSCore::Init(['otusCW']);
 
-use Bitrix\Main\EventManager;
-EventManager::getInstance()->addEventHandler(
-    'main',
-    'OnProlog',
-    [CustomEvents::class, 'OnProlog']
-);
+// use Bitrix\Main\EventManager;
+// EventManager::getInstance()->addEventHandler(
+//     'main',
+//     'OnProlog',
+//     [CustomEvents::class, 'OnProlog']
+// );
 
 // EventManager::getInstance()->AddEventHandler(
 //     "main",
