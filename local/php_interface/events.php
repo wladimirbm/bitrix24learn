@@ -38,17 +38,17 @@ class CustomEvents
     public static function OnProlog()
     {
         global $USER;
-        $arJsConfig = array(
-            'custom_start' => array(
-                'js' => '/local/addition/main.js',
-                'css' => '/local/addition/main.css',
-                'rel' => array()
-            )
-        );
-        foreach ($arJsConfig as $ext => $arExt) {
-            \CJSCore::RegisterExt($ext, $arExt);
-        }
-        CUtil::InitJSCore(array('custom_start'));
+        // $arJsConfig = array(
+        //     'custom_start' => array(
+        //         'js' => '/local/addition/main.js',
+        //         'css' => '/local/addition/main.css',
+        //         'rel' => array()
+        //     )
+        // );
+        // foreach ($arJsConfig as $ext => $arExt) {
+        //     \CJSCore::RegisterExt($ext, $arExt);
+        // }
+        // CUtil::InitJSCore(array('custom_start'));
 
         //CJSCore::Init(array('jquery', 'ajax', 'popup'));
 
