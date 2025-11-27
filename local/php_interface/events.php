@@ -1,12 +1,13 @@
 <?php
 //Подключение своих CSS и JS к Битрикс24
 
+\Bitrix\Main\UI\Extension::load('otus_confirm_workday');
 
-CJSCore::RegisterExt('otusCW', [
-    'js' => '/local/js/otus/confirm_workday/',
-    'rel' => ['ui.popup', 'main.core']
-]);
-CJSCore::Init(['otusCW']);
+// CJSCore::RegisterExt('otusCW', [
+//     'js' => '/local/js/otus/confirm_workday/',
+//     'rel' => ['ui.popup', 'main.core']
+// ]);
+// CJSCore::Init(['otusCW']);
 
 // use Bitrix\Main\EventManager;
 // EventManager::getInstance()->addEventHandler(
