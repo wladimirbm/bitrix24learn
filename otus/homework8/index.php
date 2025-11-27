@@ -6,10 +6,10 @@
 
 <h2>Учимся подключать свои скрипты, взаимодействовать с компонентами из фронтенда</h2>
 
-<p><a href="/crm/">CRM</a></p>
+<p><a href="#">Тут</a></p>
 
 <h2>Файлы</h2>
-<p><a href="/bitrix/admin/perfmon_tables.php?lang=ru#mod_">Таблицы</a></p>
+<p><a href="/bitrix/admin/fileman_admin.php?lang=ru&path=%2Flocal%2Fjs%2Fotus%2Fconfirm_workday&site=s1">Файлы модуля</a></p>
 
 
 

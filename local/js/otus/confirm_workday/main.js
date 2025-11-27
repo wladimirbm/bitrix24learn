@@ -18,7 +18,6 @@
         }
 
         replaceButtonsWithCustom(dayData) {
-            // Ищем все кнопки управления рабочим днём
             const buttons = document.querySelectorAll('.tm-control-panel__action');
             
             buttons.forEach(originalButton => {
@@ -36,7 +35,6 @@
         }
 
         setupCustomButton(customButton, originalButton, dayData, buttonText) {
-            // Сохраняем оригинальные стили
             const originalHTML = originalButton.innerHTML;
 
             customButton.onclick = (e) => {
@@ -46,7 +44,6 @@
                 this.showBitrixPopup(originalButton, dayData, buttonText);
             };
 
-            // Восстанавливаем внешний вид
             customButton.innerHTML = originalHTML;
             customButton.className = originalButton.className;
         }
@@ -87,7 +84,6 @@
         }
 
         executeOriginalAction(originalButton) {
-            // Эмулируем клик по оригинальной кнопке
             const event = new MouseEvent('click', {
                 view: window,
                 bubbles: true,
