@@ -109,10 +109,10 @@ class CBPCreateCompanyByInnactivity extends BaseActivity
             ];
 
             $resultFields = $this->prepareFieldsValues($documentId, $documentType, $fields);
-			$documentService->UpdateDocument($documentId, $resultFields);
+            $documentService->UpdateDocument($documentId, $resultFields);
 
-          
-        /*
+
+            /*
             $iblockElement = new CIBlockElement();
 
             $result = $iblockElement->Update($documentId, $fields);
@@ -126,8 +126,9 @@ class CBPCreateCompanyByInnactivity extends BaseActivity
                 false,
                 $properties
             );
+        */
         }
-*/
+
         // в рабочем активити необходимо будет создать отдельный метод который будет получать результат ответа сервиса Dadata, 
         // обходить циклом результат и сохранять в массив все полученные организации
 
@@ -183,58 +184,59 @@ class CBPCreateCompanyByInnactivity extends BaseActivity
         return $map;
     }
 
-    
-	protected function prepareFieldsValues(
-		array $documentId,
-		array $documentType,
-		array $fields,
-		$mergeValues = null
-	): array
-	{
-		if (!is_bool($mergeValues))
-		{
-			$mergeValues = ($this->MergeMultipleFields === 'Y');
-		}
+    protected function resolveFieldKey(string $key, array $documentFields, array $documentFieldsAliasesMap): string
+    {
+        if (!isset($documentFields[$key]) && isset($documentFieldsAliasesMap[$key])) {
+            $key = $documentFieldsAliasesMap[$key];
+        }
 
-		$resultFields = [];
+        return $key;
+    }
 
-		$documentService = $this->workflow->GetService('DocumentService');
-		$documentFields = $documentService->GetDocumentFields($documentType);
-		$documentFieldsAliasesMap = CBPDocument::getDocumentFieldsAliasesMap($documentFields);
-		$document = $documentService->getDocument($documentId, $documentType, array_keys($fields));
+    protected function prepareFieldsValues(
+        array $documentId,
+        array $documentType,
+        array $fields,
+        $mergeValues = null
+    ): array {
+        if (!is_bool($mergeValues)) {
+            $mergeValues = ($this->MergeMultipleFields === 'Y');
+        }
 
-		foreach ($fields as $key => $value)
-		{
-			$key = $this->resolveFieldKey($key, $documentFields, $documentFieldsAliasesMap);
+        $resultFields = [];
 
-			$property = $documentFields[$key] ?? null;
-			if ($property && ($value || $mergeValues))
-			{
-				$fieldTypeObject = $documentService->getFieldTypeObject($documentType, $property);
-				if ($fieldTypeObject)
-				{
-					$fieldTypeObject->setDocumentId($documentId);
+        $documentService = $this->workflow->GetService('DocumentService');
+        $documentFields = $documentService->GetDocumentFields($documentType);
+        $documentFieldsAliasesMap = CBPDocument::getDocumentFieldsAliasesMap($documentFields);
+        $document = $documentService->getDocument($documentId, $documentType, array_keys($fields));
 
-					if ($mergeValues && $fieldTypeObject->isMultiple())
-					{
-						$baseValue = $document[$key] ?? [];
-						$value = $fieldTypeObject->mergeValue($baseValue, $value);
-					}
+        foreach ($fields as $key => $value) {
+            $key = $this->resolveFieldKey($key, $documentFields, $documentFieldsAliasesMap);
 
-					if ($value)
-					{
-						$fieldTypeObject->setValue($value);
-						$value = $fieldTypeObject->externalizeValue(
-							FieldType::VALUE_CONTEXT_DOCUMENT,
-							$fieldTypeObject->getValue()
-						);
-					}
-				}
-			}
+            $property = $documentFields[$key] ?? null;
+            if ($property && ($value || $mergeValues)) {
+                $fieldTypeObject = $documentService->getFieldTypeObject($documentType, $property);
+                if ($fieldTypeObject) {
+                    $fieldTypeObject->setDocumentId($documentId);
 
-			$resultFields[$key] = $value ?? '';
-		}
+                    if ($mergeValues && $fieldTypeObject->isMultiple()) {
+                        $baseValue = $document[$key] ?? [];
+                        $value = $fieldTypeObject->mergeValue($baseValue, $value);
+                    }
 
-		return $resultFields;
-	}
+                    if ($value) {
+                        $fieldTypeObject->setValue($value);
+                        $value = $fieldTypeObject->externalizeValue(
+                            FieldType::VALUE_CONTEXT_DOCUMENT,
+                            $fieldTypeObject->getValue()
+                        );
+                    }
+                }
+            }
+
+            $resultFields[$key] = $value ?? '';
+        }
+
+        return $resultFields;
+    }
 }
