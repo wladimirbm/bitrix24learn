@@ -57,16 +57,19 @@ class CBPCreateCompanyByInnactivity extends BaseActivity
 
         \Bitrix\Main\Loader::includeModule('crm');
 
+        $response['suggestions'][0]['value'] = "Первая";
+        $response['suggestions'][0]['address']['value'] = "Москва";
+
+
+        /*
         $dadata = new Dadata($token, $secret);
         $dadata->init();
 
         $fields = array("query" => $this->InnField, "count" => 5);
         $response = $dadata->suggest("party", $fields);
-
+*/
         $companyName = 'Компания не найдена!';
 
-        $response['suggestions'][0]['value'] = "Первая";
-        $response['suggestions'][0]['address']['value'] = "Москва";
 
         if (!empty($response['suggestions'])) { // если копания найдена
             // по ИНН возвращается массив в котором может бытьнесколько элементов (компаний)
