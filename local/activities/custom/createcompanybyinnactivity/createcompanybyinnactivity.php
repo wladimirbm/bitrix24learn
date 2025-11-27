@@ -105,13 +105,19 @@ class CBPCreateCompanyByInnactivity extends BaseActivity
 
             $fields = [
                 'NAME' => $response['suggestions'][0]['value'],
-                'CUSTOMER' => [$companyID],
+                'CUSTOMER' => ["COMPANY_" . $companyID],
             ];
 
             $resultFields = $this->prepareFieldsValues($documentId, $documentType, $fields);
             $documentService->UpdateDocument($documentId, $resultFields);
 
 
+            $documentFields =  $documentService->GetDocumentFields($documentType);
+            //$arDocumentFields = $documentService->GetDocument($documentId);   
+
+            foreach ($documentFields as $key => $value) {
+                $this->log($key . ' => ' . $value);
+            }
             /*
             $iblockElement = new CIBlockElement();
 
