@@ -18,37 +18,32 @@
         }
 
         replaceButtonsWithCustom(dayData) {
-            const selectors = [
-                '.tm-control-panel__action:has(.ui-btn-text-inner:contains("Начать рабочий день"))',
-                '.tm-control-panel__action:has(.ui-btn-text-inner:contains("Возобновить"))'
-            ];
-
-            selectors.forEach(selector => {
-                const buttons = document.querySelectorAll(selector);
-                buttons.forEach(originalButton => {
-                    if (this.originalButtons.has(originalButton)) return;
-
+            // Ищем все кнопки управления рабочим днём
+            const buttons = document.querySelectorAll('.tm-control-panel__action');
+            
+            buttons.forEach(originalButton => {
+                if (this.originalButtons.has(originalButton)) return;
+                
+                const buttonText = originalButton.querySelector('.ui-btn-text-inner')?.textContent;
+                if (buttonText === 'Начать рабочий день' || buttonText === 'Возобновить') {
                     const clonedButton = originalButton.cloneNode(true);
-                    this.setupCustomButton(clonedButton, originalButton, dayData);
+                    this.setupCustomButton(clonedButton, originalButton, dayData, buttonText);
                     
                     originalButton.parentNode.replaceChild(clonedButton, originalButton);
                     this.originalButtons.set(clonedButton, originalButton);
-                });
+                }
             });
         }
 
-        setupCustomButton(customButton, originalButton, dayData) {
-            customButton.style.position = 'relative';
-            
-            // Сохраняем оригинальные стили и обработчики
-            const originalOnClick = originalButton.onclick;
+        setupCustomButton(customButton, originalButton, dayData, buttonText) {
+            // Сохраняем оригинальные стили
             const originalHTML = originalButton.innerHTML;
 
             customButton.onclick = (e) => {
                 e.preventDefault();
                 e.stopPropagation();
                 
-                this.showBitrixPopup(originalButton, dayData);
+                this.showBitrixPopup(originalButton, dayData, buttonText);
             };
 
             // Восстанавливаем внешний вид
@@ -56,9 +51,7 @@
             customButton.className = originalButton.className;
         }
 
-        showBitrixPopup(originalButton, dayData) {
-            const actionType = originalButton.querySelector('.ui-btn-text-inner').textContent;
-            
+        showBitrixPopup(originalButton, dayData, actionType) {
             const popup = new BX.PopupWindow('workday-confirm', null, {
                 content: `<div style="padding: 20px; text-align: center;">
                     <div style="margin-bottom: 15px; font-size: 16px;">Вы действительно хотите ${actionType.toLowerCase()}?</div>
@@ -76,7 +69,7 @@
                         className: 'ui-btn ui-btn-success',
                         events: {
                             click: () => {
-                                this.executeOriginalAction(originalButton, dayData);
+                                this.executeOriginalAction(originalButton);
                                 popup.close();
                             }
                         }
@@ -94,7 +87,7 @@
             popup.show();
         }
 
-        executeOriginalAction(originalButton, dayData) {
+        executeOriginalAction(originalButton) {
             // Эмулируем клик по оригинальной кнопке
             const event = new MouseEvent('click', {
                 view: window,
