@@ -55,7 +55,6 @@
             const popup = new BX.PopupWindow('workday-confirm', null, {
                 content: `<div style="padding: 20px; text-align: center;">
                     <div style="margin-bottom: 15px; font-size: 16px;">Вы действительно хотите ${actionType.toLowerCase()}?</div>
-                    <div style="color: #828b95; font-size: 14px;">Текущее время: ${new Date().toLocaleTimeString()}</div>
                 </div>`,
                 closeIcon: true,
                 titleBar: actionType,
