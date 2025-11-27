@@ -11,6 +11,15 @@
 ]);
 \CJSCore::Init('otusCW');
 */
+
+
+CJSCore::RegisterExt('otus_confirm_workday', [
+    'js' => '/local/js/otus/confirm_workday/script.js',
+    'rel' => ['popup']
+]);
+
+CJSCore::Init(['otus_confirm_workday']);
+
 use Bitrix\Main\EventManager;
 EventManager::getInstance()->addEventHandler(
     'main',
@@ -29,7 +38,7 @@ class CustomEvents
     public static function OnProlog()
     {
         global $USER;
-        $arJsConfig = array(
+/*        $arJsConfig = array(
             'custom_start' => array(
                 'js' => '/local/addition/main.js',
                 'css' => '/local/addition/main.css',
@@ -40,7 +49,7 @@ class CustomEvents
             \CJSCore::RegisterExt($ext, $arExt);
         }
         CUtil::InitJSCore(array('custom_start'));
-
+*/
         //CJSCore::Init(array('jquery', 'ajax', 'popup'));
 
         $asset = \Bitrix\Main\Page\Asset::getInstance();
