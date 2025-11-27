@@ -9,7 +9,7 @@ use Bitrix\Bizproc\Activity\PropertiesDialog;
 class CBPCreateCompanyByInnactivity extends BaseActivity
 {
     // protected static $requiredModules = ["crm"];
-    
+
     /**
      * @see parent::_construct()
      * @param $name string Activity name
@@ -19,8 +19,8 @@ class CBPCreateCompanyByInnactivity extends BaseActivity
         parent::__construct($name);
 
         $this->arProperties = [
-            'InnField' => 'Поле с ИНН',
-            //'MaxCountCreate' => 'Сколько компаний создать',
+            'InnField' => '',
+            //'MaxCountCreate' => '1',
 
             // return
             'Text' => null,
@@ -43,9 +43,9 @@ class CBPCreateCompanyByInnactivity extends BaseActivity
     /**
      * @return ErrorCollection
      */
-    protected function internalExecute(): ErrorCollection 
+    protected function internalExecute(): ErrorCollection
     {
-        $errors = parent::internalExecute(); 
+        $errors = parent::internalExecute();
 
         $token = "261c33510bdc7d1bb98565cfd1e37425b2ee3b2a";
         $secret = "832a12ffd03501b87df857c63b3eda10c205e44a";
@@ -54,24 +54,73 @@ class CBPCreateCompanyByInnactivity extends BaseActivity
         // $rootActivity = $this->GetRootActivity();
         // $token = $rootActivity->GetVariable("TOKEN"); 
         // $secret =  $rootActivity->GetVariable("SECRET"); 
- /*       
+
+        \Bitrix\Main\Loader::includeModule('crm');
+
         $dadata = new Dadata($token, $secret);
         $dadata->init();
 
         $fields = array("query" => $this->InnField, "count" => 5);
         $response = $dadata->suggest("party", $fields);
-  */      
+
         $companyName = 'Компания не найдена!';
-       /*
-        if(!empty($response['suggestions'])){ // если копания найдена
-           // по ИНН возвращается массив в котором может бытьнесколько элементов (компаний)
-           $companyName = $response['suggestions'][0]['value']; // получаем имя компании из первого элемента  
-        }  
-*/
+
+        $response['suggestions'][0]['value'] = "Первая";
+        $response['suggestions'][0]['address']['value'] = "Москва";
+
+        if (!empty($response['suggestions'])) { // если копания найдена
+            // по ИНН возвращается массив в котором может бытьнесколько элементов (компаний)
+            $companyName = $response['suggestions'][0]['value']; // получаем имя компании из первого элемента  
+            $arNewCompany = array(
+                "TITLE" => $response['suggestions'][0]['value'],
+                "OPENED" => "Y",
+                "COMPANY_TYPE" => "CUSTOMER",
+                "ASSIGNED_BY_ID" => 1,
+                "ADDRESS" => $response['suggestions'][0]['address']['value'],
+            );
+            $company = new CCrmCompany(false);
+
+            $arFilter = array("TITLE" => $response['suggestions'][0]['value']);
+            $arSelect = array("ID", "TITLE");
+
+            $rsCompany = CCrmCompany::GetList(array(), $arFilter, $arSelect);
+            if ($arComp = $rsCompany->Fetch()) {
+                $companyID = $arComp['ID'];
+                $this->preparedProperties['Text'] = 'Найдена компания ID: ' . $companyID;
+                $this->log($this->preparedProperties['Text']);
+            } else {
+                $companyID = $company->Add($arNewCompany);
+                $this->preparedProperties['Text'] = 'Добавлена компания: ' . $companyName . '- ' . $this->InnField;
+                $this->log($this->preparedProperties['Text']);
+            }
+
+            $rootActivity = $this->GetRootActivity(); // получаем объект активити
+
+            $documentService = CBPRuntime::GetRuntime(true)->getDocumentService();
+            $documentType = $rootActivity->getDocumentType(); // получаем тип документа
+            $documentId = $rootActivity->getDocumentId(); // получаем ID документа 
+
+            $fields = [
+                'NAME' => $response['suggestions'][0]['value'],
+            ];
+
+            $iblockElement = new CIBlockElement();
+
+            $result = $iblockElement->Update($documentId, $fields);
+
+            $properties = [
+                'CUSTOMER' => $companyID,
+            ];
+
+            $result = CIBlockElement::SetPropertyValuesEx(
+                $documentId,
+                false,
+                $properties
+            );
+        }
+
         // в рабочем активити необходимо будет создать отдельный метод который будет получать результат ответа сервиса Dadata, 
         // обходить циклом результат и сохранять в массив все полученные организации
-        $this->preparedProperties['Text'] = $this->InnField.': '.$companyName;
-        $this->log($this->preparedProperties['Text']);
 
 
         /*
@@ -102,7 +151,7 @@ class CBPCreateCompanyByInnactivity extends BaseActivity
                 $this->log('значение поля UF_COMPANY_INN:'.' '.$fieldValue);
             }
         }*/
-        
+
 
         return $errors;
     }
@@ -124,8 +173,4 @@ class CBPCreateCompanyByInnactivity extends BaseActivity
         ];
         return $map;
     }
-
-
-
-
 }
