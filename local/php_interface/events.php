@@ -14,7 +14,7 @@
 
 
 CJSCore::RegisterExt('otus_confirm_workday', [
-    'js' => '/local/js/otus/confirm_workday/script.js',
+    'js' => '/local/js/otus/confirm_workday/main.js',
     'rel' => ['popup']
 ]);
 
@@ -38,7 +38,7 @@ class CustomEvents
     public static function OnProlog()
     {
         global $USER;
-/*        $arJsConfig = array(
+        $arJsConfig = array(
             'custom_start' => array(
                 'js' => '/local/addition/main.js',
                 'css' => '/local/addition/main.css',
@@ -49,12 +49,12 @@ class CustomEvents
             \CJSCore::RegisterExt($ext, $arExt);
         }
         CUtil::InitJSCore(array('custom_start'));
-*/
+
         //CJSCore::Init(array('jquery', 'ajax', 'popup'));
 
-        $asset = \Bitrix\Main\Page\Asset::getInstance();
+       // $asset = \Bitrix\Main\Page\Asset::getInstance();
 
-        $settings=[];
+       // $settings=[];
 
        // if (preg_match('/\/crm.*/', GetPagePath())) {
        //    $asset->addString('<script>BX.ready(function () { Dreamsite.crm(' . CUtil::PhpToJSObject($settings) . '); });</script>');
