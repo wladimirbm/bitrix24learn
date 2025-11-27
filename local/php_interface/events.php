@@ -15,30 +15,30 @@ EventManager::getInstance()->addEventHandler(
     [CustomEvents::class, 'OnProlog']
 );
 
-EventManager::getInstance()->AddEventHandler(
-    "main",
-    "OnBeforeProlog",
-    [CustomEvents::class, "OnBeforePrologHandler"]
-);
+// EventManager::getInstance()->AddEventHandler(
+//     "main",
+//     "OnBeforeProlog",
+//     [CustomEvents::class, "OnBeforePrologHandler"]
+// );
 
 class CustomEvents
 {
     public static function OnProlog()
     {
         global $USER;
-        // $arJsConfig = array(
-        //     'custom_start' => array(
-        //         'js' => '/local/addition/main.js',
-        //         'css' => '/local/addition/main.css',
-        //         'rel' => array()
-        //     )
-        // );
-        // foreach ($arJsConfig as $ext => $arExt) {
-        //     \CJSCore::RegisterExt($ext, $arExt);
-        // }
-        // CUtil::InitJSCore(array('custom_start'));
+        $arJsConfig = array(
+            'custom_start' => array(
+                'js' => '/local/addition/main.js',
+                'css' => '/local/addition/main.css',
+                'rel' => array()
+            )
+        );
+        foreach ($arJsConfig as $ext => $arExt) {
+            \CJSCore::RegisterExt($ext, $arExt);
+        }
+        CUtil::InitJSCore(array('custom_start'));
 
-        //CJSCore::Init(array('jquery', 'ajax', 'popup'));
+        CJSCore::Init(array('jquery', 'ajax', 'popup'));
 
        // $asset = \Bitrix\Main\Page\Asset::getInstance();
 
@@ -58,11 +58,11 @@ class CustomEvents
    }
 
 
-    public static function OnBeforePrologHandler()
-    {
-        CJSCore::Init(array('jquery2'));
+    // public static function OnBeforePrologHandler()
+    // {
+    //     CJSCore::Init(array('jquery2'));
 
-    }
+    // }
 
 }
  
