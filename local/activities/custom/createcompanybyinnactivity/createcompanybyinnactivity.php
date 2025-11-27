@@ -105,8 +105,14 @@ class CBPCreateCompanyByInnactivity extends BaseActivity
 
             $fields = [
                 'NAME' => $response['suggestions'][0]['value'],
+                'CUSTOMER' => [$companyID],
             ];
 
+            $resultFields = $this->prepareFieldsValues($documentId, $documentType, $fields);
+			$documentService->UpdateDocument($documentId, $resultFields);
+
+          
+        /*
             $iblockElement = new CIBlockElement();
 
             $result = $iblockElement->Update($documentId, $fields);
@@ -121,7 +127,7 @@ class CBPCreateCompanyByInnactivity extends BaseActivity
                 $properties
             );
         }
-
+*/
         // в рабочем активити необходимо будет создать отдельный метод который будет получать результат ответа сервиса Dadata, 
         // обходить циклом результат и сохранять в массив все полученные организации
 
@@ -176,4 +182,59 @@ class CBPCreateCompanyByInnactivity extends BaseActivity
         ];
         return $map;
     }
+
+    
+	protected function prepareFieldsValues(
+		array $documentId,
+		array $documentType,
+		array $fields,
+		$mergeValues = null
+	): array
+	{
+		if (!is_bool($mergeValues))
+		{
+			$mergeValues = ($this->MergeMultipleFields === 'Y');
+		}
+
+		$resultFields = [];
+
+		$documentService = $this->workflow->GetService('DocumentService');
+		$documentFields = $documentService->GetDocumentFields($documentType);
+		$documentFieldsAliasesMap = CBPDocument::getDocumentFieldsAliasesMap($documentFields);
+		$document = $documentService->getDocument($documentId, $documentType, array_keys($fields));
+
+		foreach ($fields as $key => $value)
+		{
+			$key = $this->resolveFieldKey($key, $documentFields, $documentFieldsAliasesMap);
+
+			$property = $documentFields[$key] ?? null;
+			if ($property && ($value || $mergeValues))
+			{
+				$fieldTypeObject = $documentService->getFieldTypeObject($documentType, $property);
+				if ($fieldTypeObject)
+				{
+					$fieldTypeObject->setDocumentId($documentId);
+
+					if ($mergeValues && $fieldTypeObject->isMultiple())
+					{
+						$baseValue = $document[$key] ?? [];
+						$value = $fieldTypeObject->mergeValue($baseValue, $value);
+					}
+
+					if ($value)
+					{
+						$fieldTypeObject->setValue($value);
+						$value = $fieldTypeObject->externalizeValue(
+							FieldType::VALUE_CONTEXT_DOCUMENT,
+							$fieldTypeObject->getValue()
+						);
+					}
+				}
+			}
+
+			$resultFields[$key] = $value ?? '';
+		}
+
+		return $resultFields;
+	}
 }
