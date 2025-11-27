@@ -23,6 +23,10 @@ $APPLICATION->SetTitle("Список Домашних работ");
         background-image: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTYiIGhlaWdodD0iMjAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHBhdGggZD0iTTEzLjU3IDQuMjFhMy43NCAzLjc0IDAgMDAtMi45IDQuMTlDOC44IDYuMiA4Ljg5IDMuNyA4Ljg5LjA5IDIuOTQgMi4zMyA0LjMzIDguOCA0LjE1IDEwLjc3Yy0xLjUtMS4yMi0xLjc4LTQuMTUtMS43OC00LjE1Qy44IDcuNDMgMCA5LjYgMCAxMS4zN2E3LjcxIDcuNzEgMCAxMDE1LjQgMGMwLTIuNTQtMS44NS0zLjctMS44My03LjE2IiBmaWxsPSIjRkY2MDI3Ii8+PC9zdmc+);
     }
 
+    .clock {
+        background-image: url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMiIgaGVpZ2h0PSIxMiI+PHBhdGggZD0iTTUuOTQ5IDBBNS45NTUgNS45NTUgMCAwMDAgNS45NDlhNS45NTUgNS45NTUgMCAwMDUuOTQ5IDUuOTQ4IDUuOTU0IDUuOTU0IDAgMDA1Ljk0OC01Ljk0OEE1Ljk1NSA1Ljk1NSAwIDAwNS45NDkgMHptMCAxMC42MzFjLTIuNTgyIDAtNC42ODMtMi4xLTQuNjgzLTQuNjgyczIuMTAxLTQuNjgzIDQuNjgzLTQuNjgzYzIuNTgzIDAgNC42ODIgMi4xMDEgNC42ODIgNC42ODNzLTIuMSA0LjY4Mi00LjY4MiA0LjY4MnoiLz48cGF0aCBkPSJNOS4wNDkgNS43NjVINi4zNzVWMi41NTFhLjQ5LjQ5IDAgMTAtLjk4IDB2My43MDRjMCAuMjcxLjIxOS40ODkuNDkuNDg5aDMuMTYzYS40OS40OSAwIDEwLjAwMS0uOTc5eiIvPjwvc3ZnPg==);
+    }
+
     h2 {
         display: block;
         padding: 5px;
@@ -68,12 +72,12 @@ $APPLICATION->SetTitle("Список Домашних работ");
 </div>
 <div>
     <h2><a href="homework8/">Домашняя работа 8 (Учимся подключать свои скрипты, взаимодействовать с компонентами из фронтенда // ДЗ) - на проверку!</a>
-        <div class="prog proc"></div> 
+        <div class="prog clock"></div>
     </h2>
 </div>
 <div>
     <h2><a href="homework9/">Домашняя работа 9 (Написание своих активити для БП // ДЗ) - на проверку! </a>
-        <div class="prog proc"></div> 
+        <div class="prog clock"></div>
     </h2>
 </div>
 <div>
