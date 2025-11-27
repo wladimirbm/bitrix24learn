@@ -61,13 +61,13 @@ class CBPCreateCompanyByInnactivity extends BaseActivity
         $response['suggestions'][0]['address']['value'] = "Москва";
 
 
-        /*
+        
         $dadata = new Dadata($token, $secret);
         $dadata->init();
 
         $fields = array("query" => $this->InnField, "count" => 5);
         $response = $dadata->suggest("party", $fields);
-*/
+
         $companyName = 'Компания не найдена!';
 
 
