@@ -9,12 +9,12 @@ CJSCore::RegisterExt('otus_confirm_workday', [
 ]);
 CJSCore::Init(['otus_confirm_workday']);
 
-// use Bitrix\Main\EventManager;
-// EventManager::getInstance()->addEventHandler(
-//     'main',
-//     'OnProlog',
-//     [CustomEvents::class, 'OnProlog']
-// );
+use Bitrix\Main\EventManager;
+EventManager::getInstance()->addEventHandler(
+    'main',
+    'OnProlog',
+    [CustomEvents::class, 'OnProlog']
+);
 
 // EventManager::getInstance()->AddEventHandler(
 //     "main",
