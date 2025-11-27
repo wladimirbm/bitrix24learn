@@ -3,11 +3,11 @@
 
 // \Bitrix\Main\UI\Extension::load('otus_confirm_workday');
 
-CJSCore::RegisterExt('otusCW', [
-    'js' => '/local/js/otus/confirm_workday/main.js',
+CJSCore::RegisterExt('otus_confirm_workday', [
+    'js' => '/local/js/otus/confirm_workday/',
     'rel' => ['ui.popup', 'main.core']
 ]);
-CJSCore::Init(['otusCW']);
+CJSCore::Init(['otus_confirm_workday']);
 
 // use Bitrix\Main\EventManager;
 // EventManager::getInstance()->addEventHandler(
