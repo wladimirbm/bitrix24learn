@@ -11,7 +11,7 @@ $APPLICATION->SetTitle("Домашняя работа 9 (Написание св
 <h2>Файлы</h2>
 <p><a href="/bitrix/admin/fileman_admin.php?PAGEN_1=1&SIZEN_1=20&lang=ru&site=s1&path=%2Flocal%2Factivities%2Fcustom%2Fcreatecompanybyinnactivity&show_perms_for=0&fu_action=">Файлы активити</a></p>
 <p><a href="/services/lists/19/bp_edit/6/">Бизнес процесс</a></p>
-
+ 
 
 <?php
 /*

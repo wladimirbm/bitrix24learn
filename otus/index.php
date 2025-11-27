@@ -68,12 +68,12 @@ $APPLICATION->SetTitle("Список Домашних работ");
 </div>
 <div>
     <h2><a href="homework8/">Домашняя работа 8 (Учимся подключать свои скрипты, взаимодействовать с компонентами из фронтенда // ДЗ) - в процессе</a>
-        <div class="prog proc"></div>
+        <div class="prog proc"></div> 
     </h2>
 </div>
 <div>
     <h2><a href="homework9/">Домашняя работа 9 (Написание своих активити для БП // ДЗ) - на проверку! </a>
-        <div class="prog proc"></div>
+        <div class="prog proc"></div> 
     </h2>
 </div>
 <div>
