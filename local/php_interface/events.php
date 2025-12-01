@@ -1,4 +1,14 @@
 <?php
+
+//Обработчик изменений в элементе инфоблока
+use Bitrix\Main\Loader;
+
+$eventManager = \Bitrix\Main\EventManager::getInstance();
+
+$eventManager->addEventHandler("iblock", "OnAfterIBlockElementUpdate", ['\App\Events\IbFieldsHandler','onElementAfterUpdate']);
+$eventManager->addEventHandlerCompatible("crm", "OnAfterCrmDealUpdate", ['\App\Events\CrmFieldsHandler', 'onDealAfterUpdate']);
+
+
 //Подключение своих CSS и JS к Битрикс24
 
 \Bitrix\Main\UI\Extension::load('otus.confirm_workday');
