@@ -35,7 +35,6 @@ class CrmFieldsHandler
     {
         if (!CModule::IncludeModule('iblock')) return true;
 
-        // Проверяем, есть ли элемент ИБ, привязанный к этой сделке
         $elementId = self::getZayyavkaByDealId($id);
 
         if ($elementId) {
