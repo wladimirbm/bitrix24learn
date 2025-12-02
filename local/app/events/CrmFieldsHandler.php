@@ -21,9 +21,11 @@ class CrmFieldsHandler
         $elementId = self::getZayyavkaByDealId($arFields['ID']);
         if (!$elementId) return;
 
+        \App\Debug\Mylog::addLog($arFields, 'Crm-arFields', '', __FILE__, __LINE__);
+
         CIBlockElement::SetPropertyValuesEx(
             $elementId,
-            false,
+            20,
             [
                 'AMOUNT' => $arFields['OPPORTUNITY'],
                 'ASSIGNED' => $arFields['ASSIGNED_BY_ID'],
