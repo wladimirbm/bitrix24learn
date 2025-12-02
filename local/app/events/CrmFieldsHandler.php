@@ -18,7 +18,7 @@ class CrmFieldsHandler
             return;
         }
 
-        $elementId = self::getZayyavkaByDealId($arFields['ID']);
+        $elementId = self::getZayyavkaByDealId($arFields['ID'])['ID'];
         if (!$elementId) return;
 
         //\App\Debug\Mylog::addLog($arFields, 'Crm-arFields', '', __FILE__, __LINE__);
