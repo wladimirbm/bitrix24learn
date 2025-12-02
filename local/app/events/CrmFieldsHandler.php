@@ -14,7 +14,7 @@ class CrmFieldsHandler
 
         // IBLOCK = 20 
         if (!empty($arFields['UF_IB_SYNC'])) {
-            DealTable::Update($arFields['ID'], ['UF_IB_SYNC' => false]);
+            DealTable::Update($arFields['ID'], ['UF_IB_SYNC' => 0]);
             return;
         }
 
@@ -25,11 +25,11 @@ class CrmFieldsHandler
 
         CIBlockElement::SetPropertyValuesEx(
             $elementId,
-            20,
+            false,
             [
                 'AMOUNT' => $arFields['OPPORTUNITY'],
                 'ASSIGNED' => $arFields['ASSIGNED_BY_ID'],
-                'UF_CRM_SYNC' => true
+                'UF_CRM_SYNC' => 1
             ]
         );
         // IBLOCK = 20 

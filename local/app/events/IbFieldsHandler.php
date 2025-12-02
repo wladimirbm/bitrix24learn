@@ -44,7 +44,7 @@ class IbFieldsHandler
                 CIBlockElement::SetPropertyValuesEx(
                     $arFields['ID'],
                     $element['IBLOCK_ID'],
-                    ['UF_CRM_SYNC' => false]
+                    ['UF_CRM_SYNC' => 0]
                 );
                 return;
             }
@@ -52,7 +52,7 @@ class IbFieldsHandler
             DealTable::Update($dealId, [
                 'OPPORTUNITY' => $properties['AMOUNT'],
                 'ASSIGNED_BY_ID' => $properties['ASSIGNED'],
-                'UF_IB_SYNC' => true
+                'UF_IB_SYNC' => 1
             ]);
         }
     }
