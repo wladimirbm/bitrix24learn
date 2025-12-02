@@ -5,6 +5,7 @@ namespace App\Events;
 use Bitrix\Main\Loader;
 use Bitrix\Crm\DealTable;
 use CIBlockElement;
+use CAdminException;
 
 class CrmFieldsHandler
 {
@@ -45,11 +46,18 @@ class CrmFieldsHandler
 
         if ($elementId) {
             global $APPLICATION;
+            $e = new CAdminException();
+            $e->AddMessage(
+                array(
+                    "text" => 'Невозможно удалить сделку, так как она привязана к <a href="/services/lists/20/element/0/' . $elementId . '/?list_section_id=">заявке</a>',
+                )
+            );
             $arFields['RESULT_MESSAGE'] = 'Невозможно удалить сделку, так как она привязана к <a href="/services/lists/20/element/0/' . $elementId . '/?list_section_id=">заявке</a>';
             $arFields['ERROR'] = 'Невозможно удалить сделку, так как она привязана к <a href="/services/lists/20/element/0/' . $elementId . '/?list_section_id=">заявке</a>';
-            $APPLICATION->throwException(
-                'Невозможно удалить сделку, так как она привязана к <a href="/services/lists/20/element/0/' . $elementId . '/?list_section_id=">заявке</a>'
-            );
+            $APPLICATION->throwException($e);
+            // $APPLICATION->throwException(
+            //     'Невозможно удалить сделку, так как она привязана к <a href="/services/lists/20/element/0/' . $elementId . '/?list_section_id=">заявке</a>'
+            // );
             return false;
         }
 
