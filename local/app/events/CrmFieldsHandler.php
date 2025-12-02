@@ -21,9 +21,9 @@ class CrmFieldsHandler
         $elementId = self::getZayyavkaByDealId($arFields['ID']);
         if (!$elementId) return;
 
-        \App\Debug\Mylog::addLog($arFields, 'Crm-arFields', '', __FILE__, __LINE__);
+        //\App\Debug\Mylog::addLog($arFields, 'Crm-arFields', '', __FILE__, __LINE__);
 
-        CIBlockElement::SetPropertyValuesEx(
+        $res = CIBlockElement::SetPropertyValuesEx(
             $elementId,
             false,
             [
@@ -32,6 +32,8 @@ class CrmFieldsHandler
                 'UF_CRM_SYNC' => 1
             ]
         );
+
+        \App\Debug\Mylog::addLog($res, 'Crm-res', '', __FILE__, __LINE__);
         // IBLOCK = 20 
     }
 
