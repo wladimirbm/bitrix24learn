@@ -9,7 +9,7 @@ $eventManager->addEventHandler('iblock', 'OnAfterIBlockElementAdd', ['\App\Event
 $eventManager->addEventHandler("iblock", "OnAfterIBlockElementUpdate", ['\App\Events\IbFieldsHandler','onElementAfterUpdate']);
 
 $eventManager->addEventHandlerCompatible("crm", "OnAfterCrmDealUpdate", ['\App\Events\CrmFieldsHandler', 'onDealAfterUpdate']);
-$eventManager->addEventHandlerCompatible('crm', 'OnAfterCrmDealDelete', ['\App\Events\CrmFieldsHandler', 'onDealAfterDelete']);
+$eventManager->addEventHandlerCompatible('crm', 'OnBeforeCrmDealDelete', ['\App\Events\CrmFieldsHandler', 'onDealBeforeDelete']);
 
 
 //Подключение своих CSS и JS к Битрикс24
