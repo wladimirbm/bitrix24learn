@@ -27,6 +27,7 @@ class IbFieldsHandler
                 $element['IBLOCK_ID'],
                 $arFields['ID'],
                 [],
+                [],
                 ['CODE' => ['DEAL', 'AMOUNT', 'ASSIGNED', 'UF_CRM_SYNC']]
             );
 
