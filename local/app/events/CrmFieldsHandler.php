@@ -3,6 +3,8 @@
 namespace App\Events;
 
 use Bitrix\Main\Loader;
+use Bitrix\Crm\DealTable;
+use CIBlockElement;
 
 class CrmFieldsHandler
 {
@@ -12,7 +14,7 @@ class CrmFieldsHandler
 
         // IBLOCK = 20 
         if (!empty($arFields['UF_IB_SYNC'])) {
-            CCrmDeal::Update($arFields['ID'], ['UF_IB_SYNC' => false]);
+            DealTable::Update($arFields['ID'], ['UF_IB_SYNC' => false]);
             return;
         }
 

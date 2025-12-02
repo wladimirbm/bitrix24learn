@@ -4,6 +4,7 @@ namespace App\Events;
 
 use Bitrix\Main\Loader;
 use CIBlockElement;
+use Bitrix\Crm\DealTable;
 
 class IbFieldsHandler
 {
@@ -48,7 +49,7 @@ class IbFieldsHandler
                 return;
             }
 
-            CCrmDeal::Update($dealId, [
+            DealTable::Update($dealId, [
                 'OPPORTUNITY' => $properties['AMOUNT'],
                 'ASSIGNED_BY_ID' => $properties['ASSIGNED'],
                 'UF_IB_SYNC' => true
