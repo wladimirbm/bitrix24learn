@@ -20,11 +20,11 @@ if (file_exists(__DIR__. '/Models/Lists/DoctorProceduresPropertyValuesTable.php'
 } else die(__DIR__. '/Models/Lists/DoctorProceduresPropertyValuesTable.php');
 
 
-if (file_exists(__DIR__ . '/events/CrmFields.php')) {
-    include_once __DIR__ . '/events/CrmFields.php';
+if (file_exists(__DIR__ . '/events/CrmFieldsHandler.php')) {
+    include_once __DIR__ . '/events/CrmFieldsHandler.php';
 }
-if (file_exists(__DIR__ . '/events/IbFields.php')) {
-    include_once __DIR__ . '/events/IbFields.php';
+if (file_exists(__DIR__ . '/events/IbFieldsHandler.php')) {
+    include_once __DIR__ . '/events/IbFieldsHandler.php';
 }
 
 
