@@ -46,9 +46,9 @@ class CrmFieldsHandler
         if ($elementId) {
             global $APPLICATION;
             $arFields['RESULT_MESSAGE'] = 'Невозможно удалить сделку, так как она привязана к <a href="/services/lists/20/element/0/' . $elementId . '/?list_section_id=">заявке</a>';
-            $APPLICATION->throwException(
-                'Невозможно удалить сделку, так как она привязана к <a href="/services/lists/20/element/0/' . $elementId . '/?list_section_id=">заявке</a>'
-            );
+            // $APPLICATION->throwException(
+            //     'Невозможно удалить сделку, так как она привязана к <a href="/services/lists/20/element/0/' . $elementId . '/?list_section_id=">заявке</a>'
+            // );
             return false;
         }
 
