@@ -9,7 +9,7 @@ class IbFieldsHandler
 {
     public static function onElementAfterUpdate(&$arFields)
     {
-        if (!CModule::IncludeModule('iblock') || !CModule::IncludeModule('crm')) return;
+        if (!Loader::includeModule('iblock') || !Loader::includeModule('crm'))  return;
 
         if ($arFields['IBLOCK_ID'] == 20) {
 

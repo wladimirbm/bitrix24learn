@@ -8,7 +8,7 @@ class CrmFieldsHandler
 {
     public static function onDealAfterUpdate(&$arFields)
     {
-        if (!CModule::IncludeModule('iblock') || !CModule::IncludeModule('crm')) return;
+        if (!Loader::includeModule('iblock') || !Loader::includeModule('crm'))  return;
 
         // IBLOCK = 20 
         if (!empty($arFields['UF_IB_SYNC'])) {
@@ -33,7 +33,7 @@ class CrmFieldsHandler
 
     public static function onDealBeforeDelete($id, &$arFields)
     {
-        if (!CModule::IncludeModule('iblock')) return true;
+        if (!Loader::includeModule('iblock'))  return true;
 
         $elementId = self::getZayyavkaByDealId($id);
 
