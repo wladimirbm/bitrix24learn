@@ -62,6 +62,7 @@ class CrmFieldsHandler
             false,
             ['ID', 'NAME']
         );
+        \App\Debug\Mylog::addLog($res, 'Crm-getZayyavkaByDealId', '', __FILE__, __LINE__);
         return ($element = $res->Fetch()) ? $element : false;
     }
 }
