@@ -14,4 +14,4 @@ $APPLICATION->SetTitle("Домашняя работа 10 (Обработка с�
 <p><a href="/bitrix/admin/fileman_admin.php?lang=ru&path=%2Flocal%2Fphp_interface&site=s1">Подключение обработчика events.php</a></p>
 
 
-<? require($_SERVER["DOCUMENT_ROOT"] . "/bitrix/footer.php"); ?>
+<? require($_SERVER["DOCUMENT_ROOT"] . "/bitrix/footer.php"); ?> 
