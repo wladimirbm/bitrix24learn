@@ -25,7 +25,7 @@ class CrmFieldsHandler
 
         $res = CIBlockElement::SetPropertyValuesEx(
             $elementId,
-            false,
+            20,
             [
                 'AMOUNT' => $arFields['OPPORTUNITY'],
                 'ASSIGNED' => $arFields['ASSIGNED_BY_ID'],
