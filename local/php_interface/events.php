@@ -5,8 +5,11 @@ use Bitrix\Main\Loader;
 
 $eventManager = \Bitrix\Main\EventManager::getInstance();
 
+$eventManager->addEventHandler('iblock', 'OnAfterIBlockElementAdd', ['\App\Events\IbFieldsHandler', 'onElementAfterUpdate']);
 $eventManager->addEventHandler("iblock", "OnAfterIBlockElementUpdate", ['\App\Events\IbFieldsHandler','onElementAfterUpdate']);
+
 $eventManager->addEventHandlerCompatible("crm", "OnAfterCrmDealUpdate", ['\App\Events\CrmFieldsHandler', 'onDealAfterUpdate']);
+$eventManager->addEventHandlerCompatible('crm', 'OnAfterCrmDealDelete', ['\App\Events\CrmFieldsHandler', 'onDealAfterDelete']);
 
 
 //Подключение своих CSS и JS к Битрикс24

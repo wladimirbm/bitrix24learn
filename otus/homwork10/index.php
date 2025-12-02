@@ -6,11 +6,12 @@ $APPLICATION->SetTitle("Домашняя работа 10 (Обработка с�
 
 <h2>Обработчик изменений в элементе инфоблока</h2>
 
-<p><a href="/services/lists/19/view/0/">Инфоблок</a></p>
+<p><a href="/services/lists/20/view/0/">Инфоблок</a></p>
 
 
 <h2>Файлы</h2>
-<p><a href="/bitrix/admin/fileman_admin.php?PAGEN_1=1&SIZEN_1=20&lang=ru&site=s1&path=%2Flocal%2Factivities%2Fcustom%2Fcreatecompanybyinnactivity&show_perms_for=0&fu_action=">Файлы активити</a></p>
+<p><a href="/bitrix/admin/fileman_admin.php?lang=ru&path=%2Flocal%2Fapp%2Fevents&site=s1">Классы обработчика</a></p>
+<p><a href="/bitrix/admin/fileman_admin.php?lang=ru&path=%2Flocal%2Fphp_interface&site=s1">Подключение обработчика events.php</a></p>
 
 
 <? require($_SERVER["DOCUMENT_ROOT"] . "/bitrix/footer.php"); ?>
