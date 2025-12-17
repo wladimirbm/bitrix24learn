@@ -51,6 +51,8 @@ class IbFieldsHandler
             //     return;
             // }
 
+            \App\Debug\Mylog::addLog($properties, 'IB-properties', '', __FILE__, __LINE__);
+
             $updDeal = [];
             if (!empty($properties['ASSIGNED'])) $updDeal['ASSIGNED_BY_ID'] = $properties['ASSIGNED'];
             else {
