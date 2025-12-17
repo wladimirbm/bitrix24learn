@@ -55,15 +55,8 @@ class IbFieldsHandler
             if (!empty($properties['ASSIGNED'])) $updDeal['ASSIGNED_BY_ID'] = $properties['ASSIGNED'];
             else {
                 global $APPLICATION;
-                $e = new CAdminException();
-                $e->AddMessage(
-                    array(
-                        "text" => 'Необходимо выбрать Ответственного',
-                    )
-                );
-                $arFields['RESULT_MESSAGE'] = 'Необходимо выбрать Ответственного';
-                $arFields['ERROR'] = 'Необходимо выбрать Ответственного';
-                $APPLICATION->throwException($e);
+                $APPLICATION->throwException('Необходимо выбрать Ответственного');
+                return false;
             }
             if (!empty($properties['AMOUNT'])) $updDeal['OPPORTUNITY'] = $properties['AMOUNT'];
             else $updDeal['OPPORTUNITY'] = 0;
