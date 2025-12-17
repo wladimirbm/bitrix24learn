@@ -50,11 +50,15 @@ class IbFieldsHandler
             //     return;
             // }
 
-            DealTable::Update($dealId, [
-                'OPPORTUNITY' => $properties['AMOUNT'],
-                'ASSIGNED_BY_ID' => $properties['ASSIGNED'],
-                // 'UF_IB_SYNC' => 1
-            ]);
+            $updDeal = [];
+            if (!empty($properties['ASSIGNED'])) $updDeal['ASSIGNED_BY_ID'] = $properties['ASSIGNED'];
+            if (!empty($properties['AMOUNT'])) $updDeal['OPPORTUNITY'] = $properties['AMOUNT'];
+            else $updDeal['OPPORTUNITY'] = 0;
+
+            if (!empty($updDeal)) {
+                DealTable::Update($dealId, $updDeal);
+                \App\Debug\Mylog::addLog($updDeal, 'IB-updDeal', '', __FILE__, __LINE__);
+            }
         }
     }
 }
