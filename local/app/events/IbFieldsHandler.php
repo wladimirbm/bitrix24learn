@@ -58,6 +58,8 @@ class IbFieldsHandler
             else {
                 global $APPLICATION;
                 $APPLICATION->throwException('Необходимо выбрать Ответственного');
+                $arFields['RESULT_MESSAGE'] = 'Необходимо выбрать Ответственного';
+                $arFields['ERROR'] = 'Необходимо выбрать Ответственного';
                 return false;
             }
             if (!empty($properties['AMOUNT'])) $updDeal['OPPORTUNITY'] = $properties['AMOUNT'];
