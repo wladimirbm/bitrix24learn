@@ -40,15 +40,15 @@ class IbFieldsHandler
             $dealId = $properties['DEAL'] ?? 0;
             if (!$dealId) return;
 
-            if (!empty($properties['UF_CRM_SYNC'])) {
-                CIBlockElement::SetPropertyValuesEx(
-                    $arFields['ID'],
-                    $element['IBLOCK_ID'],
-                    [//'UF_CRM_SYNC' => 0
-                    ]
-                );
-                return;
-            }
+            // if (!empty($properties['UF_CRM_SYNC'])) {
+            //     CIBlockElement::SetPropertyValuesEx(
+            //         $arFields['ID'],
+            //         $element['IBLOCK_ID'],
+            //         ['UF_CRM_SYNC' => 0
+            //         ]
+            //     );
+            //     return;
+            // }
 
             DealTable::Update($dealId, [
                 'OPPORTUNITY' => $properties['AMOUNT'],
