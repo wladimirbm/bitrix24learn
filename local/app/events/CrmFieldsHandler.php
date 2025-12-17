@@ -14,10 +14,10 @@ class CrmFieldsHandler
         if (!Loader::includeModule('iblock') || !Loader::includeModule('crm'))  return;
 
         // IBLOCK = 20 
-        if (!empty($arFields['UF_IB_SYNC'])) {
-            DealTable::Update($arFields['ID'], ['UF_IB_SYNC' => 0]);
-            return;
-        }
+        // if (!empty($arFields['UF_IB_SYNC'])) {
+        //     DealTable::Update($arFields['ID'], ['UF_IB_SYNC' => 0]);
+        //     return;
+        // }
 
         $elementId = self::getZayyavkaByDealId($arFields['ID'])['ID'];
         if (!$elementId) return;
@@ -30,7 +30,7 @@ class CrmFieldsHandler
             [
                 'AMOUNT' => $arFields['OPPORTUNITY'],
                 'ASSIGNED' => $arFields['ASSIGNED_BY_ID'],
-                'UF_CRM_SYNC' => 1
+                // 'UF_CRM_SYNC' => 1
             ]
         );
 
