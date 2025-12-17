@@ -5,6 +5,7 @@ namespace App\Events;
 use Bitrix\Main\Loader;
 use CIBlockElement;
 use Bitrix\Crm\DealTable;
+use CAdminException;
 
 class IbFieldsHandler
 {
@@ -52,6 +53,18 @@ class IbFieldsHandler
 
             $updDeal = [];
             if (!empty($properties['ASSIGNED'])) $updDeal['ASSIGNED_BY_ID'] = $properties['ASSIGNED'];
+            else {
+                global $APPLICATION;
+                $e = new CAdminException();
+                $e->AddMessage(
+                    array(
+                        "text" => 'Необходимо выбрать Ответственного',
+                    )
+                );
+                $arFields['RESULT_MESSAGE'] = 'Необходимо выбрать Ответственного';
+                $arFields['ERROR'] = 'Необходимо выбрать Ответственного';
+                $APPLICATION->throwException($e);
+            }
             if (!empty($properties['AMOUNT'])) $updDeal['OPPORTUNITY'] = $properties['AMOUNT'];
             else $updDeal['OPPORTUNITY'] = 0;
 
