@@ -60,12 +60,12 @@ class IbFieldsHandler
                 $APPLICATION->throwException('Необходимо выбрать Ответственного');
                 $arFields['RESULT_MESSAGE'] = 'Необходимо выбрать Ответственного';
                 $arFields['ERROR'] = 'Необходимо выбрать Ответственного';
-                return false;
+                //return false;
             }
             if (!empty($properties['AMOUNT'])) $updDeal['OPPORTUNITY'] = $properties['AMOUNT'];
             else $updDeal['OPPORTUNITY'] = 0;
 
-            if (!empty($updDeal)) {
+            if (!empty($updDeal['ASSIGNED_BY_ID'])) {
                 DealTable::Update($dealId, $updDeal);
                 \App\Debug\Mylog::addLog($updDeal, 'IB-updDeal', '', __FILE__, __LINE__);
             }
