@@ -8,7 +8,6 @@ if (!CModule::IncludeModule('iblock')) {
 
 function isTimeSlotAvailable($doctorId, $datetime, &$error = '')
 {
-    // Преобразуем к единому формату для сравнений
     $datetimeBitrix = str_replace('T', ' ', $datetime) . ':00';
     $timestamp = MakeTimeStamp($datetimeBitrix);
 
@@ -17,52 +16,49 @@ function isTimeSlotAvailable($doctorId, $datetime, &$error = '')
         return false;
     }
 
-    // Теперь работаем с отформатированным временем
-    $timeStart = date('Y-m-d H:i:s', $timestamp);
-    $timeEnd = date('Y-m-d H:i:s', $timestamp + 30 * 60);
+    // Наш интервал: от 30 минут до начала до 30 минут после начала
+    $checkStart = date('Y-m-d H:i:s', $timestamp - 30 * 60);  // За 30 мин до
+    $checkEnd = date('Y-m-d H:i:s', $timestamp + 30 * 60);    // Через 30 мин после
 
+    // Конвертируем в формат Битрикс
+    $checkStartBitrix = ConvertDateTime($checkStart, "DD.MM.YYYY HH:MI:SS");
+    $checkEndBitrix = ConvertDateTime($checkEnd, "DD.MM.YYYY HH:MI:SS");
 
-    // Проверка на занятость в указанный интервал
+    // Ищем ВСЕ бронирования врача в этом интервале
     $res = CIBlockElement::GetList(
         ['PROPERTY_WRITETIME' => 'ASC'],
         [
-            'IBLOCK_ID' => 21, // IBLOCK_BOOKING_ID
-            'PROPERTY_DOCTOR' => $doctorId,
-            '>=PROPERTY_WRITETIME' => $timeStart,
-            '<=PROPERTY_WRITETIME' => $timeEnd
-        ],
-        false,
-        false,
-        ['ID', 'PROPERTY_WRITETIME']
-    );
-
-    if ($booking = $res->Fetch()) {
-        $bookingTime = FormatDate('H:i', MakeTimeStamp($booking['PROPERTY_WRITETIME_VALUE']));
-        $error = sprintf('Время занято. У врача уже есть приём в %s. Выберите другое время.', $bookingTime);
-        return false;
-    }
-
-    // Проверка интервала 30 минут после предыдущего приёма
-    $timeBeforeStart = date('Y-m-d H:i:s', $timestamp - 30 * 60);
-    $res = CIBlockElement::GetList(
-        [],
-        [
             'IBLOCK_ID' => 21,
             'PROPERTY_DOCTOR' => $doctorId,
-            '>=PROPERTY_WRITETIME' => $timeBeforeStart,
-            '<PROPERTY_WRITETIME' => $timeStart
+            '>=PROPERTY_WRITETIME' => $checkStartBitrix,
+            '<=PROPERTY_WRITETIME' => $checkEndBitrix
         ],
         false,
-        ['nTopCount' => 1],
+        false,
         ['ID', 'PROPERTY_WRITETIME']
     );
 
-    if ($previousBooking = $res->Fetch()) {
-        $prevTime = MakeTimeStamp($previousBooking['PROPERTY_WRITETIME_VALUE']);
-        $minutesBetween = ($timestamp - $prevTime) / 60;
+    while ($booking = $res->Fetch()) {
+        $bookingTimestamp = MakeTimeStamp($booking['PROPERTY_WRITETIME_VALUE']);
+        $minutesDiff = abs($timestamp - $bookingTimestamp) / 60;
 
-        if ($minutesBetween < 30) {
-            $error = sprintf('Мало времени после предыдущего приёма (осталось %.0f минут). Выберите время на 30 минут позже.', $minutesBetween);
+        if ($minutesDiff < 30) {
+            // Нашли конфликтное бронирование
+            $bookingTime = FormatDate('d.m.Y H:i', $bookingTimestamp);
+
+            if ($bookingTimestamp < $timestamp) {
+                $error = sprintf(
+                    'Мало времени после предыдущего приёма %s (всего %.0f мин). Нужно 30 мин.',
+                    $bookingTime,
+                    $minutesDiff
+                );
+            } else {
+                $error = sprintf(
+                    'Время слишком близко к следующему приёму %s (всего %.0f мин). Нужно 30 мин.',
+                    $bookingTime,
+                    $minutesDiff
+                );
+            }
             return false;
         }
     }
