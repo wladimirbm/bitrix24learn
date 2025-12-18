@@ -12,6 +12,19 @@ $eventManager->addEventHandlerCompatible("crm", "OnAfterCrmDealUpdate", ['\App\E
 $eventManager->addEventHandlerCompatible('crm', 'OnBeforeCrmDealDelete', ['\App\Events\CrmFieldsHandler', 'onDealBeforeDelete']);
 
 
+// подключение кастомного типа пользовательского поля
+$eventManager->AddEventHandler(
+    'iblock',
+    'OnIBlockPropertyBuildList',
+    ['UserTypes\BookingProcedureType', 'GetUserTypeDescription']
+);
+
+CJSCore::RegisterExt('otus_booking', [
+    'js' => '/local/js/otus/booking/popup.js',
+    'rel' => ['popup', 'ui.notification', 'ui.dialogs.messagebox']
+]);
+
+
 //Подключение своих CSS и JS к Битрикс24
 
 \Bitrix\Main\UI\Extension::load('otus.confirm_workday');

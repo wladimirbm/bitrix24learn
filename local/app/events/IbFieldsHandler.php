@@ -55,17 +55,17 @@ class IbFieldsHandler
 
             $updDeal = [];
             if (!empty($properties['ASSIGNED'])) $updDeal['ASSIGNED_BY_ID'] = $properties['ASSIGNED'];
-            else {
-                global $APPLICATION;
-                $APPLICATION->throwException('Необходимо выбрать Ответственного');
-                $arFields['RESULT_MESSAGE'] = 'Необходимо выбрать Ответственного';
-                $arFields['ERROR'] = 'Необходимо выбрать Ответственного';
-                //return false;
-            }
+            // else {
+            //     global $APPLICATION;
+            //     $APPLICATION->throwException('Необходимо выбрать Ответственного');
+            //     $arFields['RESULT_MESSAGE'] = 'Необходимо выбрать Ответственного';
+            //     $arFields['ERROR'] = 'Необходимо выбрать Ответственного';
+            //     //return false;
+            // }
             if (!empty($properties['AMOUNT'])) $updDeal['OPPORTUNITY'] = $properties['AMOUNT'];
             else $updDeal['OPPORTUNITY'] = 0;
 
-            if (!empty($updDeal['ASSIGNED_BY_ID'])) {
+            if (!empty($updDeal)) {
                 DealTable::Update($dealId, $updDeal);
                 \App\Debug\Mylog::addLog($updDeal, 'IB-updDeal', '', __FILE__, __LINE__);
             }
