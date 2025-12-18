@@ -1,7 +1,10 @@
 <?
 require_once $_SERVER['DOCUMENT_ROOT'] . '/bitrix/modules/main/include/prolog_before.php';
 
-use CIBlockElement;
+if (!CModule::IncludeModule('iblock')) {
+    echo json_encode(['success' => false, 'error' => 'Модуль инфоблоков не подключён']);
+    exit;
+}
 
 function isTimeSlotAvailable($doctorId, $datetime, &$error = '')
 {
