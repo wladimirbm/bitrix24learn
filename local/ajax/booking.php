@@ -8,9 +8,19 @@ if (!CModule::IncludeModule('iblock')) {
 
 function isTimeSlotAvailable($doctorId, $datetime, &$error = '')
 {
-    $timestamp = MakeTimeStamp($datetime);
+       // Преобразуем к единому формату для сравнений
+    $datetimeBitrix = ConvertDateTime($datetime, "YYYY-MM-DD HH:MI:SS");
+    $timestamp = MakeTimeStamp($datetimeBitrix);
+    
+    if ($timestamp <= time()) {
+        $error = 'Нельзя бронировать прошедшее время';
+        return false;
+    }
+    
+    // Теперь работаем с отформатированным временем
     $timeStart = date('Y-m-d H:i:s', $timestamp);
     $timeEnd = date('Y-m-d H:i:s', $timestamp + 30 * 60);
+    
     
     // Проверка на занятость в указанный интервал
     $res = CIBlockElement::GetList(
@@ -69,13 +79,14 @@ if (check_bitrix_sessid()) {
     $datetime = $_POST['datetime'];
     
     if (isTimeSlotAvailable($doctorId, $datetime, $errorMessage)) {
+        $datetimeBitrix = ConvertDateTime($datetime, "YYYY-MM-DD HH:MI:SS");
         $el = new CIBlockElement;
         $res = $el->Add([
             'IBLOCK_ID' => 21, // IBLOCK_BOOKING_ID
             'NAME' => 'Бронирование #' . time(),
             'PROPERTY_VALUES' => [
                 'FIO' => $patientName,
-                'WRITETIME' => $datetime,
+                'WRITETIME' => $datetimeBitrix,
                 'DOCTOR' => $doctorId,
                 'PROCEDURE' => $procedureId
             ]
