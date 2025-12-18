@@ -25,18 +25,24 @@ function isTimeSlotAvailable($doctorId, $datetime, &$error = '')
     $checkEndBitrix = ConvertDateTime($checkEnd, "DD.MM.YYYY HH:MI:SS");
 
     // Ищем ВСЕ бронирования врача в этом интервале
-    $res = CIBlockElement::GetList(
-        ['PROPERTY_WRITETIME' => 'ASC'],
-        [
+    $arrFilter =  [
             'IBLOCK_ID' => 21,
             'PROPERTY_DOCTOR' => $doctorId,
             '>=PROPERTY_WRITETIME' => $checkStart,
             '<=PROPERTY_WRITETIME' => $checkEnd
-        ],
+    ];
+    
+    \App\Debug\Mylog::addLog($arrFilter, 'Booking-IB-arrFilter', '', __FILE__, __LINE__);
+    
+    $res = CIBlockElement::GetList(
+        ['PROPERTY_WRITETIME' => 'ASC'],
+        $arrFilter,
         false,
         false,
         ['ID', 'PROPERTY_WRITETIME']
     );
+
+    \App\Debug\Mylog::addLog($res, 'Booking-IB-res', '', __FILE__, __LINE__);
 
     while ($booking = $res->Fetch()) {
         $bookingTimestamp = MakeTimeStamp($booking['PROPERTY_WRITETIME_VALUE']);
