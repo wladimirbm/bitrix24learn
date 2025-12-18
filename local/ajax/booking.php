@@ -8,20 +8,20 @@ if (!CModule::IncludeModule('iblock')) {
 
 function isTimeSlotAvailable($doctorId, $datetime, &$error = '')
 {
-       // Преобразуем к единому формату для сравнений
-    $datetimeBitrix = ConvertDateTime($datetime, "YYYY-MM-DD HH:MI:SS");
+    // Преобразуем к единому формату для сравнений
+    $datetimeBitrix = str_replace('T', ' ', $datetime) . ':00';
     $timestamp = MakeTimeStamp($datetimeBitrix);
-    
+
     if ($timestamp <= time()) {
         $error = 'Нельзя бронировать прошедшее время';
         return false;
     }
-    
+
     // Теперь работаем с отформатированным временем
     $timeStart = date('Y-m-d H:i:s', $timestamp);
     $timeEnd = date('Y-m-d H:i:s', $timestamp + 30 * 60);
-    
-    
+
+
     // Проверка на занятость в указанный интервал
     $res = CIBlockElement::GetList(
         ['PROPERTY_WRITETIME' => 'ASC'],
@@ -35,13 +35,13 @@ function isTimeSlotAvailable($doctorId, $datetime, &$error = '')
         false,
         ['ID', 'PROPERTY_WRITETIME']
     );
-    
+
     if ($booking = $res->Fetch()) {
         $bookingTime = FormatDate('H:i', MakeTimeStamp($booking['PROPERTY_WRITETIME_VALUE']));
         $error = sprintf('Время занято. У врача уже есть приём в %s. Выберите другое время.', $bookingTime);
         return false;
     }
-    
+
     // Проверка интервала 30 минут после предыдущего приёма
     $timeBeforeStart = date('Y-m-d H:i:s', $timestamp - 30 * 60);
     $res = CIBlockElement::GetList(
@@ -56,17 +56,17 @@ function isTimeSlotAvailable($doctorId, $datetime, &$error = '')
         ['nTopCount' => 1],
         ['ID', 'PROPERTY_WRITETIME']
     );
-    
+
     if ($previousBooking = $res->Fetch()) {
         $prevTime = MakeTimeStamp($previousBooking['PROPERTY_WRITETIME_VALUE']);
         $minutesBetween = ($timestamp - $prevTime) / 60;
-        
+
         if ($minutesBetween < 30) {
             $error = sprintf('Мало времени после предыдущего приёма (осталось %.0f минут). Выберите время на 30 минут позже.', $minutesBetween);
             return false;
         }
     }
-    
+
     return true;
 }
 
@@ -77,9 +77,9 @@ if (check_bitrix_sessid()) {
     $procedureId = (int)$_POST['procedureId'];
     $patientName = trim($_POST['patientName']);
     $datetime = $_POST['datetime'];
-    
+
     if (isTimeSlotAvailable($doctorId, $datetime, $errorMessage)) {
-        $datetimeBitrix = ConvertDateTime($datetime, "YYYY-MM-DD HH:MI:SS");
+        $datetimeBitrix = str_replace('T', ' ', $datetime) . ':00';
         $el = new CIBlockElement;
         $res = $el->Add([
             'IBLOCK_ID' => 21, // IBLOCK_BOOKING_ID
@@ -91,7 +91,7 @@ if (check_bitrix_sessid()) {
                 'PROCEDURE' => $procedureId
             ]
         ]);
-        
+
         if ($res) {
             $result['success'] = true;
         } else {
