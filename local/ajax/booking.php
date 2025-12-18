@@ -12,7 +12,7 @@ function isTimeSlotAvailable($doctorId, $datetime, &$error = '')
     $datetimeBitrix = str_replace('T', ' ', $datetime) . ':00';
     $timestamp = MakeTimeStamp($datetimeBitrix);
 
-    if ($timestamp <= time()) {
+    if (strtotime($datetimeBitrix) <= time()) {
         $error = 'Нельзя бронировать прошедшее время';
         return false;
     }
