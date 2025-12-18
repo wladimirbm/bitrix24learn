@@ -1,6 +1,8 @@
 <?
 require_once $_SERVER['DOCUMENT_ROOT'] . '/bitrix/modules/main/include/prolog_before.php';
 
+use CIBlockElement;
+
 function isTimeSlotAvailable($doctorId, $datetime, &$error = '')
 {
     $timestamp = MakeTimeStamp($datetime);
