@@ -151,9 +151,7 @@ class BookingProcedureType
     {
         ob_start(); ?>
         <script>
-            // JS уже загружен через CJSCore::Init
             BX.ready(function() {
-                // Инициализация обработчиков для всех ссылок
                 document.querySelectorAll('.booking-procedure').forEach(link => {
                     link.addEventListener('click', function(e) {
                         e.preventDefault();
@@ -161,8 +159,8 @@ class BookingProcedureType
                         var procedureId = this.dataset.procedure;
                         var procedureName = this.textContent;
 
-                        if (window.BX && BX.Otus && BX.Otus.BookingPopup) {
-                            BX.Otus.BookingPopup.openPopup(doctorId, procedureId, procedureName);
+                        if (window.BX && BX.Otus && BX.Otus.Booking) {
+                            BX.Otus.Booking.openPopup(doctorId, procedureId, procedureName);
                         }
                     });
                 });

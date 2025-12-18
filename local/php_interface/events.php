@@ -24,6 +24,7 @@ CJSCore::RegisterExt('otus_booking', [
     'rel' => ['popup', 'ui.notification', 'ui.dialogs.messagebox']
 ]);
 
+CJSCore::Init(['otus_booking']);
 
 //Подключение своих CSS и JS к Битрикс24
 

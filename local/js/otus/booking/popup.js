@@ -1,6 +1,6 @@
 (function() {
     BX.Otus = BX.Otus || {};
-    BX.Otus.BookingPopup = {
+    BX.Otus.Booking = {
         init: function(doctorId) {
             document.querySelectorAll('.booking-procedure').forEach(link => {
                 link.addEventListener('click', function(e) {
