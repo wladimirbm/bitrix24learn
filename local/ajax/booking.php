@@ -9,7 +9,7 @@ if (!CModule::IncludeModule('iblock')) {
 function isTimeSlotAvailable($doctorId, $datetime, &$error = '')
 {
     $datetimeBitrix = str_replace('T', ' ', $datetime) . ':00';
-    $timestamp = MakeTimeStamp($datetimeBitrix);
+    $timestamp = strtotime($datetimeBitrix);
 
     if (strtotime($datetimeBitrix) <= time()) {
         $error = 'Нельзя бронировать прошедшее время';
@@ -33,7 +33,7 @@ function isTimeSlotAvailable($doctorId, $datetime, &$error = '')
     ];
     
     \App\Debug\Mylog::addLog($arrFilter, 'Booking-IB-arrFilter', '', __FILE__, __LINE__);
-    
+
     $res = CIBlockElement::GetList(
         ['PROPERTY_WRITETIME' => 'ASC'],
         $arrFilter,
