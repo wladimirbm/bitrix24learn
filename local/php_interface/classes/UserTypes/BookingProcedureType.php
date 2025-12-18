@@ -39,14 +39,13 @@ class BookingProcedureType
     
     public static function GetPublicViewHTML($arProperty, $value, $strHTMLControlName)
     {
-        return htmlspecialcharsbx($value['VALUE'] ?? '');
-        //return self::GetPropertyFieldHtml($arProperty, $value, $strHTMLControlName);
+        //return htmlspecialcharsbx($value['VALUE'] ?? '');
+        return self::GetPropertyFieldHtml($arProperty, $value, $strHTMLControlName);
     }
     
     public static function GetAdminListViewHTML($arProperty, $value, $strHTMLControlName)
     {
-        //return self::GetPublicViewHTML($arProperty, $value, $strHTMLControlName);
-        return self::GetPropertyFieldHtml($arProperty, $value, $strHTMLControlName);
+        return self::GetPublicViewHTML($arProperty, $value, $strHTMLControlName);
     }
     
     public static function GetSearchContent($arProperty, $value, $strHTMLControlName)
