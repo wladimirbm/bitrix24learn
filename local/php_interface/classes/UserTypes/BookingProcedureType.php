@@ -40,22 +40,61 @@ class BookingProcedureType
 
     public static function GetPublicViewHTML($arProperty, $value, $strHTMLControlName)
     {
-        $elementId = $value['ELEMENT_ID'] ?? 0;
+        // Получаем ID элемента врача
+        $elementId = 0;
+
+        // Пробуем все возможные источники ID
+        if (isset($strHTMLControlName['VALUE'])) {
+            $elementId = $strHTMLControlName['VALUE'];
+        } elseif (isset($value['ELEMENT_ID'])) {
+            $elementId = $value['ELEMENT_ID'];
+        } elseif (isset($value['VALUE']['ELEMENT_ID'])) {
+            $elementId = $value['VALUE']['ELEMENT_ID'];
+        } elseif (isset($_REQUEST['ID']) && empty($strHTMLControlName['MODE'])) {
+            // Детальная страница
+            $elementId = $_REQUEST['ID'];
+        }
+
+        if (!$elementId) {
+            return '<span style="color: #999;">ID не определён</span>';
+        }
+
+        // Получаем процедуры врача
         $procedures = self::getDoctorProcedures($elementId);
 
-        $html = '';
+        if (empty($procedures)) {
+            return '<span style="color: #999;">Нет процедур</span>';
+        }
+
+        // Генерируем кликабельные ссылки
+        $html = '<div style="max-height: 100px; overflow-y: auto;">';
         foreach ($procedures as $procedure) {
             $html .= sprintf(
-                '<a href="javascript:void(0)" class="booking-procedure" data-procedure="%d">%s</a><br>',
+                '<a href="javascript:void(0)" 
+                class="booking-procedure" 
+                data-procedure="%d" 
+                data-doctor="%d"
+                onclick="BX.Otus.BookingPopup.openPopup(%d, %d, \'%s\')">
+                %s
+            </a><br>',
                 $procedure['ID'],
+                $elementId,
+                $elementId,
+                $procedure['ID'],
+                htmlspecialcharsbx($procedure['NAME']),
                 htmlspecialcharsbx($procedure['NAME'])
             );
         }
+        $html .= '</div>';
 
-        $html .= self::getJsInit($elementId);
+        // Инициализация JS (один раз на страницу)
+        static $jsIncluded = false;
+        if (!$jsIncluded) {
+            $html .= self::getJsInitList();
+            $jsIncluded = true;
+        }
+
         return $html;
-        
-        //return self::GetPropertyFieldHtml($arProperty, $value, $strHTMLControlName);
     }
 
     public static function GetAdminListViewHTML($arProperty, $value, $strHTMLControlName)
@@ -102,6 +141,31 @@ class BookingProcedureType
         <script>
             BX.ready(function() {
                 BX.Otus.BookingPopup.init(<?= $doctorId ?>);
+            });
+        </script>
+    <?php
+        return ob_get_clean();
+    }
+
+    private static function getJsInitList()
+    {
+        ob_start(); ?>
+        <script>
+            // JS уже загружен через CJSCore::Init
+            BX.ready(function() {
+                // Инициализация обработчиков для всех ссылок
+                document.querySelectorAll('.booking-procedure').forEach(link => {
+                    link.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        var doctorId = this.dataset.doctor;
+                        var procedureId = this.dataset.procedure;
+                        var procedureName = this.textContent;
+
+                        if (window.BX && BX.Otus && BX.Otus.BookingPopup) {
+                            BX.Otus.BookingPopup.openPopup(doctorId, procedureId, procedureName);
+                        }
+                    });
+                });
             });
         </script>
 <?php
