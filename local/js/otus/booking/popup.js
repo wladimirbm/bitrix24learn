@@ -5,7 +5,7 @@
             document.querySelectorAll('.booking-procedure').forEach(link => {
                 link.addEventListener('click', function(e) {
                     e.preventDefault();
-                    BX.Otus.BookingPopup.openPopup(
+                    BX.Otus.Booking.openPopup(
                         doctorId,
                         this.dataset.procedure,
                         this.textContent
@@ -28,8 +28,8 @@
                     </div>
                     <input type="hidden" id="booking-doctor-id" value="${doctorId}">
                     <input type="hidden" id="booking-procedure-id" value="${procedureId}">
-                    <button onclick="BX.Otus.BookingPopup.saveBooking()">Сохранить</button>
-                    <button onclick="BX.Otus.BookingPopup.closePopup()">Отмена</button>
+                    <button onclick="BX.Otus.Booking.saveBooking()">Сохранить</button>
+                    <button onclick="BX.Otus.Booking.closePopup()">Отмена</button>
                 </div>
             `;
 
@@ -60,7 +60,7 @@
                 onsuccess: function(response) {
                     var result = JSON.parse(response);
                     if (result.success) {
-                        BX.Otus.BookingPopup.closePopup();
+                        BX.Otus.Booking.closePopup();
                         BX.UI.Notification.Center.notify({
                             content: 'Бронирование создано!',
                             autoHideDelay: 3000
