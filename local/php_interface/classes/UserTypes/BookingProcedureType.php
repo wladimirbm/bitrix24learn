@@ -1,10 +1,11 @@
 <?php
+
 namespace UserTypes;
 
 class BookingProcedureType
 {
     const USER_TYPE = 'iblock_booking';
-    
+
     public static function GetUserTypeDescription()
     {
         return [
@@ -18,12 +19,12 @@ class BookingProcedureType
             'GetPublicViewHTML'    => [self::class, 'GetPublicViewHTML'],
         ];
     }
-    
+
     public static function GetPropertyFieldHtml($arProperty, $value, $strHTMLControlName)
     {
         $elementId = $_REQUEST['ID'] ?? 0;
         $procedures = self::getDoctorProcedures($elementId);
-        
+
         $html = '';
         foreach ($procedures as $procedure) {
             $html .= sprintf(
@@ -32,28 +33,42 @@ class BookingProcedureType
                 htmlspecialcharsbx($procedure['NAME'])
             );
         }
-        
+
         $html .= self::getJsInit($elementId);
         return $html;
     }
-    
+
     public static function GetPublicViewHTML($arProperty, $value, $strHTMLControlName)
     {
-        return print_r($value,true);
-        //return htmlspecialcharsbx($value['VALUE'] ?? '');
-        return self::GetPropertyFieldHtml($arProperty, $value, $strHTMLControlName);
+        $elementId = $value['ELEMENT_ID'] ?? 0;
+        $procedures = self::getDoctorProcedures($elementId);
+
+        $html = '';
+        foreach ($procedures as $procedure) {
+            $html .= sprintf(
+                '<a href="javascript:void(0)" class="booking-procedure" data-procedure="%d">%s</a><br>',
+                $procedure['ID'],
+                htmlspecialcharsbx($procedure['NAME'])
+            );
+        }
+
+        $html .= self::getJsInit($elementId);
+        return $html;
+        
+        //return self::GetPropertyFieldHtml($arProperty, $value, $strHTMLControlName);
     }
-    
+
     public static function GetAdminListViewHTML($arProperty, $value, $strHTMLControlName)
     {
-        return self::GetPublicViewHTML($arProperty, $value, $strHTMLControlName);
+        return htmlspecialcharsbx($value['VALUE'] ?? '');
+        //return self::GetPublicViewHTML($arProperty, $value, $strHTMLControlName);
     }
-    
+
     public static function GetSearchContent($arProperty, $value, $strHTMLControlName)
     {
         return $value['VALUE'] ?? '';
     }
-    
+
     private static function getDoctorProcedures($doctorId)
     {
         if (!$doctorId) return [];
@@ -65,7 +80,7 @@ class BookingProcedureType
             [],
             ['CODE' => 'PROCEDURES_ID']
         );
-        
+
         while ($prop = $res->Fetch()) {
             if ($prop['VALUE']) {
                 $procedureRes = \CIBlockElement::GetByID($prop['VALUE']);
@@ -77,10 +92,10 @@ class BookingProcedureType
                 }
             }
         }
-        
+
         return $procedures;
     }
-    
+
     private static function getJsInit($doctorId)
     {
         ob_start(); ?>
@@ -89,7 +104,7 @@ class BookingProcedureType
                 BX.Otus.BookingPopup.init(<?= $doctorId ?>);
             });
         </script>
-        <?php
+<?php
         return ob_get_clean();
     }
 }
