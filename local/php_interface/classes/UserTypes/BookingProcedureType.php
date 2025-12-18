@@ -40,10 +40,8 @@ class BookingProcedureType
 
     public static function GetPublicViewHTML($arProperty, $value, $strHTMLControlName)
     {
-        // Получаем ID элемента врача
         $elementId = 0;
 
-        // Пробуем все возможные источники ID
         if (isset($strHTMLControlName['VALUE'])) {
             $elementId = $strHTMLControlName['VALUE'];
         } elseif (isset($value['ELEMENT_ID'])) {
@@ -59,14 +57,12 @@ class BookingProcedureType
             return '<span style="color: #999;">ID не определён</span>';
         }
 
-        // Получаем процедуры врача
         $procedures = self::getDoctorProcedures($elementId);
 
         if (empty($procedures)) {
             return '<span style="color: #999;">Нет процедур</span>';
         }
 
-        // Генерируем кликабельные ссылки
         $html = '<div style="max-height: 100px; overflow-y: auto;">';
         foreach ($procedures as $procedure) {
             $html .= sprintf(

@@ -16,15 +16,12 @@ function isTimeSlotAvailable($doctorId, $datetime, &$error = '')
         return false;
     }
 
-    // Наш интервал: от 30 минут до начала до 30 минут после начала
     $checkStart = date('Y-m-d H:i:s', $timestamp - 30 * 60);  // За 30 мин до
     $checkEnd = date('Y-m-d H:i:s', $timestamp + 30 * 60);    // Через 30 мин после
 
-    // Конвертируем в формат Битрикс
     $checkStartBitrix = ConvertDateTime($checkStart, "DD.MM.YYYY HH:MI:SS");
     $checkEndBitrix = ConvertDateTime($checkEnd, "DD.MM.YYYY HH:MI:SS");
 
-    // Ищем ВСЕ бронирования врача в этом интервале
     $arrFilter =  [
             'IBLOCK_ID' => 21,
             'PROPERTY_DOCTOR' => $doctorId,
@@ -49,9 +46,7 @@ function isTimeSlotAvailable($doctorId, $datetime, &$error = '')
         $minutesDiff = abs($timestamp - $bookingTimestamp) / 60;
 
         if ($minutesDiff < 30) {
-            // Нашли конфликтное бронирование
             $bookingTime = FormatDate('d.m.Y H:i', $bookingTimestamp);
-
             if ($bookingTimestamp < $timestamp) {
                 $error = sprintf(
                     'Мало времени после предыдущего приёма %s (всего %.0f мин). Нужно 30 мин.',
@@ -84,7 +79,7 @@ if (check_bitrix_sessid()) {
         $datetimeBitrix = str_replace('T', ' ', $datetime) . ':00';
         $el = new CIBlockElement;
         $res = $el->Add([
-            'IBLOCK_ID' => 21, // IBLOCK_BOOKING_ID
+            'IBLOCK_ID' => 21,
             'NAME' => 'Бронирование #' . time(),
             'PROPERTY_VALUES' => [
                 'FIO' => $patientName,

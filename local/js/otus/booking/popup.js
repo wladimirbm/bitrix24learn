@@ -15,13 +15,11 @@
     },
 
     openPopup: function (doctorId, procedureId, procedureName) {
-      // Закрываем старый попап, если есть
       if (this.popup) {
         this.popup.close();
         this.popup = null;
       }
 
-      // Генерируем УНИКАЛЬНЫЙ ID для попапа
       var popupId =
         "booking-popup-" + doctorId + "-" + procedureId + "-" + Date.now();
 
