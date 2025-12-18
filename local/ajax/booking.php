@@ -30,8 +30,8 @@ function isTimeSlotAvailable($doctorId, $datetime, &$error = '')
         [
             'IBLOCK_ID' => 21,
             'PROPERTY_DOCTOR' => $doctorId,
-            '>=PROPERTY_WRITETIME' => $checkStartBitrix,
-            '<=PROPERTY_WRITETIME' => $checkEndBitrix
+            '>=PROPERTY_WRITETIME' => $checkStart,
+            '<=PROPERTY_WRITETIME' => $checkEnd
         ],
         false,
         false,
