@@ -74,7 +74,7 @@ class BookingProcedureType
                 class="booking-procedure" 
                 data-procedure="%d" 
                 data-doctor="%d"
-                onclick="BX.Otus.BookingPopup.openPopup(%d, %d, \'%s\')">
+                onclick="BX.Otus.Booking.openPopup(%d, %d, \'%s\')">
                 %s
             </a><br>',
                 $procedure['ID'],
@@ -140,7 +140,7 @@ class BookingProcedureType
         ob_start(); ?>
         <script>
             BX.ready(function() {
-                BX.Otus.BookingPopup.init(<?= $doctorId ?>);
+                BX.Otus.Booking.init(<?= $doctorId ?>);
             });
         </script>
     <?php
