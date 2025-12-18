@@ -39,6 +39,7 @@ class BookingProcedureType
     
     public static function GetPublicViewHTML($arProperty, $value, $strHTMLControlName)
     {
+        return print_r($value,true);
         //return htmlspecialcharsbx($value['VALUE'] ?? '');
         return self::GetPropertyFieldHtml($arProperty, $value, $strHTMLControlName);
     }
