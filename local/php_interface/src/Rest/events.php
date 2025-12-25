@@ -1,5 +1,4 @@
 <?php
-
 namespace Otus\Rest;
 
 use Bitrix\Main\Application;
