@@ -23,3 +23,7 @@
 //     require_once(__DIR__. '/Orm/AssistentsTable.php');
 // } else die(__DIR__. '/Orm/AssistentsTable.php');
 
+// if (file_exists(__DIR__. '/Rest/Events.php')) {
+//     require_once(__DIR__. '/Rest/Events.php');
+// } else die(__DIR__. '/Rest/Events.php');
+

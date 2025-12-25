@@ -11,7 +11,7 @@ $eventManager->addEventHandler("iblock", "OnAfterIBlockElementUpdate", ['\App\Ev
 $eventManager->addEventHandlerCompatible("crm", "OnAfterCrmDealUpdate", ['\App\Events\CrmFieldsHandler', 'onDealAfterUpdate']);
 $eventManager->addEventHandlerCompatible('crm', 'OnBeforeCrmDealDelete', ['\App\Events\CrmFieldsHandler', 'onDealBeforeDelete']);
 
-$eventManager->addEventHandlerCompatible('rest', 'OnRestServiceBuildDescription', ['\Otus\Rest\Events', 'OnRestServiceBuildDescriptionHandler']);
+$eventManager->addEventHandlerCompatible('rest', 'OnRestServiceBuildDescription', ['Otus\Rest\Events', 'OnRestServiceBuildDescriptionHandler']);
 
 // подключение кастомного типа пользовательского поля
 $eventManager->AddEventHandler(
