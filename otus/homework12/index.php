@@ -1,16 +1,16 @@
 <? require($_SERVER["DOCUMENT_ROOT"] . "/bitrix/header.php"); ?>
 <?php
-$APPLICATION->SetTitle("Домашняя работа 11 (Локальные приложения и вебхуки // ДЗ )");
+$APPLICATION->SetTitle("Домашняя работа 12 (Добавление собственных методов REST // ДЗ)");
 ?>
 <H1><? $APPLICATION->ShowTitle() ?></H1>
 
-<h2>Локальные приложения и вебхуки</h2>
+<h2>Добавление собственных методов REST</h2>
 
 <p><a href="/crm/contact/list/">Контакты</a></p>
 
 
 <h2>Файлы</h2>
-<p><a href="/bitrix/admin/fileman_admin.php?lang=ru&path=%2Flocal%2Fapp%2Fwebhook&site=s1">Обработчик исходящего вебхука</a></p>
+<p><a href="//bitrix/admin/fileman_admin.php?lang=ru&path=%2Flocal%2Fphp_interface%2Fsrc%2FRest&site=s1">Обработчик входящих вебхуков</a></p>
 
 
 <? require($_SERVER["DOCUMENT_ROOT"] . "/bitrix/footer.php"); ?> 
