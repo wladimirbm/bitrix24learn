@@ -10,7 +10,7 @@ $APPLICATION->SetTitle("Домашняя работа 11 (Локальные п�
 
 
 <h2>Файлы</h2>
-<p><a href="/bitrix/admin/fileman_admin.php?lang=ru&path=%2Flocal%2Fapp%2Fwebhook&site=s1">Обработчика исходяжего выбхука</a></p>
+<p><a href="/bitrix/admin/fileman_admin.php?lang=ru&path=%2Flocal%2Fapp%2Fwebhook&site=s1">Обработчик исходящего вебхука</a></p>
 
 
 <? require($_SERVER["DOCUMENT_ROOT"] . "/bitrix/footer.php"); ?> 
