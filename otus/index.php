@@ -67,7 +67,7 @@ $APPLICATION->SetTitle("Список Домашних работ");
 </div>
 <div>
     <h2><a href="homework7/">Домашняя работа 7 (Создание кастомных полей и встраивание их в систему // ДЗ)</a>
-        <div class="prog clock"></div>
+        <div class="prog done"></div>
     </h2>
 </div>
 <div>
