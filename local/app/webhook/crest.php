@@ -15,7 +15,7 @@
 	 *      C_REST_LOG_TYPE_DUMP = true //logs save var_export for viewing convenience
 	 *      C_REST_IGNORE_SSL = true //turn off validate ssl by curl
 	 */
-
+ 
 	class CRest
 	{
 		const VERSION = '1.36';
