@@ -7,7 +7,8 @@
 file_put_contents('../../../logs/webhook.log', print_r($_REQUEST, true) . PHP_EOL, FILE_APPEND);
 //https://cc61466.tw1.ru/rest/1/kuzuzl8fna81k2n0/
 
-require_once(__DIR__ . '/crest.php');
+require_once('crest.php');
+
 if (!empty($_REQUEST['data']['FIELDS']['ID']))
     $resultActivity = CRest::call(
         'crm.activity.get',
