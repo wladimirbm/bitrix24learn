@@ -16,6 +16,10 @@ if (!empty($_REQUEST['data']['FIELDS']['ID']))
         ]
     );
 
+file_put_contents('../../../logs/webhook.log', 'resultActivity: ' .print_r($resultActivity, true) . PHP_EOL, FILE_APPEND);
+file_put_contents('../../../logs/webhook.log', 'CREATED: ' .print_r(strtotime($resultActivity['result']['CREATED']), true) . PHP_EOL, FILE_APPEND);
+
+
 if (!empty($resultActivity['result'])) {
     if ($resultActivity['result']['OWNER_TYPE_ID'] == 3)
 
