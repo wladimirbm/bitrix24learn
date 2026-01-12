@@ -34,7 +34,7 @@ $addResult = CRest::call('otus.doctor.add', [
     'FIRSTNAME' => 'Доктор_' . date('His'),
     'MIDDLENAME' => 'Тест',
     'DUTY_ID' => rand(1, 100),
-    'BIRTHDAY' => date('Y-m-d', rand(315532800, 946684800))
+    'BIRTHDAY' => str_pad(RAND(1, 29), 2, "0", STR_PAD_LEFT) . '.' . str_pad(RAND(1, 12), 2, "0", STR_PAD_LEFT) . '.' . RAND(1960, 2000)
 ]);
 
 dump($addResult);
