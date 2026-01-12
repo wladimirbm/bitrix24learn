@@ -76,6 +76,7 @@ class Events
         }
 
         $data = [
+            'NAME' => $arParams['LASTNAME'] . ' ' . $arParams['FIRSTNAME'] . ' ' . ($arParams['MIDDLENAME'] ?? ''),
             'LASTNAME' => $arParams['LASTNAME'],
             'FIRSTNAME' => $arParams['FIRSTNAME'],
             'MIDDLENAME' => $arParams['MIDDLENAME'] ?? '',
