@@ -49,18 +49,19 @@ class Events
     private static function formatResponse($data, $isList = false)
     {
         //static::$startTime = microtime(true);
-        $endTime = microtime(true);
-        $response = [
-            'result' => $data,
-            'count' => count($data),
-            'time' => [
-                'start' => static::$startTime,
-                'finish' => $endTime,
-                'duration' => $endTime - static::$startTime,
-                'date_start' => date('c', static::$startTime),
-                'date_finish' => date('c', $endTime)
-            ]
-        ];
+        //$endTime = microtime(true);
+        $response = $data;
+        // $response = [
+        //     'result' => $data,
+        //     'count' => count($data),
+        //     'time' => [
+        //         'start' => static::$startTime,
+        //         'finish' => $endTime,
+        //         'duration' => $endTime - static::$startTime,
+        //         'date_start' => date('c', static::$startTime),
+        //         'date_finish' => date('c', $endTime)
+        //     ]
+        // ];
 
         //$response['time']['duration'] = $response['time']['finish'] - $response['time']['start'];
         return $response;
