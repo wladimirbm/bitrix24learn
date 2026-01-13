@@ -74,10 +74,10 @@ class DoctorsTable extends DataManager
                 ->configureTitle(Loc::getMessage('ELEMENT_PROP_S16_ENTITY_PROPERTY_69_FIELD'))
                 ->configureColumnName('PROPERTY_69')
 			,
-			'ASSISTENTS' => (new ManyToMany('ASSISTENTS', AssistentsTable::class))
-                ->configureTableName('otus_doctor_assistent')
-                ->configureLocalPrimary('ID', 'DOCTOR_ID')
-                ->configureRemotePrimary('ID', 'ASSISTENT_ID'),
+			// 'ASSISTENTS' => (new ManyToMany('ASSISTENTS', AssistentsTable::class))
+            //     ->configureTableName('otus_doctor_assistent')
+            //     ->configureLocalPrimary('ID', 'DOCTOR_ID')
+            //     ->configureRemotePrimary('ID', 'ASSISTENT_ID'),
 		];
 	}
 }
