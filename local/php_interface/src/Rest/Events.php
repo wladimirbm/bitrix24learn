@@ -1,4 +1,5 @@
 <?php
+
 namespace Otus\Rest;
 
 use Bitrix\Main\Application;
@@ -9,6 +10,8 @@ use Otus\Orm\DoctorsTable;
 //use Models\Lists\DoctorsPropertyValuesTable as DoctorsTable;
 //use Otus\Crmcustomtab\Orm\DoctorsTable;
 use Bitrix\Main\Type\Date;
+use Bitrix\Main\Loader;
+use CIBlockElement;
 
 Loc::loadMessages(__FILE__);
 
@@ -72,6 +75,51 @@ class Events
 
     public static function add($arParams, $n, \CRestServer $server)
     {
+        if (empty($arParams['LASTNAME']) || empty($arParams['FIRSTNAME'])) {
+            throw new RestException('Обязательные поля: LASTNAME, FIRSTNAME', 'INVALID_PARAMS');
+        }
+
+        // Подключаем модуль инфоблоков
+        if (!Loader::includeModule('iblock')) {
+            throw new RestException('Модуль инфоблоков не подключен', 'MODULE_ERROR');
+        }
+
+        // ID инфоблока "Врачи"
+        $iblockId = 16; // IBLOCK_DOCTORS_ID
+
+        // Подготавливаем свойства
+        $properties = [
+            'LASTNAME' => $arParams['LASTNAME'],
+            'FIRSTNAME' => $arParams['FIRSTNAME'],
+            'MIDDLENAME' => $arParams['MIDDLENAME'] ?? '',
+            'DUTY_ID' => $arParams['DUTY_ID'] ?? 0,
+            'BIRTHDAY' => $arParams['BIRTHDAY'] ?? null,
+        ];
+
+        // Создаём элемент инфоблока
+        $el = new CIBlockElement;
+        $fields = [
+            'IBLOCK_ID' => $iblockId,
+            'NAME' => $properties['LASTNAME'] . ' ' . $properties['FIRSTNAME'] . ' ' . $properties['MIDDLENAME'],
+            'ACTIVE' => 'Y',
+            'PROPERTY_VALUES' => $properties,
+        ];
+
+        $newElementId = $el->Add($fields);
+
+        if ($newElementId) {
+            // Триггерим исходящий вебхук (если нужен)
+            self::triggerEvent('onAfterOtusDoctorAdd', $newElementId, $properties);
+
+            return self::formatResponse(['ID' => $newElementId]);
+        } else {
+            $error = $el->LAST_ERROR ?: 'Неизвестная ошибка при создании элемента';
+            throw new RestException($error, 'ADD_ERROR');
+        }
+    }
+
+    public static function add_bad($arParams, $n, \CRestServer $server)
+    {
         static::$startTime = microtime(true);
 
         if (empty($arParams['LASTNAME']) || empty($arParams['FIRSTNAME'])) {
@@ -84,11 +132,11 @@ class Events
             'FIRSTNAME' => $arParams['FIRSTNAME'],
             'MIDDLENAME' => $arParams['MIDDLENAME'] ?? '',
             'DUTY_ID' => (int)($arParams['DUTY_ID'] ?? 0),
-            'BIRTHDAY' => $arParams['BIRTHDAY'] ? Date::createFromText($arParams['BIRTHDAY']): null, 
+            'BIRTHDAY' => $arParams['BIRTHDAY'] ? Date::createFromText($arParams['BIRTHDAY']) : null,
         ];
 
         $result = DoctorsTable::add($data);
-        
+
         if ($result->isSuccess()) {
             // Триггерим исходящий вебхук
             self::triggerEvent('onAfterOtusDoctorAdd', $result->getId(), $data);
