@@ -58,19 +58,17 @@ if ($newDoctorId) {
     ]));
 }
 
+// ================== GET ==================
+if ($newDoctorId) {
+    echo "<h3>5. otus.doctor.get (ID={$newDoctorId})</h3>";
+    dump(CRest::call('otus.doctor.get', ['ID' => $newDoctorId]));
+}
+
 // ================== DELETE ==================
 if ($newDoctorId) {
-    echo "<h3>5. otus.doctor.delete (ID={$newDoctorId})</h3>";
+    echo "<h3>6. otus.doctor.delete (ID={$newDoctorId})</h3>";
     dump(CRest::call('otus.doctor.delete', ['ID' => $newDoctorId]));
 }
 
-// ================== ВЕБХУК ADD ==================
-// echo '<h3>6. Входящий вебхук onOtusDoctorAdd</h3>';
-// dump(CRest::call('onOtusDoctorAdd', [
-//     'data' => [
-//         'LASTNAME' => 'Вебхук_' . time(),
-//         'FIRSTNAME' => 'Доктор'
-//     ]
-// ]));
 
 echo '<h2>✅ Тестирование завершено</h2>';
