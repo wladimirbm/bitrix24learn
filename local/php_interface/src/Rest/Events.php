@@ -79,7 +79,7 @@ class Events
         }
 
         $data = [
-            'NAME' => $arParams['LASTNAME'] . ' ' . $arParams['FIRSTNAME'] . ' ' . ($arParams['MIDDLENAME'] ?? ''),
+            //'NAME' => $arParams['LASTNAME'] . ' ' . $arParams['FIRSTNAME'] . ' ' . ($arParams['MIDDLENAME'] ?? ''),
             'LASTNAME' => $arParams['LASTNAME'],
             'FIRSTNAME' => $arParams['FIRSTNAME'],
             'MIDDLENAME' => $arParams['MIDDLENAME'] ?? '',
@@ -88,7 +88,7 @@ class Events
         ];
 
         $result = DoctorsTable::add($data);
-        dump($result);
+        
         if ($result->isSuccess()) {
             // Триггерим исходящий вебхук
             self::triggerEvent('onAfterOtusDoctorAdd', $result->getId(), $data);
