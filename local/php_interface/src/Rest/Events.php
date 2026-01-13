@@ -6,6 +6,7 @@ use Bitrix\Rest\RestException;
 use Bitrix\Main\Event;
 use Bitrix\Main\Localization\Loc;
 use Otus\Orm\DoctorsTable;
+//use Models\Lists\DoctorsPropertyValuesTable as DoctorsTable;
 use Bitrix\Main\Type\DateTime;
 
 Loc::loadMessages(__FILE__);
@@ -81,7 +82,7 @@ class Events
             'LASTNAME' => $arParams['LASTNAME'],
             'FIRSTNAME' => $arParams['FIRSTNAME'],
             'MIDDLENAME' => $arParams['MIDDLENAME'] ?? '',
-            'DUTY_ID' => (int)($arParams['DUTY_ID'] ?? 0),
+            //'DUTY_ID' => (int)($arParams['DUTY_ID'] ?? 0),
             'BIRTHDAY' => DateTime::createFromText($arParams['BIRTHDAY']) ?? null,
         ];
 
