@@ -84,7 +84,7 @@ class Events
             'FIRSTNAME' => $arParams['FIRSTNAME'],
             'MIDDLENAME' => $arParams['MIDDLENAME'] ?? '',
             'DUTY_ID' => (int)($arParams['DUTY_ID'] ?? 0),
-            'BIRTHDAY' => DateTime::createFromText($arParams['BIRTHDAY']) ?? null,
+            'BIRTHDAY' => $arParams['BIRTHDAY'] ?? null, //DateTime::createFromText(
         ];
 
         $result = DoctorsTable::add($data);
