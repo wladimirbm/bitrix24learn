@@ -5,9 +5,9 @@ use Bitrix\Main\Application;
 use Bitrix\Rest\RestException;
 use Bitrix\Main\Event;
 use Bitrix\Main\Localization\Loc;
-//use Otus\Orm\DoctorsTable;
+use Otus\Orm\DoctorsTable;
 //use Models\Lists\DoctorsPropertyValuesTable as DoctorsTable;
-use Otus\Crmcustomtab\Orm\DoctorsTable;
+//use Otus\Crmcustomtab\Orm\DoctorsTable;
 use Bitrix\Main\Type\DateTime;
 
 Loc::loadMessages(__FILE__);
@@ -79,7 +79,7 @@ class Events
         }
 
         $data = [
-            //'NAME' => $arParams['LASTNAME'] . ' ' . $arParams['FIRSTNAME'] . ' ' . ($arParams['MIDDLENAME'] ?? ''),
+            'NAME' => $arParams['LASTNAME'] . ' ' . $arParams['FIRSTNAME'] . ' ' . ($arParams['MIDDLENAME'] ?? ''),
             'LASTNAME' => $arParams['LASTNAME'],
             'FIRSTNAME' => $arParams['FIRSTNAME'],
             'MIDDLENAME' => $arParams['MIDDLENAME'] ?? '',
@@ -88,7 +88,7 @@ class Events
         ];
 
         $result = DoctorsTable::add($data);
-
+        dump($result);
         if ($result->isSuccess()) {
             // Триггерим исходящий вебхук
             self::triggerEvent('onAfterOtusDoctorAdd', $result->getId(), $data);
