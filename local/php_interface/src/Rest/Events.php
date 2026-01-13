@@ -8,7 +8,7 @@ use Bitrix\Main\Localization\Loc;
 use Otus\Orm\DoctorsTable;
 //use Models\Lists\DoctorsPropertyValuesTable as DoctorsTable;
 //use Otus\Crmcustomtab\Orm\DoctorsTable;
-use Bitrix\Main\Type\DateTime;
+use Bitrix\Main\Type\Date;
 
 Loc::loadMessages(__FILE__);
 
@@ -84,7 +84,7 @@ class Events
             'FIRSTNAME' => $arParams['FIRSTNAME'],
             'MIDDLENAME' => $arParams['MIDDLENAME'] ?? '',
             'DUTY_ID' => (int)($arParams['DUTY_ID'] ?? 0),
-            'BIRTHDAY' => $arParams['BIRTHDAY'] ? DateTime::createFromText($arParams['BIRTHDAY']): null, 
+            'BIRTHDAY' => $arParams['BIRTHDAY'] ? Date::createFromText($arParams['BIRTHDAY']): null, 
         ];
 
         $result = DoctorsTable::add($data);
