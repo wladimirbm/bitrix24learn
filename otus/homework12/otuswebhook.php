@@ -1,15 +1,16 @@
 <?php
-require_once($_SERVER['DOCUMENT_ROOT'].'/local/app/webhook/crest.php');
+require_once($_SERVER['DOCUMENT_ROOT'] . '/local/app/webhook/crest.php');
 require($_SERVER["DOCUMENT_ROOT"] . "/bitrix/header.php"); ?>
 <?php
 $APPLICATION->SetTitle("Rest запросы:");
 ?>
 <H1><? $APPLICATION->ShowTitle() ?></H1>
 
-<?php 
+<?php
 
 if (!function_exists('dump')) {
-    function dump($var) {
+    function dump($var)
+    {
         echo '<pre>';
         var_dump($var);
         echo '</pre><hr>';
@@ -34,7 +35,8 @@ $addResult = CRest::call('otus.doctor.add', [
     'FIRSTNAME' => 'Доктор_' . date('d-m-Y H:i:s'),
     'MIDDLENAME' => 'Тест',
     'DUTY_ID' => rand(1, 100),
-    'BIRTHDAY' => RAND(1960, 2000) . '-' . str_pad(RAND(1, 12), 2, "0", STR_PAD_LEFT) . '-' . str_pad(RAND(1, 29), 2, "0", STR_PAD_LEFT),
+    'BIRTHDAY' =>  str_pad(RAND(1, 29), 2, "0", STR_PAD_LEFT) . '.' . str_pad(RAND(1, 12), 2, "0", STR_PAD_LEFT) . '.' . RAND(1960, 2000),
+    //'BIRTHDAY' => RAND(1960, 2000) . '-' . str_pad(RAND(1, 12), 2, "0", STR_PAD_LEFT) . '-' . str_pad(RAND(1, 29), 2, "0", STR_PAD_LEFT),
 ]);
 
 dump($addResult);
