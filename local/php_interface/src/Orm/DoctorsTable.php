@@ -48,7 +48,7 @@ class DoctorsTable extends DataManager
 			'ID' => (new IntegerField('IBLOCK_ELEMENT_ID',
 					[]
 				))->configureTitle(Loc::getMessage('ELEMENT_PROP_S16_ENTITY_IBLOCK_ELEMENT_ID_FIELD'))
-						->configurePrimary(true)
+						->configurePrimary(true)->configureAutocomplete()
 			,
 			'LASTNAME' => (new TextField('LASTNAME'))
                 ->configureTitle(Loc::getMessage('ELEMENT_PROP_S16_ENTITY_PROPERTY_64_FIELD'))
