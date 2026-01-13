@@ -65,7 +65,7 @@ if ($newDoctorId) {
 }
 
 // ================== DELETE ==================
-if ($newDoctorId) {
+if ($newDoctorId && !isset($_GET['nodelete'])) {
     echo "<h3>6. otus.doctor.delete (ID={$newDoctorId})</h3>";
     dump(CRest::call('otus.doctor.delete', ['ID' => $newDoctorId]));
 }
