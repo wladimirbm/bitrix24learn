@@ -84,8 +84,7 @@ class Events
             throw new RestException('Модуль инфоблоков не подключен', 'MODULE_ERROR');
         }
 
-        // ID инфоблока "Врачи"
-        $iblockId = 16; // IBLOCK_DOCTORS_ID
+        $iblockId = 16; 
 
         // Подготавливаем свойства
         $properties = [
