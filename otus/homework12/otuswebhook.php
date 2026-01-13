@@ -31,7 +31,7 @@ echo "<em>Уникальная фамилия: {$uniqueLastName}</em><br>";
 
 $addResult = CRest::call('otus.doctor.add', [
     'LASTNAME' => $uniqueLastName,
-    'FIRSTNAME' => 'Доктор_' . date('His'),
+    'FIRSTNAME' => 'Доктор_' . date('d-m-Y H:i:s'),
     'MIDDLENAME' => 'Тест',
     'DUTY_ID' => rand(1, 100),
     'BIRTHDAY' => RAND(1960, 2000) . '-' . str_pad(RAND(1, 12), 2, "0", STR_PAD_LEFT) . '-' . str_pad(RAND(1, 29), 2, "0", STR_PAD_LEFT),
