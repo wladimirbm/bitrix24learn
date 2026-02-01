@@ -91,8 +91,8 @@ $APPLICATION->SetTitle("Список Домашних работ");
     </h2>
 </div>
 <div>
-    <h2><a href="homework12/">Домашняя работа 12 (Добавление собственных методов REST // ДЗ) - на проверку! </a>
-        <div class="prog clock"></div>
+    <h2><a href="homework12/">Домашняя работа 12 (Добавление собственных методов REST // ДЗ)</a>
+        <div class="prog done"></div>
     </h2>
 </div>
 <? require($_SERVER["DOCUMENT_ROOT"] . "/bitrix/footer.php"); ?>
