@@ -54,8 +54,7 @@ class Agents
         ]);
         
         // 2. Создаём элемент смарт-процесса СО СТАТУСОМ "ВЫПОЛНЕНО"
-        $factory = \Bitrix\Crm\Service\Container::getInstance()
-            ->getFactoryByEntityTypeId(1058); // ID типа смарт-процесса "Заявка на закупку"
+        $factory = \Bitrix\Crm\Service\Container::getInstance()->getFactory(1058); // ID типа смарт-процесса "Заявка на закупку"
             
         if (!$factory) {
             return false;
@@ -65,22 +64,23 @@ class Agents
             'fields' => [
                 'TITLE' => '[АВТТО] Закупка: ' . $elementName,
                 'STAGE_ID' => 'DT1058_11:SUCCESS', 
-                'ASSIGNED_BY_ID' => 13 // ID начальник закупщиков
+                'ASSIGNED_BY_ID' => 1 // 13 - ID начальник закупщиков
             ]
         ]);
         
-        $requestId = $item->save()->getId();
+        $requestId = $item->save();
+        $requestId = $item->getId();
         
         // 3. Добавляем товар через вкладку «Товары»
-        $productRow = \Bitrix\Crm\ProductRow::create([
+        $productRow = \Bitrix\Crm\ProductRow::add([
             'OWNER_ID' => $requestId,
-            'OWNER_TYPE' => \CCrmOwnerTypeAbbreviation::ResolveByTypeID(1058),
+            'OWNER_TYPE' => \CCrmOwnerTypeAbbr::ResolveByTypeID(1058),
             'PRODUCT_ID' => $elementId,
             'QUANTITY' => 10,
-            'PRICE' => 0,
-            'PRICE_EXCLUSIVE' => 0,
-            'PRICE_NETTO' => 0,
-            'PRICE_BRUTTO' => 0
+            //'PRICE' => 0,
+            //'PRICE_EXCLUSIVE' => 0,
+            //'PRICE_NETTO' => 0,
+            //'PRICE_BRUTTO' => 0
         ]);
         
         $productRow->save();
@@ -88,7 +88,7 @@ class Agents
         // 4. Уведомление закупщику (если подключен модуль im)
         if (Loader::includeModule('im')) {
             \Bitrix\Im::notify([
-                'TO_USER_ID' => 1,
+                'TO_USER_ID' => 1, // 13 
                 'MESSAGE' => '✅ Автоматическая закупка: ' . $elementName . '. Остаток 10 единиц.',
                 'TYPE' => 'SYSTEM'
             ]);
