@@ -18,7 +18,10 @@ if (file_exists(__DIR__ . '/classes/UserTypes/BookingProcedureType.php')) {
     include_once __DIR__ . '/classes/UserTypes/BookingProcedureType.php';
 }
 
-
 if (file_exists(__DIR__ . '/events.php')) {
     require_once(__DIR__ . '/events.php');
+}
+
+if (file_exists(__DIR__ . '/agents/smarts.php')) {
+    require_once(__DIR__ . '/agents/smarts.php');
 }
