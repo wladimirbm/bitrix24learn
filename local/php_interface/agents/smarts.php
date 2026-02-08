@@ -26,7 +26,7 @@ class Agents
         //     'select' => ['ID', 'NAME']
         // ]);
 
-          $elements = \Bitrix\Iblock\ElementTable::getList([
+        $elements = \Bitrix\Iblock\ElementTable::getList([
             'filter' => [
                 'IBLOCK_ID' => $iblockId,
                 'IBLOCK_SECTION_ID' => $sectionId,
@@ -56,7 +56,7 @@ class Agents
             }
         }
 
-        //return __METHOD__ . '();';
+        return __METHOD__ . '();';
     }
 
     private static function createAutoPurchaseRequest($elementId, $elementName)
