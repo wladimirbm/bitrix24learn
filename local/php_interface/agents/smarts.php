@@ -15,18 +15,29 @@ class Agents
         $iblockId = 14;     // ID инфоблока каталога
         $sectionId = 16;    // ID раздела "Запчасти"
 
-        $elements = \CIBlockElement::getList([
+        // $elements = \CIBlockElement::getList([
+        //     'filter' => [
+        //         'IBLOCK_ID' => $iblockId,
+        //         'SECTION_ID' => $sectionId,
+        //         'IBLOCK_SECTION_ID' => $sectionId,
+        //         'IBLOCK_TYPE' => 'CRM_PRODUCT_CATALOG',
+        //         //'INCLUDE_SUBSECTIONS' => 'Y'
+        //     ],
+        //     'select' => ['ID', 'NAME']
+        // ]);
+
+          $elements = \Bitrix\Iblock\ElementTable::getList([
             'filter' => [
                 'IBLOCK_ID' => $iblockId,
                 'SECTION_ID' => $sectionId,
-                'IBLOCK_SECTION_ID' => $sectionId,
-                //'INCLUDE_SUBSECTIONS' => 'Y'
+                'INCLUDE_SUBSECTIONS' => 'Y'
             ],
             'select' => ['ID', 'NAME']
         ]);
 
+
         while ($element = $elements->fetch()) {
-            \App\Debug\Mylog::addLog($element, 'Товары:', '', __FILE__, __LINE__);
+            \App\Debug\Mylog::addLog($element, 'Товары', '', __FILE__, __LINE__);
         }
         die();
 
