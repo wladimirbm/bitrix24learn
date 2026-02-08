@@ -61,24 +61,26 @@ class Agents
             return false;
         }
 
-        // 3. Создаём заявку
-        $data = [
-            'fields' => [
-                'TITLE' => '[АВТО] Закупка: ' . $elementName,
-                'STAGE_ID' => 'DT1058_11:SUCCESS',
-                'ASSIGNED_BY_ID' => 1, // 13
-            ]
-        ];
-        \App\Debug\Mylog::addLog($data, 'data для заявки', '', __FILE__, __LINE__);
-        $item = $factory->createItem($data);
+        // 3. Создаём новый элемент по правилам фабрики
+        $item = $factory->createItem();
 
-        $saveResult = $item->save();
-        if (!$saveResult->isSuccess()) {
-            //error_log('Ошибка создания заявки: ' . print_r($saveResult->getErrorMessages(), true));
-            \App\Debug\Mylog::addLog(print_r($saveResult->getErrorMessages(), true), 'Ошибка создания заявки', '', __FILE__, __LINE__);
+        // 4. Заполняем данные через setFromCompatibleData (рекомендованный способ)
+        $item->setFromCompatibleData([
+            'TITLE' => '[АВТО] Закупка: ' . $elementName,
+            'STAGE_ID' => 'DT1058_11:SUCCESS', // Убедитесь, что статус существует
+            'ASSIGNED_BY_ID' => 13
+        ]);
 
+        // 5. СОЗДАЁМ И ЗАПУСКАЕМ ОПЕРАЦИЮ ДОБАВЛЕНИЯ
+        $operation = $factory->getAddOperation($item);
+        $result = $operation->launch();
+
+        if (!$result->isSuccess()) {
+            //error_log('Ошибка создания заявки через Operation: ' . print_r($result->getErrorMessages(), true));
+            \App\Debug\Mylog::addLog(print_r($result->getErrorMessages(), true), 'Ошибка создания заявки через Operation', '', __FILE__, __LINE__);
             return false;
         }
+
         $requestId = $item->getId();
 
         // 4. ПОЛУЧАЕМ entityTypeAbbr через системный метод
