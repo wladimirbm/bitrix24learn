@@ -5,43 +5,105 @@ use Bitrix\Main\Loader;
 
 $eventManager = \Bitrix\Main\EventManager::getInstance();
 
-AddEventHandler('crm', 'OnBeforeCrmDealAdd', function(&$arFields) {
-    // Проверяем, что указан автомобиль через ВАШЕ поле
+// /local/php_interface/init.php
+AddEventHandler('crm', 'OnBeforeCrmDealAdd', function (&$arFields) {
+    // Проверяем, что указан автомобиль
     if (empty($arFields['UF_CRM_1770588718'])) {
         return true; // Если авто не указано - пропускаем проверку
     }
-    
-    $carId = $arFields['UF_CRM_1770588718']; // ID автомобиля
-    
-    // Ищем активные сделки по этому авто
+
+    // Проверяем, что сделка из нужной воронки (Сервисное обслуживание)
+    if ($arFields['CATEGORY_ID'] != 1) {
+        return true; // Проверяем только для сервисных сделок
+    }
+
+    $carId = $arFields['UF_CRM_1770588718'];
+
+    // Финальные стадии вашей воронки
+    $finalStages = [
+        'C1:WON',      // Выполнено
+        'C1:LOSE',     // Сделка провалена
+        'C1:APOLOGY'   // Анализ причин провала
+    ];
+
+    // Ищем НЕзакрытые сделки по этому авто
     $dbDeals = CCrmDeal::GetList(
         [],
         [
-            '=UF_CRM_1770588718' => $carId, // Ваше поле
-            '!STAGE_ID' => ['C8:SUCCESS', 'C8:FAIL'] // Исключаем финальные стадии
-            // ВАЖНО: замените 'C8:SUCCESS' на реальные ID финальных стадий вашей воронки
+            '=UF_CRM_1770588718' => $carId,
+            '=CATEGORY_ID' => 1, // Только сделки сервисного обслуживания
+            '!STAGE_ID' => $finalStages // Исключаем финальные стадии
         ],
         false,
         false,
-        ['ID', 'TITLE', 'ASSIGNED_BY_ID']
+        ['ID', 'TITLE', 'ASSIGNED_BY_ID', 'STAGE_ID']
     );
-    
+
     if ($deal = $dbDeals->Fetch()) {
         // Отправляем уведомление ответственному
-        CIMNotify::Add([
-            'TO_USER_ID' => $arFields['ASSIGNED_BY_ID'],
-            'FROM_USER_ID' => 1,
-            'MESSAGE' => "Нельзя создать сделку: есть незакрытая сделка [#{$deal['ID']}] {$deal['TITLE']} по этому автомобилю",
-            'NOTIFY_TYPE' => IM_NOTIFY_SYSTEM
-        ]);
-        
-        // Запрещаем создание
-        $GLOBALS['APPLICATION']->ThrowException("Есть незакрытая сделка #{$deal['ID']} по этому автомобилю");
+        if (CModule::IncludeModule('im')) {
+            CIMNotify::Add([
+                'TO_USER_ID' => $arFields['ASSIGNED_BY_ID'],
+                'FROM_USER_ID' => 1,
+                'MESSAGE' => "⚠️ Нельзя создать сделку: есть активная сделка [#{$deal['ID']}] '{$deal['TITLE']}' (стадия: {$deal['STAGE_ID']})",
+                'NOTIFY_TYPE' => IM_NOTIFY_SYSTEM
+            ]);
+        }
+
+        $GLOBALS['APPLICATION']->ThrowException(
+            "Есть незакрытая сделка #{$deal['ID']} '{$deal['TITLE']}' по этому автомобилю. " .
+                "Закройте её или выберите другой автомобиль."
+        );
         return false;
     }
-    
+
     return true;
 });
+
+AddEventHandler('crm', 'OnBeforeCrmDealUpdate', function ($id, &$arFields) {
+    // Проверяем, если меняется автомобиль
+    if (empty($arFields['UF_CRM_1770588718'])) {
+        return true;
+    }
+
+    $carId = $arFields['UF_CRM_1770588718'];
+    $deal = CCrmDeal::GetByID($id, false);
+
+    if (!$deal || $deal['CATEGORY_ID'] != 1) {
+        return true;
+    }
+
+    // Если автомобиль не меняется - пропускаем
+    if ($deal['UF_CRM_1770588718'] == $carId) {
+        return true;
+    }
+
+    // Проверяем, не занят ли новый автомобиль
+    $finalStages = ['C1:WON', 'C1:LOSE', 'C1:APOLOGY'];
+
+    $dbDeals = CCrmDeal::GetList(
+        [],
+        [
+            '=UF_CRM_1770588718' => $carId,
+            '=CATEGORY_ID' => 1,
+            '!ID' => $id, // Исключаем текущую сделку
+            '!STAGE_ID' => $finalStages
+        ],
+        false,
+        false,
+        ['ID', 'TITLE']
+    );
+
+    if ($existingDeal = $dbDeals->Fetch()) {
+        $GLOBALS['APPLICATION']->ThrowException(
+            "Автомобиль уже используется в активной сделке #{$existingDeal['ID']}"
+        );
+        return false;
+    }
+
+    return true;
+});
+
 
 /*
 $eventManager->addEventHandler('iblock', 'OnAfterIBlockElementAdd', ['\App\Events\IbFieldsHandler', 'onElementAfterUpdate']);
@@ -134,4 +196,3 @@ class CustomEvents
     // }
 
 } */
- 
