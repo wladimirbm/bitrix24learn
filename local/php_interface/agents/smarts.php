@@ -51,10 +51,8 @@ class Agents
         // 1. Увеличиваем остаток
         \Bitrix\Catalog\Model\Product::update($elementId, ['QUANTITY' => 10]);
 
-
         $factory_id = '1058';
         $factory = \Bitrix\Crm\Service\Container::getInstance()->getFactory($factory_id);
-
 
         \App\Debug\Mylog::addLog($factory, 'Factory', '', __FILE__, __LINE__);
         if (!$factory) {
