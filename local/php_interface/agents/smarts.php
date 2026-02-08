@@ -54,7 +54,7 @@ class Agents
         $factory_id = '1058';
         $factory = \Bitrix\Crm\Service\Container::getInstance()->getFactory($factory_id);
 
-        \App\Debug\Mylog::addLog($factory, 'Factory', '', __FILE__, __LINE__);
+        //\App\Debug\Mylog::addLog($factory, 'Factory', '', __FILE__, __LINE__);
         if (!$factory) {
             \App\Debug\Mylog::addLog($factory, 'Фабрика для 1058 не найдена', '', __FILE__, __LINE__);
             //error_log('Фабрика для DYNAMIC_1058/1058 не найдена');
@@ -62,13 +62,15 @@ class Agents
         }
 
         // 3. Создаём заявку
-        $item = $factory->createItem([
+        $data = [
             'fields' => [
                 'TITLE' => '[АВТО] Закупка: ' . $elementName,
                 'STAGE_ID' => 'DT1058_11:SUCCESS',
-                'ASSIGNED_BY_ID' => 1 // 13
+                'ASSIGNED_BY_ID' => 1, // 13
             ]
-        ]);
+        ];
+        \App\Debug\Mylog::addLog($data, 'data для заявки', '', __FILE__, __LINE__);
+        $item = $factory->createItem($data);
 
         $saveResult = $item->save();
         if (!$saveResult->isSuccess()) {
