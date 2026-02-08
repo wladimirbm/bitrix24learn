@@ -51,16 +51,10 @@ class Agents
         // 1. Увеличиваем остаток
         \Bitrix\Catalog\Model\Product::update($elementId, ['QUANTITY' => 10]);
 
-        // 2. Получаем фабрику через entityTypeName
-        $factory = 'DYNAMIC_1058';
-        $factory = \Bitrix\Crm\Service\Container::getInstance()
-            ->getFactory('DYNAMIC_1058');
 
-        if (!$factory) {
-            $factory = '1058';
-            $factory = \Bitrix\Crm\Service\Container::getInstance()
-                ->getFactory(1058);
-        }
+        $factory = '1058';
+        $factory = \Bitrix\Crm\Service\Container::getInstance()->getFactory(1058);
+
 
         \App\Debug\Mylog::addLog($factory, 'Factory', '', __FILE__, __LINE__);
         if (!$factory) {
@@ -82,7 +76,7 @@ class Agents
         if (!$saveResult->isSuccess()) {
             //error_log('Ошибка создания заявки: ' . print_r($saveResult->getErrorMessages(), true));
             \App\Debug\Mylog::addLog(print_r($saveResult->getErrorMessages(), true), 'Ошибка создания заявки', '', __FILE__, __LINE__);
-            
+
             return false;
         }
         $requestId = $item->getId();
