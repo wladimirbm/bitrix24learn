@@ -125,13 +125,13 @@ class Agents
             return false;
         }
 
-        if (\Bitrix\Main\Loader::includeModule('im')) {
+        // if (\Bitrix\Main\Loader::includeModule('im')) {
             // \CIMMessage::Add(array(  
             // 	'FROM_USER_ID' => 1,  
             // 	'TO_USER_ID' => 21, 
             // 	'MESSAGE' => 'Пишу в чат тебе', 
             // ));  
-        }
+        // }
 
         if (Loader::IncludeModule('im')) {
             $arFields = array(
