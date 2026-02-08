@@ -108,13 +108,22 @@ class Agents
             return false;
         }
 
+        if (\Bitrix\Main\Loader::includeModule('im'))  
+{  
+	// \CIMMessage::Add(array(  
+	// 	'FROM_USER_ID' => 1,  
+	// 	'TO_USER_ID' => 21, 
+	// 	'MESSAGE' => 'Пишу в чат тебе', 
+	// ));  
+}
+
         if (Loader::IncludeModule('im')) {
             $arFields = array(
                 "NOTIFY_TITLE" => "Автоматическая закупка", //заголовок
                 "MESSAGE" => '✅ Автозакупка: ' . $elementName . '. Остаток восстановлен до 10 единиц.',
                 "MESSAGE_TYPE" => IM_MESSAGE_SYSTEM,
                 "TO_USER_ID" => 1, // 13 ID закупщика
-                "FROM_USER_ID" => 13, // От имени какого пользователя (например, система)
+                "FROM_USER_ID" => 1, // От имени какого пользователя (например, система)
                 "NOTIFY_TYPE" => IM_NOTIFY_SYSTEM,
                 "NOTIFY_MODULE" => "main",
                 "NOTIFY_EVENT" => "manage",
