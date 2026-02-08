@@ -25,6 +25,11 @@ class Agents
         ]);
 
         while ($element = $elements->fetch()) {
+            \App\Debug\Mylog::addLog($element, 'Товары:', '', __FILE__, __LINE__);
+        }
+        die();
+
+        while ($element = $elements->fetch()) {
             $newQuantity = file_get_contents(
                 'https://www.random.org/integers/?num=1&min=0&max=10&col=1&base=10&format=plain&rnd=new'
             );
@@ -108,14 +113,13 @@ class Agents
             return false;
         }
 
-        if (\Bitrix\Main\Loader::includeModule('im'))  
-{  
-	// \CIMMessage::Add(array(  
-	// 	'FROM_USER_ID' => 1,  
-	// 	'TO_USER_ID' => 21, 
-	// 	'MESSAGE' => 'Пишу в чат тебе', 
-	// ));  
-}
+        if (\Bitrix\Main\Loader::includeModule('im')) {
+            // \CIMMessage::Add(array(  
+            // 	'FROM_USER_ID' => 1,  
+            // 	'TO_USER_ID' => 21, 
+            // 	'MESSAGE' => 'Пишу в чат тебе', 
+            // ));  
+        }
 
         if (Loader::IncludeModule('im')) {
             $arFields = array(
