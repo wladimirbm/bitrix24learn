@@ -56,7 +56,7 @@ class Agents
             }
         }
 
-        return __METHOD__ . '();';
+        return '\Otus\Smarts\Agents::'.__METHOD__ . '();';
     }
 
     private static function createAutoPurchaseRequest($elementId, $elementName)
