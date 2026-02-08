@@ -36,10 +36,10 @@ class Agents
         ]);
 
 
-        while ($element = $elements->fetch()) {
-            \App\Debug\Mylog::addLog($element, 'Товары', '', __FILE__, __LINE__);
-        }
-        die();
+        // while ($element = $elements->fetch()) {
+        //     \App\Debug\Mylog::addLog($element, 'Товары', '', __FILE__, __LINE__);
+        // }
+        // die();
 
         while ($element = $elements->fetch()) {
             $newQuantity = file_get_contents(
