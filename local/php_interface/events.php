@@ -84,7 +84,7 @@ AddEventHandler('crm', 'OnBeforeCrmDealUpdate', function ($id, &$arFields) {
     // Проверяем, не занят ли новый автомобиль
     $finalStages = ['C1:WON', 'C1:LOSE', 'C1:APOLOGY'];
 
-    $dbDeals = CCrmDeal::GetList(
+    $dbDeals = CCrmDeal::GetListEx(
         [],
         [
             '=UF_CRM_1770588718' => $carId,
