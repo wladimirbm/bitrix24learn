@@ -106,14 +106,26 @@ class Agents
         // 8. Добавляем товар к заявке через SaveRows
         \CCrmProductRow::SaveRows($ownerTypeAbbr, $requestId, $rows);
 
-        // Проверяем ошибки (SaveRows не возвращает результат, но можно проверить через GetRows)
-        // $checkRows = \CCrmProductRow::GetRows($ownerTypeAbbr, $requestId);
-        // if (empty($checkRows)) {
-        //     //error_log('Товары не добавились к заявке ID ' . $requestId);
-        //     \App\Debug\Mylog::addLog($checkRows, 'Товары не добавились к заявке ID', '', __FILE__, __LINE__);
 
-        //     return false;
-        // }
+        // 6. ПРОВЕРКА: получаем товары через GetList
+        $dbRes = \CCrmProductRow::GetList(
+            array(),
+            array(
+                'OWNER_ID' => $requestId,
+                'OWNER_TYPE' => $ownerTypeAbbr
+            )
+        );
+        $checkRows = array();
+        while ($row = $dbRes->Fetch()) {
+            $checkRows[] = $row;
+        }
+
+        if (empty($checkRows)) {
+            error_log('Товары не добавились к заявке ID ' . $requestId);
+            \App\Debug\Mylog::addLog($requestId, 'Товары не добавились к заявке ID', '', __FILE__, __LINE__);
+
+            return false;
+        }
 
         // 6. Уведомление
         if (Loader::includeModule('im')) {
