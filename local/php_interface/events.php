@@ -25,9 +25,12 @@ AddEventHandler('crm', 'OnBeforeCrmDealAdd', function (&$arFields) {
         'C1:LOSE',     // Сделка провалена
         'C1:APOLOGY'   // Анализ причин провала
     ];
-
+    if (!CModule::IncludeModule("crm")) {
+        echo '!CModule::IncludeModule("crm")';
+        return;
+    }
     // Ищем НЕзакрытые сделки по этому авто
-    $dbDeals = CCrmDeal::GetList(
+    $dbDeals = CCrmDeal::GetListEx(
         [],
         [
             '=UF_CRM_1770588718' => $carId,
