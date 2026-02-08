@@ -43,7 +43,7 @@ class Agents
             }
         }
 
-        return __METHOD__ . '();';
+        //return __METHOD__ . '();';
     }
 
     private static function createAutoPurchaseRequest($elementId, $elementName)
