@@ -89,17 +89,29 @@ class Agents
         //error_log('Полученный ownerTypeAbbr для 1058: ' . $ownerTypeAbbr); // Для отладки
         \App\Debug\Mylog::addLog($ownerTypeAbbr, 'Полученный ownerTypeAbbr для 1058', '', __FILE__, __LINE__);
 
-        // 5. Добавляем товар
-        $addResult = \Bitrix\Crm\ProductRow::add([
-            'OWNER_ID' => $requestId,
-            'OWNER_TYPE' => $ownerTypeAbbr, // ← Используем полученное значение
-            'PRODUCT_ID' => $elementId,
-            'QUANTITY' => 10
-        ]);
+        // 6. Получаем entityTypeAbbr
+        $ownerTypeAbbr = \CCrmOwnerTypeAbbr::ResolveByTypeID(1058);
+        error_log('Полученный ownerTypeAbbr для 1058: ' . $ownerTypeAbbr);
 
-        if (!$addResult->isSuccess()) {
-            //error_log('Ошибка добавления товара: ' . print_r($addResult->getErrorMessages(), true));
-            \App\Debug\Mylog::addLog(print_r($addResult->getErrorMessages(), true), 'Ошибка добавления товара', '', __FILE__, __LINE__);
+        // 7. Подготавливаем данные товара
+        $rows = array();
+        $rows[] = array(
+            'PRODUCT_ID' => $elementId, // ID товара из каталога
+            'PRODUCT_NAME' => $elementName, // Название как резерв
+            'QUANTITY' => 10,
+            'PRICE' => 0, // Можно взять из каталога, если важно
+            'MEASURE_CODE' => 796 // Штуки (код из справочника)
+        );
+
+        // 8. Добавляем товар к заявке через SaveRows
+        \CCrmProductRow::SaveRows($ownerTypeAbbr, $requestId, $rows);
+
+        // Проверяем ошибки (SaveRows не возвращает результат, но можно проверить через GetRows)
+        $checkRows = \CCrmProductRow::GetRows($ownerTypeAbbr, $requestId);
+        if (empty($checkRows)) {
+            //error_log('Товары не добавились к заявке ID ' . $requestId);
+            \App\Debug\Mylog::addLog($checkRows, 'Товары не добавились к заявке ID', '', __FILE__, __LINE__);
+
             return false;
         }
 
