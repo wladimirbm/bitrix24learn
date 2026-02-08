@@ -107,6 +107,7 @@ AddEventHandler('crm', 'OnBeforeCrmDealUpdate', function(&$arFields) {
     );
     
     if ($dbDeals && $existingDeal = $dbDeals->Fetch()) {
+
         global $APPLICATION;
         $APPLICATION->ThrowException(
             "Автомобиль уже используется в активной сделке #{$existingDeal['ID']}"
