@@ -52,13 +52,13 @@ class Agents
         \Bitrix\Catalog\Model\Product::update($elementId, ['QUANTITY' => 10]);
 
 
-        $factory = '1058';
-        $factory = \Bitrix\Crm\Service\Container::getInstance()->getFactory(1058);
+        $factory_id = '1058';
+        $factory = \Bitrix\Crm\Service\Container::getInstance()->getFactory($factory_id);
 
 
         \App\Debug\Mylog::addLog($factory, 'Factory', '', __FILE__, __LINE__);
         if (!$factory) {
-            \App\Debug\Mylog::addLog($factory, 'Фабрика для DYNAMIC_1058/1058 не найдена', '', __FILE__, __LINE__);
+            \App\Debug\Mylog::addLog($factory, 'Фабрика для 1058 не найдена', '', __FILE__, __LINE__);
             //error_log('Фабрика для DYNAMIC_1058/1058 не найдена');
             return false;
         }
