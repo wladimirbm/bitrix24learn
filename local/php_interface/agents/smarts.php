@@ -16,10 +16,10 @@ class Agents
         $sectionId = 16;    // ID раздела "Запчасти"
 
         // 1. Получаем ТОЛЬКО товары из раздела «Запчасти»
-        $elements = \Bitrix\Iblock\ElementTable::getList([
+        $elements = \CIBlockElement::getList([
             'filter' => [
                 'IBLOCK_ID' => $iblockId,
-                'IBLOCK_SECTION_ID' => $sectionId,
+                'SECTION_ID' => $sectionId,
                 'INCLUDE_SUBSECTIONS' => 'Y'
             ],
             'select' => ['ID', 'NAME']
