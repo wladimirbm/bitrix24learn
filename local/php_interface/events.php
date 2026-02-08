@@ -63,47 +63,55 @@ AddEventHandler('crm', 'OnBeforeCrmDealAdd', function (&$arFields) {
     return true;
 });
 
-AddEventHandler('crm', 'OnBeforeCrmDealUpdate', function ($id, &$arFields) {
-    // Проверяем, если меняется автомобиль
+AddEventHandler('crm', 'OnBeforeCrmDealUpdate', function(&$arFields) {
+    // Если нет ID - это создание, пропускаем
+    if (empty($arFields['ID'])) {
+        return true;
+    }
+    
+    // Если автомобиль не меняется - пропускаем
     if (empty($arFields['UF_CRM_1770588718'])) {
         return true;
     }
-
+    
     $carId = $arFields['UF_CRM_1770588718'];
-    $deal = CCrmDeal::GetByID($id, false);
-
+    $dealId = $arFields['ID'];
+    
+    // Получаем текущую сделку для проверки
+    $deal = CCrmDeal::GetByID($dealId, false);
+    
     if (!$deal || $deal['CATEGORY_ID'] != 1) {
         return true;
     }
-
+    
     // Если автомобиль не меняется - пропускаем
     if ($deal['UF_CRM_1770588718'] == $carId) {
         return true;
     }
-
+    
     // Проверяем, не занят ли новый автомобиль
     $finalStages = ['C1:WON', 'C1:LOSE', 'C1:APOLOGY'];
-
+    
     $dbDeals = CCrmDeal::GetListEx(
         [],
         [
             '=UF_CRM_1770588718' => $carId,
             '=CATEGORY_ID' => 1,
-            '!ID' => $id, // Исключаем текущую сделку
+            '!ID' => $dealId,
             '!STAGE_ID' => $finalStages
         ],
         false,
         false,
         ['ID', 'TITLE']
     );
-
-    if ($existingDeal = $dbDeals->Fetch()) {
+    
+    if ($dbDeals && $existingDeal = $dbDeals->Fetch()) {
         $GLOBALS['APPLICATION']->ThrowException(
             "Автомобиль уже используется в активной сделке #{$existingDeal['ID']}"
         );
         return false;
     }
-
+    
     return true;
 });
 
