@@ -108,7 +108,7 @@ class Agents
             return false;
         }
 
-        if (CModule::IncludeModule('im')) {
+        if (Loader::IncludeModule('im')) {
             $arFields = array(
                 "NOTIFY_TITLE" => "Автоматическая закупка", //заголовок
                 "MESSAGE" => '✅ Автозакупка: ' . $elementName . '. Остаток восстановлен до 10 единиц.',
