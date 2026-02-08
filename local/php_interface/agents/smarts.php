@@ -24,77 +24,97 @@ class Agents
             ],
             'select' => ['ID', 'NAME']
         ]);
-        
+
         while ($element = $elements->fetch()) {
             // 2. Запрос к random.org за случайным остатком (0-10)
             $newQuantity = file_get_contents(
-                'https://www.random.org/integers/?num=1&min=0&max=10&col=1&base=10&format=plain&rnd=new'
+                'https://www.random.org/integers/?num=1&min=0&max=5&col=1&base=10&format=plain&rnd=new'
             );
             $newQuantity = (int)trim($newQuantity);
-            
+
             // 3. Обновляем системное поле остатка
             \Bitrix\Catalog\Model\Product::update($element['ID'], [
                 'QUANTITY' => $newQuantity
             ]);
-            
+
             // 4. Если остаток = 0 → создаём автоматическую заявку на закупку
             if ($newQuantity === 0) {
                 self::createAutoPurchaseRequest($element['ID'], $element['NAME']);
             }
         }
-        
+
         return __METHOD__ . '();';
     }
-    
+
     private static function createAutoPurchaseRequest($elementId, $elementName)
     {
-        // 1. СРАЗУ увеличиваем остаток на 10 единиц
-        \Bitrix\Catalog\Model\Product::update($elementId, [
-            'QUANTITY' => 10
-        ]);
-        
-        // 2. Создаём элемент смарт-процесса СО СТАТУСОМ "ВЫПОЛНЕНО"
-        $factory = \Bitrix\Crm\Service\Container::getInstance()->getFactory(1058); // ID типа смарт-процесса "Заявка на закупку"
-            
+        // 1. Увеличиваем остаток
+        \Bitrix\Catalog\Model\Product::update($elementId, ['QUANTITY' => 10]);
+
+        // 2. Получаем фабрику через entityTypeName
+        $factory = 'DYNAMIC_1058';
+        $factory = \Bitrix\Crm\Service\Container::getInstance()
+            ->getFactory('DYNAMIC_1058');
+
         if (!$factory) {
+            $factory = '1058';
+            $factory = \Bitrix\Crm\Service\Container::getInstance()
+                ->getFactory(1058);
+        }
+
+        \App\Debug\Mylog::addLog($factory, 'Factory', '', __FILE__, __LINE__);
+        if (!$factory) {
+            \App\Debug\Mylog::addLog($factory, 'Фабрика для DYNAMIC_1058/1058 не найдена', '', __FILE__, __LINE__);
+            //error_log('Фабрика для DYNAMIC_1058/1058 не найдена');
             return false;
         }
-        
+
+        // 3. Создаём заявку
         $item = $factory->createItem([
             'fields' => [
-                'TITLE' => '[АВТТО] Закупка: ' . $elementName,
-                'STAGE_ID' => 'DT1058_11:SUCCESS', 
-                'ASSIGNED_BY_ID' => 1 // 13 - ID начальник закупщиков
+                'TITLE' => '[АВТО] Закупка: ' . $elementName,
+                'STAGE_ID' => 'DT1058_11:SUCCESS',
+                'ASSIGNED_BY_ID' => 1 // 13
             ]
         ]);
-        
-        $requestId = $item->save();
+
+        $saveResult = $item->save();
+        if (!$saveResult->isSuccess()) {
+            //error_log('Ошибка создания заявки: ' . print_r($saveResult->getErrorMessages(), true));
+            \App\Debug\Mylog::addLog(print_r($saveResult->getErrorMessages(), true), 'Ошибка создания заявки', '', __FILE__, __LINE__);
+            
+            return false;
+        }
         $requestId = $item->getId();
-        
-        // 3. Добавляем товар через вкладку «Товары»
-        $productRow = \Bitrix\Crm\ProductRow::add([
+
+        // 4. ПОЛУЧАЕМ entityTypeAbbr через системный метод
+        $ownerTypeAbbr = \CCrmOwnerTypeAbbr::ResolveByTypeID(1058);
+        //error_log('Полученный ownerTypeAbbr для 1058: ' . $ownerTypeAbbr); // Для отладки
+        \App\Debug\Mylog::addLog($ownerTypeAbbr, 'Полученный ownerTypeAbbr для 1058', '', __FILE__, __LINE__);
+
+        // 5. Добавляем товар
+        $addResult = \Bitrix\Crm\ProductRow::add([
             'OWNER_ID' => $requestId,
-            'OWNER_TYPE' => \CCrmOwnerTypeAbbr::ResolveByTypeID(1058),
+            'OWNER_TYPE' => $ownerTypeAbbr, // ← Используем полученное значение
             'PRODUCT_ID' => $elementId,
-            'QUANTITY' => 10,
-            //'PRICE' => 0,
-            //'PRICE_EXCLUSIVE' => 0,
-            //'PRICE_NETTO' => 0,
-            //'PRICE_BRUTTO' => 0
+            'QUANTITY' => 10
         ]);
-        
-        $productRow->save();
-        
-        // 4. Уведомление закупщику (если подключен модуль im)
+
+        if (!$addResult->isSuccess()) {
+            //error_log('Ошибка добавления товара: ' . print_r($addResult->getErrorMessages(), true));
+            \App\Debug\Mylog::addLog(print_r($addResult->getErrorMessages(), true), 'Ошибка добавления товара', '', __FILE__, __LINE__);
+            return false;
+        }
+
+        // 6. Уведомление
         if (Loader::includeModule('im')) {
             \Bitrix\Im::notify([
-                'TO_USER_ID' => 1, // 13 
-                'MESSAGE' => '✅ Автоматическая закупка: ' . $elementName . '. Остаток 10 единиц.',
+                'TO_USER_ID' => 1, //13
+                'MESSAGE' => '✅ Автозакупка: ' . $elementName . '. Остаток 10 ед.',
                 'TYPE' => 'SYSTEM'
             ]);
         }
-        
+
         return true;
     }
 }
-?>
