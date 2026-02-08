@@ -82,6 +82,7 @@ class Agents
         }
 
         $requestId = $item->getId();
+        \App\Debug\Mylog::addLog($requestId, 'id заявки', '', __FILE__, __LINE__);
 
         // 4. ПОЛУЧАЕМ entityTypeAbbr через системный метод
         $ownerTypeAbbr = \CCrmOwnerTypeAbbr::ResolveByTypeID(1058);
