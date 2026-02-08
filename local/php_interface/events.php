@@ -53,7 +53,7 @@ AddEventHandler('crm', 'OnBeforeCrmDealAdd', function (&$arFields) {
             ]);
         }
 
-        $arFields['RESULT_MESSAGE'] = "Автомобиль уже используется в активной сделке #{$existingDeal['ID']}";
+        $arFields['RESULT_MESSAGE'] = "Есть незакрытая сделка #{$deal['ID']} '{$deal['TITLE']}' по этому автомобилю.";
         global $APPLICATION;
         $APPLICATION->ThrowException(
             "Есть незакрытая сделка #{$deal['ID']} '{$deal['TITLE']}' по этому автомобилю. " .
@@ -110,9 +110,9 @@ AddEventHandler('crm', 'OnBeforeCrmDealUpdate', function(&$arFields) {
     if ($dbDeals && $existingDeal = $dbDeals->Fetch()) {
 
         global $APPLICATION;
-        $arFields['RESULT_MESSAGE'] = "Автомобиль уже используется в активной сделке #{$existingDeal['ID']}";
+        $arFields['RESULT_MESSAGE'] = "Автомобиль уже используется в активной сделке #{$existingDeal['ID']} '{$existingDeal['TITLE']}'";
         $APPLICATION->ThrowException(
-            "Автомобиль уже используется в активной сделке #{$existingDeal['ID']}"
+            "Автомобиль уже используется в активной сделке #{$existingDeal['ID']} '{$existingDeal['TITLE']}'"
         );
         return false;
     }
