@@ -19,6 +19,7 @@ class Agents
             'filter' => [
                 'IBLOCK_ID' => $iblockId,
                 'SECTION_ID' => $sectionId,
+                'IBLOCK_SECTION_ID' => $sectionId,
                 'INCLUDE_SUBSECTIONS' => 'Y'
             ],
             'select' => ['ID', 'NAME']
