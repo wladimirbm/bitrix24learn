@@ -5,6 +5,45 @@ use Bitrix\Main\Loader;
 
 $eventManager = \Bitrix\Main\EventManager::getInstance();
 
+AddEventHandler('crm', 'OnBeforeCrmDealAdd', function(&$arFields) {
+    // Проверяем, что указан автомобиль через ВАШЕ поле
+    if (empty($arFields['UF_CRM_1770588718'])) {
+        return true; // Если авто не указано - пропускаем проверку
+    }
+    
+    $carId = $arFields['UF_CRM_1770588718']; // ID автомобиля
+    
+    // Ищем активные сделки по этому авто
+    $dbDeals = CCrmDeal::GetList(
+        [],
+        [
+            '=UF_CRM_1770588718' => $carId, // Ваше поле
+            '!STAGE_ID' => ['C8:SUCCESS', 'C8:FAIL'] // Исключаем финальные стадии
+            // ВАЖНО: замените 'C8:SUCCESS' на реальные ID финальных стадий вашей воронки
+        ],
+        false,
+        false,
+        ['ID', 'TITLE', 'ASSIGNED_BY_ID']
+    );
+    
+    if ($deal = $dbDeals->Fetch()) {
+        // Отправляем уведомление ответственному
+        CIMNotify::Add([
+            'TO_USER_ID' => $arFields['ASSIGNED_BY_ID'],
+            'FROM_USER_ID' => 1,
+            'MESSAGE' => "Нельзя создать сделку: есть незакрытая сделка [#{$deal['ID']}] {$deal['TITLE']} по этому автомобилю",
+            'NOTIFY_TYPE' => IM_NOTIFY_SYSTEM
+        ]);
+        
+        // Запрещаем создание
+        $GLOBALS['APPLICATION']->ThrowException("Есть незакрытая сделка #{$deal['ID']} по этому автомобилю");
+        return false;
+    }
+    
+    return true;
+});
+
+/*
 $eventManager->addEventHandler('iblock', 'OnAfterIBlockElementAdd', ['\App\Events\IbFieldsHandler', 'onElementAfterUpdate']);
 $eventManager->addEventHandler("iblock", "OnAfterIBlockElementUpdate", ['\App\Events\IbFieldsHandler','onElementAfterUpdate']);
 
@@ -72,8 +111,9 @@ class CustomEvents
        // $asset = \Bitrix\Main\Page\Asset::getInstance();
 
        // $settings=[];
-
+*/
        // if (preg_match('/\/crm.*/', GetPagePath())) {
+
        //    $asset->addString('<script>BX.ready(function () { Dreamsite.crm(' . CUtil::PhpToJSObject($settings) . '); });</script>');
        // }
 
@@ -84,7 +124,7 @@ class CustomEvents
 
         //На всех страницах
         //$asset->addString('<script>BX.ready(function () { Dreamsite.all(); });</script>');
-   }
+/*   }
 
 
     // public static function OnBeforePrologHandler()
@@ -93,5 +133,5 @@ class CustomEvents
 
     // }
 
-}
+} */
  
