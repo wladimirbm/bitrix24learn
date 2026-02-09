@@ -150,7 +150,7 @@ class Agents
     public static function bpcodephp()
     {
 
-
+        $document = [];
         try {
             // 3. Получаем товары из текущей заявки
             $requestId = $document['ID'];
