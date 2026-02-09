@@ -86,7 +86,7 @@ class CarDetailComponent extends CBitrixComponent
         if (!$item) {
             return null;
         }
-
+        return $item->getUfCrm_6_COLOR();
         return $item->getFieldValueCaption($fieldCode);
     }
 
