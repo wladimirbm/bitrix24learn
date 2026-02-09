@@ -32,8 +32,10 @@ class CarDetailComponent extends CBitrixComponent
                 return ['ERROR' => 'Автомобиль не найден', 'HAS_ERROR' => true];
             }
 
-           // $item = $factory->getItem($sourceItemId);
-print_r($carItem->getData());
+$photoField = $factory->getFieldsCollection()->getField('UF_CRM_6_COLOR');
+
+    print_r($photoField);
+            //print_r($carItem->getData());
 
             //$contacts = $carItem->getContacts();
             // Здесь хранится простой массив с данными о привязках к контактам
