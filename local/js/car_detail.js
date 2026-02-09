@@ -1,26 +1,11 @@
 // /local/js/car_detail.js
 console.log('🚗 car_detail.js загружен');
 
-// Хранилище открытых попапов (защита от дублей)
+// Хранилище открытых попапов
 var carHistoryPopups = {};
 
-// 1. УДАЛЕНИЕ КНОПОК "ИСТОРИЯ"
-function removeHistoryButtons() {
-    var buttons = document.querySelectorAll('.car-history-button, .car-history-btn');
-    buttons.forEach(function(btn) {
-        btn.style.display = 'none';
-        setTimeout(function() {
-            if (btn.parentNode) btn.parentNode.removeChild(btn);
-        }, 100);
-    });
-    if (buttons.length > 0) {
-        console.log('🗑️ Удалено кнопок:', buttons.length);
-    }
-}
-
-// 2. ФУНКЦИЯ ОТКРЫТИЯ ПОПАПА
+// 1. ФУНКЦИЯ ОТКРЫТИЯ ПОПАПА
 window.showCarHistory = function(carId, event) {
-    // Останавливаем ВСЁ
     if (event) {
         event.preventDefault();
         event.stopPropagation();
@@ -43,19 +28,12 @@ window.showCarHistory = function(carId, event) {
         return;
     }
     
-    // Проверяем popup модуль
-    if (typeof BX.PopupWindow === 'undefined') {
-        BX.load(['popup'], function() {
-            loadCarData(carId);
-        });
-    } else {
-        loadCarData(carId);
-    }
+    // Загружаем данные
+    loadCarData(carId);
 };
 
-// 3. ЗАГРУЗКА ДАННЫХ
+// 2. ЗАГРУЗКА ДАННЫХ
 function loadCarData(carId) {
-    // Показываем лоадер
     BX.showWait();
     
     BX.ajax({
@@ -68,7 +46,6 @@ function loadCarData(carId) {
         dataType: 'html',
         onsuccess: function(html) {
             BX.closeWait();
-            console.log('✅ Данные загружены');
             
             // Уникальный ID для попапа
             var popupId = 'car-history-' + carId + '-' + Date.now();
@@ -95,14 +72,13 @@ function loadCarData(carId) {
                 ],
                 events: {
                     onPopupClose: function() {
-                        // Удаляем из хранилища при закрытии
                         delete carHistoryPopups[carId];
                         this.destroy();
                     }
                 }
             });
             
-            // Сохраняем ссылку на попап
+            // Сохраняем ссылку
             carHistoryPopups[carId] = popup;
             
             // Показываем
@@ -111,22 +87,19 @@ function loadCarData(carId) {
         },
         onfailure: function() {
             BX.closeWait();
-            console.error('❌ Ошибка AJAX');
             BX.UI.Dialogs.MessageBox.alert('Ошибка', 'Не удалось загрузить информацию');
         }
     });
 }
 
-// 4. ПЕРЕХВАТ ССЫЛОК (ГЛАВНОЕ!)
+// 3. ПЕРЕХВАТ ССЫЛОК (ПРОСТОЙ ВАРИАНТ)
 function interceptCarLinks() {
     var links = document.querySelectorAll('a[href*="/crm/type/1054/details/"]');
-    console.log('🔗 Найдено ссылок на авто:', links.length);
+    console.log('🔗 Найдено ссылок:', links.length);
     
     links.forEach(function(link) {
         // Уже обработана?
-        if (link.dataset.carHistoryIntercepted === 'true') {
-            return;
-        }
+        if (link.dataset.carHistoryDone) return;
         
         var href = link.getAttribute('href');
         var match = href.match(/\/details\/(\d+)/);
@@ -134,127 +107,64 @@ function interceptCarLinks() {
         
         var carId = match[1];
         
-        // Маркируем как обработанную
-        link.dataset.carHistoryIntercepted = 'true';
+        // МАРКИРУЕМ
+        link.dataset.carHistoryDone = 'true';
         link.dataset.carId = carId;
         
-        // СОХРАНЯЕМ оригинальный href (для shift+клик)
-        var originalHref = href;
+        // УБИРАЕМ HREF полностью
+        link.removeAttribute('href');
+        link.href = 'javascript:void(0)';
         
-        // СИЛЬНЫЙ ПЕРЕХВАТ: заменяем onclick полностью
+        // ПРОСТОЙ ОБРАБОТЧИК
         link.onclick = function(e) {
-            // Разрешаем только shift/ctrl+клик для открытия карточки
-            if (e.shiftKey || e.ctrlKey || e.metaKey) {
-                // Открываем оригинальную карточку
-                if (e.shiftKey || e.ctrlKey) {
-                    if (BX.SidePanel && BX.SidePanel.Instance) {
-                        BX.SidePanel.Instance.open(originalHref);
-                    } else {
-                        window.open(originalHref, '_blank');
-                    }
-                }
-                return true;
-            }
-            
-            // Обычный клик - ОСТАНАВЛИВАЕМ ВСЁ
             e.preventDefault();
             e.stopPropagation();
-            e.stopImmediatePropagation();
             
-            console.log('🖱️ Клик перехвачен для авто ID:', carId);
+            console.log('🖱️ Клик по авто ID:', carId);
             showCarHistory(carId, e);
             
             return false;
         };
         
-        // ДОПОЛНИТЕЛЬНЫЙ обработчик на capture phase (перехватывает раньше всех)
+        // ДОПОЛНИТЕЛЬНЫЙ перехват
         link.addEventListener('click', function(e) {
-            if (!e.shiftKey && !e.ctrlKey && !e.metaKey) {
-                e.stopImmediatePropagation();
-            }
-        }, true); // capture phase!
+            e.stopImmediatePropagation();
+        }, true);
         
-        // Меняем курсор и подсказку
         link.style.cursor = 'pointer';
-        link.title = 'Клик — история авто\nShift/Ctrl+клик — карточка';
-        
-        console.log('✅ Обработчик установлен для авто ID:', carId);
+        link.title = 'История обслуживания автомобиля';
     });
 }
 
-// 5. ОЖИДАНИЕ ТАБЛИЦЫ
-function waitForTableAndInit() {
+// 4. ОЖИДАНИЕ ТАБЛИЦЫ
+function waitForTable() {
     var table = document.querySelector('#crm-type-item-list-1054-10parent_3_table');
     
     if (table) {
         console.log('✅ Таблица найдена');
-        
-        // 1. Удаляем кнопки
-        removeHistoryButtons();
-        
-        // 2. Перехватываем ссылки
         interceptCarLinks();
         
-        // 3. Следим за изменениями таблицы
+        // Следим за изменениями
         if (typeof MutationObserver !== 'undefined') {
             var observer = new MutationObserver(function() {
-                console.log('🔄 Таблица обновилась');
-                setTimeout(function() {
-                    removeHistoryButtons();
-                    interceptCarLinks();
-                }, 100);
+                setTimeout(interceptCarLinks, 100);
             });
-            
-            observer.observe(table, {
-                childList: true,
-                subtree: true
-            });
-            
-            console.log('👁️ Наблюдатель за таблицей запущен');
+            observer.observe(table, { childList: true, subtree: true });
         }
     } else {
-        console.log('⏳ Ждем таблицу...');
-        setTimeout(waitForTableAndInit, 500);
+        setTimeout(waitForTable, 500);
     }
 }
 
-// 6. ИНИЦИАЛИЗАЦИЯ
-function initCarHistory() {
-    console.log('🚀 Инициализация модуля истории авто');
-    
-    // Сразу удаляем кнопки если есть
-    removeHistoryButtons();
-    
-    // Ждем таблицу
-    setTimeout(waitForTableAndInit, 1000);
-    
-    // Периодическая проверка (на случай динамической загрузки)
-    setInterval(function() {
-        removeHistoryButtons();
-        interceptCarLinks();
-    }, 3000);
-}
+// 5. ЗАПУСК
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('🚀 Запуск модуля истории авто');
+    setTimeout(waitForTable, 1000);
+});
 
-// 7. ЗАПУСК
-if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', initCarHistory);
-} else {
-    initCarHistory();
-}
-
-// 8. ТЕСТОВЫЕ ФУНКЦИИ
-window.debugCarHistory = {
-    testPopup: function(carId) {
-        showCarHistory(carId || 1);
-    },
-    checkLinks: function() {
-        var links = document.querySelectorAll('a[href*="/crm/type/1054/details/"]');
-        console.log('🔍 Проверка ссылок:', links.length);
-        links.forEach(function(link, i) {
-            console.log(i + 1 + '.', link.href, '- intercepted:', link.dataset.carHistoryIntercepted);
-        });
-    },
-    removeAllButtons: removeHistoryButtons
+// 6. Для тестирования
+window.testCarHistory = function(carId) {
+    showCarHistory(carId || 1);
 };
 
-console.log('✅ car_detail.js инициализирован');
+console.log('✅ car_detail.js загружен');
