@@ -5,7 +5,7 @@ $APPLICATION->SetTitle('Проектная работа "Внедрение Би
 <H1><? $APPLICATION->ShowTitle() ?></H1>
 
 
-
+<p>Репозиторий: <a href="https://github.com/wladimirbm/bitrix24learn">https://github.com/wladimirbm/bitrix24learn</a></p>
 <h3>Сотрудники</h3>
 <p><a href="/company/">Список</a></p>
 <p><a href="/hr/structure/">Структура</a></p>
