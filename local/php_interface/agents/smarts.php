@@ -61,6 +61,8 @@ class Agents
 
     private static function createAutoPurchaseRequest($elementId, $elementName)
     {
+        global $USER;
+        $USER->Authorize(1);
         \Bitrix\Catalog\Model\Product::update($elementId, ['QUANTITY' => 10]);
 
         $factory_id = '1058';
@@ -75,7 +77,7 @@ class Agents
 
         $item->setFromCompatibleData([
             'TITLE' => '[АВТО] Закупка: ' . $elementName,
-            'STAGE_ID' => 'DT1058_11:SUCCESS', // Убедитесь, что статус существует
+            'STAGE_ID' => 'DT1058_11:SUCCESS', 
             'ASSIGNED_BY_ID' => 13
         ]);
 
