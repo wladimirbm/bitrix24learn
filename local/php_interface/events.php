@@ -121,6 +121,29 @@ AddEventHandler('crm', 'OnBeforeCrmDealUpdate', function(&$arFields) {
 });
 
 
+AddEventHandler('main', 'OnEndBufferContent', function(&$content) {
+    if (strpos($_SERVER['REQUEST_URI'], '/crm/contact/details/') !== false) {
+        $script = '
+        <script>
+        // Простая локализация
+        window.CarMessages = {
+            CAR_LOADING: "Загрузка истории автомобиля...",
+            CAR_ERROR_TITLE: "Ошибка загрузки",
+            CAR_ERROR_MESSAGE: "Не удалось загрузить информацию об автомобиле",
+            CAR_POPUP_TITLE: "История обслуживания автомобиля",
+            BTN_CLOSE: "Закрыть",
+            BTN_OPEN_CARD: "Открыть карточку авто",
+            BTN_HISTORY: "История"
+        };
+        </script>
+        <script src="/local/js/car_detail.js"></script>';
+        
+        $content = str_replace('</body>', $script . '</body>', $content);
+    }
+});
+?>
+
+/*
 AddEventHandler('main', 'OnProlog', function() {
     // Проверяем, что мы на странице контакта
     $request = \Bitrix\Main\Application::getInstance()->getContext()->getRequest();
@@ -149,6 +172,7 @@ AddEventHandler('main', 'OnProlog', function() {
         echo '<script>BX.message(' . \Bitrix\Main\Web\Json::encode($messages) . ');</script>';
     }
 });
+*/
 /*
 $eventManager->addEventHandler('iblock', 'OnAfterIBlockElementAdd', ['\App\Events\IbFieldsHandler', 'onElementAfterUpdate']);
 $eventManager->addEventHandler("iblock", "OnAfterIBlockElementUpdate", ['\App\Events\IbFieldsHandler','onElementAfterUpdate']);
