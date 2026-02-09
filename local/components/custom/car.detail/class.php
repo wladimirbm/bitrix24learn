@@ -115,7 +115,7 @@ class CarDetailComponent extends CBitrixComponent
             $finalStages = ['C1:WON', 'C1:LOSE', 'C1:APOLOGY'];
             
             // ИСПРАВЛЕНО: первый параметр - массив сортировки, а не false
-            $dbDeals = CCrmDeal::GetList(
+            $dbDeals = CCrmDeal::GetListEx(
                 [], // Пустой массив для сортировки
                 [
                     '=UF_CRM_1770588718' => $carId, // Поле связи с авто
