@@ -33,14 +33,15 @@ class CarDetailComponent extends CBitrixComponent
             }
 
 
-            $field = $carItem->get('UF_CRM_6_COLOR'); // Это будет ID значения
-            // Чтобы получить текстовое значение:
-            //$factory = \Bitrix\Crm\Service\Container::getInstance()->getFactory(1054);
-            $fieldDescription = \Bitrix\Crm\Service\Container::getInstance()->getFactory(1054)->getFieldsCollection()->getField('UF_CRM_6_COLOR');
-echo $fieldDescription->getType();
-            if ($fieldDescription && $fieldDescription->getType() === 'enumeration') {
-                $items = $fieldDescription->getItems(); // Массив значений списка
-                $colorValue = $items[$field]['VALUE'] ?? ''; // Текстовое значение
+            $fieldName = 'UF_CRM_6_COLOR'; // Это будет ID значения
+            $factory = \Bitrix\Crm\Service\Container::getInstance()->getFactory(1054); // или другой тип смарт-процесса
+
+            if ($factory) {
+                $item = $factory->getItems();
+
+                foreach ($item as $element) {
+                    echo $element->getTitle();
+                }
             }
 
 
