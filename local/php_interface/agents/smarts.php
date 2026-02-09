@@ -34,7 +34,7 @@ class Agents
             ],
             'select' => ['ID', 'NAME']
         ]);
-return "test";
+//return "test";
 
          while ($element = $elements->fetch()) {
              \App\Debug\Mylog::addLog($element, 'Товары', '', __FILE__, __LINE__);
