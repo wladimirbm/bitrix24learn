@@ -32,10 +32,10 @@ class CarDetailComponent extends CBitrixComponent
                 return ['ERROR' => 'Автомобиль не найден', 'HAS_ERROR' => true];
             }
 
-//$contacts = $carItem->getContacts();
-// Здесь хранится простой массив с данными о привязках к контактам
-$existingBindings = $carItem->getContactBindings();
-print_r($existingBindings);
+            //$contacts = $carItem->getContacts();
+            // Здесь хранится простой массив с данными о привязках к контактам
+            $existingBindings = $carItem->getContactBindings();
+            // print_r($existingBindings);
 
             $colorValue = $this->getSmartProcessEnumFieldValue(1054, $carId, 'UF_CRM_6_COLOR');
 
@@ -50,7 +50,7 @@ print_r($existingBindings);
                 'MILEAGE' => $carItem->get('UF_CRM_6_MILEAGE') ?? '',
                 'COLOR' => $colorValue ?? ($carItem->get('UF_CRM_6_COLOR') ?? ''),
                 //'OWNER_NAME' => $this->getContactName($carItem->get('UF_CRM_6_CONTACT'))
-                'OWNER_NAME' => $this->getContactName($carItem->get('CLIENT'))
+                'OWNER_NAME' => $this->getContactName($existingBindings[0]['CONTACT_ID'])
             ];
 
             // 2. Получаем активные сделки
