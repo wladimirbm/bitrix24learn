@@ -51,17 +51,19 @@ class Agents
                 'https://www.random.org/integers/?num=1&min=0&max=10&col=1&base=10&format=plain&rnd=new'
             );
             $newQuantity = (int)trim($newQuantity);
-            
+
             \App\Debug\Mylog::addLog($newQuantity, 'newQuantity', '', __FILE__, __LINE__);
 
-            \Bitrix\Catalog\Model\Product::update($element['ID'], [
-                'QUANTITY' => $newQuantity
-            ]);
-            
-            \App\Debug\Mylog::addLog($newQuantity, 'update', '', __FILE__, __LINE__);
+
+
 
             if ($newQuantity === 0) {
                 self::createAutoPurchaseRequest($element['ID'], $element['NAME']);
+            } else {
+                \Bitrix\Catalog\Model\Product::update($element['ID'], [
+                    'QUANTITY' => $newQuantity
+                ]);
+                \App\Debug\Mylog::addLog($newQuantity, 'update', '', __FILE__, __LINE__);
             }
         }
 
