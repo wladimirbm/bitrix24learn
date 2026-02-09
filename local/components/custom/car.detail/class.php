@@ -7,31 +7,31 @@ class CarDetailComponent extends CBitrixComponent
     {
         CModule::IncludeModule('crm');
         CModule::IncludeModule('iblock');
-        
+
         $this->arResult = $this->getCarData();
         $this->includeComponentTemplate();
     }
-    
+
     private function getCarData()
     {
         $carId = (int)$_REQUEST['car_id'];
         if (!$carId) {
             return ['ERROR' => 'Автомобиль не найден', 'HAS_ERROR' => true];
         }
-        
+
         try {
             // 1. Получаем данные об автомобиле
             $factory = \Bitrix\Crm\Service\Container::getInstance()->getFactory(1054);
-            
+
             if (!$factory) {
                 return ['ERROR' => 'Смарт-процесс не найден', 'HAS_ERROR' => true];
             }
-            
+
             $carItem = $factory->getItem($carId);
             if (!$carItem) {
                 return ['ERROR' => 'Автомобиль не найден', 'HAS_ERROR' => true];
             }
-            
+
             $carData = [
                 'ID' => $carItem->getId(),
                 'BRAND' => $this->getLinkedEntityName($carItem->get('UF_CRM_6_BRAND'), 1040),
@@ -43,11 +43,11 @@ class CarDetailComponent extends CBitrixComponent
                 'COLOR' => $carItem->get('UF_CRM_6_COLOR') ?? '',
                 'OWNER_NAME' => $this->getContactName($carItem->get('UF_CRM_6_CONTACT'))
             ];
-            
+
             // 2. Получаем активные сделки
             $deals = $this->getActiveDeals($carId);
             $carData['ACTIVE_DEALS_COUNT'] = count($deals);
-            
+
             // 3. Определяем статус авто
             if (count($deals) > 0) {
                 $carData['STATUS_TEXT'] = 'В РАБОТЕ';
@@ -58,22 +58,21 @@ class CarDetailComponent extends CBitrixComponent
                 $carData['STATUS_COLOR'] = '#27ae60';
                 $carData['STATUS_DESCRIPTION'] = 'Свободен';
             }
-            
+
             return [
                 'CAR' => $carData,
                 'DEALS' => $deals,
                 'HAS_ERROR' => false
             ];
-            
         } catch (Exception $e) {
             return ['ERROR' => 'Ошибка: ' . $e->getMessage(), 'HAS_ERROR' => true];
         }
     }
-    
+
     private function getLinkedEntityName($entityId, $entityTypeId)
     {
         if (!$entityId) return '—';
-        
+
         try {
             $factory = \Bitrix\Crm\Service\Container::getInstance()->getFactory($entityTypeId);
             if ($factory) {
@@ -85,14 +84,14 @@ class CarDetailComponent extends CBitrixComponent
         } catch (Exception $e) {
             // Игнорируем ошибку
         }
-        
+
         return '—';
     }
-    
+
     private function getContactName($contactId)
     {
         if (!$contactId) return '—';
-        
+
         try {
             $contact = CCrmContact::GetByID($contactId);
             if ($contact) {
@@ -102,85 +101,94 @@ class CarDetailComponent extends CBitrixComponent
         } catch (Exception $e) {
             // Игнорируем ошибку
         }
-        
+
         return '—';
     }
-    
+
     private function getActiveDeals($carId)
     {
         $deals = [];
-        
+
         try {
-            // Получаем только НЕзавершенные сделки
-            $finalStages = ['C1:WON', 'C1:LOSE', 'C1:APOLOGY'];
-            
-            // ИСПРАВЛЕНО: первый параметр - массив сортировки, а не false
+            // Определяем финальные стадии (завершенные)
+            $finalStages = [
+                'C1:WON',           // Выполнено
+                'C1:LOSE',          // Сделка провалена
+                'C1:APOLOGY'        // Анализ причин провала
+            ];
+
+            // Получаем ВСЕ сделки, кроме завершенных
             $dbDeals = CCrmDeal::GetListEx(
-                [], // Пустой массив для сортировки
+                ['DATE_CREATE' => 'DESC'], // Сортировка по дате создания (новые сверху)
                 [
                     '=UF_CRM_1770588718' => $carId, // Поле связи с авто
-                    '=CATEGORY_ID' => 1, // Сервисные сделки
-                    '!STAGE_ID' => $finalStages // Исключаем финальные
+                    '=CATEGORY_ID' => 1,           // Только сервисные сделки (воронка 1)
+                    '!STAGE_ID' => $finalStages    // Исключаем финальные стадии
                 ],
                 false, // Группировка
                 false, // Навигация
                 ['ID', 'TITLE', 'DATE_CREATE', 'STAGE_ID', 'ASSIGNED_BY_ID', 'OPPORTUNITY']
             );
-            
+
             if ($dbDeals) {
                 while ($deal = $dbDeals->Fetch()) {
                     // Получаем имя ответственного
                     $user = CUser::GetByID($deal['ASSIGNED_BY_ID'])->Fetch();
                     $assignedByName = $user ? trim($user['NAME'] . ' ' . $user['LAST_NAME']) : '—';
-                    
+
                     // Получаем товары из сделки
                     $productRows = [];
                     if (class_exists('\CCrmProductRow')) {
                         $productRows = \CCrmProductRow::LoadRows('D', $deal['ID']);
                     }
-                    
+
                     $productsFormatted = [];
                     foreach ($productRows as $product) {
                         $productsFormatted[] = [
-                            'NAME' => $product['PRODUCT_NAME'],
+                            'NAME' => htmlspecialcharsbx($product['PRODUCT_NAME']),
                             'QUANTITY' => $product['QUANTITY']
                         ];
                     }
-                    
+
+                    // Определяем название стадии
+                    $stageName = $this->getStageName($deal['STAGE_ID']);
+
                     $deals[] = [
                         'ID' => $deal['ID'],
-                        'TITLE' => $deal['TITLE'] ?: 'Сделка #' . $deal['ID'],
-                        'DATE_CREATE' => $deal['DATE_CREATE'],
+                        'TITLE' => $deal['TITLE'] ? htmlspecialcharsbx($deal['TITLE']) : 'Сделка #' . $deal['ID'],
+                        'DATE_CREATE' => FormatDate('d.m.Y, H:i', MakeTimeStamp($deal['DATE_CREATE'])),
                         'STAGE_ID' => $deal['STAGE_ID'],
-                        'STAGE_NAME' => $this->getStageName($deal['STAGE_ID']),
-                        'ASSIGNED_BY_ID' => $deal['ASSIGNED_BY_ID'],
-                        'ASSIGNED_BY_NAME' => $assignedByName,
-                        'OPPORTUNITY' => $deal['OPPORTUNITY'],
+                        'STAGE_NAME' => $stageName,
+                        'ASSIGNED_BY_NAME' => htmlspecialcharsbx($assignedByName),
+                        'OPPORTUNITY' => $deal['OPPORTUNITY'] ? number_format($deal['OPPORTUNITY'], 0, '', ' ') . ' ₽' : '0 ₽',
                         'PRODUCT_ROWS' => $productsFormatted
                     ];
                 }
             }
-            
         } catch (Exception $e) {
-            // Логируем ошибку, но продолжаем работу
+            // Логируем ошибку
             AddMessage2Log('Ошибка получения сделок: ' . $e->getMessage());
         }
-        
+
         return $deals;
     }
-    
+
     private function getStageName($stageId)
     {
         $stageNames = [
-            'C1:NEW' => 'Приемка',
+            // Активные стадии (текущие)
+            'C1:NEW' => 'Приёмка',
+            'C1:PREPARATION' => 'Диагностика',
+            'C1:PREPAYMENT_INVOICE' => 'Ожидание запчастей',
             'C1:EXECUTING' => 'Ремонт',
-            'C1:1' => 'Диагностика',
-            'C1:2' => 'Ожидание запчастей',
-            'C1:3' => 'Ремонт',
-            'C1:4' => 'Проверка'
+            'C1:FINAL_INVOICE' => 'Проверка',
+
+            // Финальные стадии (не должны показываться)
+            'C1:WON' => 'Выполнено',
+            'C1:LOSE' => 'Сделка провалена',
+            'C1:APOLOGY' => 'Анализ причин провала'
         ];
-        
+
         return $stageNames[$stageId] ?? $stageId;
     }
 }
-?>
