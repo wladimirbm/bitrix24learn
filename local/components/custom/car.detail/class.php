@@ -1,147 +1,169 @@
 <?php
-
 if (!defined('B_PROLOG_INCLUDED') || B_PROLOG_INCLUDED !== true) die();
-
-use Bitrix\Main\Loader;
 
 class CarDetailComponent extends CBitrixComponent
 {
     public function executeComponent()
     {
+        CModule::IncludeModule('crm');
+        CModule::IncludeModule('iblock');
+        
         $this->arResult = $this->getCarData();
         $this->includeComponentTemplate();
     }
     
     private function getCarData()
     {
-        Loader::includeModule('crm');
-
         $carId = (int)$_REQUEST['car_id'];
         if (!$carId) {
-            return ['ERROR' => GetMessage('ERROR_NO_CAR')];
+            return ['ERROR' => 'Автомобиль не найден', 'HAS_ERROR' => true];
         }
         
-        // 1. Получаем данные об автомобиле
-        $factory = \Bitrix\Crm\Service\Container::getInstance()->getFactory(1054);
-        
-        if (!$factory) {
-            return ['ERROR' => GetMessage('ERROR_NO_ACCESS')];
+        try {
+            // 1. Получаем данные об автомобиле
+            $factory = \Bitrix\Crm\Service\Container::getInstance()->getFactory(1054);
+            
+            if (!$factory) {
+                return ['ERROR' => 'Смарт-процесс не найден', 'HAS_ERROR' => true];
+            }
+            
+            $carItem = $factory->getItem($carId);
+            if (!$carItem) {
+                return ['ERROR' => 'Автомобиль не найден', 'HAS_ERROR' => true];
+            }
+            
+            $carData = [
+                'ID' => $carItem->getId(),
+                'BRAND' => $this->getLinkedEntityName($carItem->get('UF_CRM_6_BRAND'), 1040),
+                'MODEL' => $this->getLinkedEntityName($carItem->get('UF_CRM_6_MODEL'), 1046),
+                'VIN' => $carItem->get('UF_CRM_6_VIN') ?? '',
+                'NUMBER' => $carItem->get('UF_CRM_6_NUMBER') ?? '—',
+                'YEAR' => $carItem->get('UF_CRM_6_YEAR') ?? '',
+                'MILEAGE' => $carItem->get('UF_CRM_6_MILEAGE') ?? '',
+                'COLOR' => $carItem->get('UF_CRM_6_COLOR') ?? '',
+                'OWNER_NAME' => $this->getContactName($carItem->get('UF_CRM_6_CONTACT'))
+            ];
+            
+            // 2. Получаем активные сделки
+            $deals = $this->getActiveDeals($carId);
+            $carData['ACTIVE_DEALS_COUNT'] = count($deals);
+            
+            // 3. Определяем статус авто
+            if (count($deals) > 0) {
+                $carData['STATUS_TEXT'] = 'В РАБОТЕ';
+                $carData['STATUS_COLOR'] = '#e74c3c';
+                $carData['STATUS_DESCRIPTION'] = 'В работе';
+            } else {
+                $carData['STATUS_TEXT'] = 'СВОБОДЕН';
+                $carData['STATUS_COLOR'] = '#27ae60';
+                $carData['STATUS_DESCRIPTION'] = 'Свободен';
+            }
+            
+            return [
+                'CAR' => $carData,
+                'DEALS' => $deals,
+                'HAS_ERROR' => false
+            ];
+            
+        } catch (Exception $e) {
+            return ['ERROR' => 'Ошибка: ' . $e->getMessage(), 'HAS_ERROR' => true];
         }
-        
-        $carItem = $factory->getItem($carId);
-        if (!$carItem) {
-            return ['ERROR' => GetMessage('ERROR_NO_CAR')];
-        }
-        
-        $carData = [
-            'ID' => $carItem->getId(),
-            'BRAND' => $this->getBrandName($carItem->get('UF_CRM_6_BRAND')),
-            'MODEL' => $this->getModelName($carItem->get('UF_CRM_6_MODEL')),
-            'VIN' => $carItem->get('UF_CRM_6_VIN') ?? '',
-            'NUMBER' => $carItem->get('UF_CRM_6_NUMBER') ?? GetMessage('EMPTY_VALUE'),
-            'YEAR' => $carItem->get('UF_CRM_6_YEAR') ?? '',
-            'MILEAGE' => $carItem->get('UF_CRM_6_MILEAGE') ?? '',
-            'COLOR' => $carItem->get('UF_CRM_6_COLOR') ?? '',
-            'OWNER_NAME' => $this->getOwnerName($carItem->get('UF_CRM_6_CONTACT'))
-        ];
-        
-        // 2. Получаем активные сделки
-        $deals = $this->getActiveDeals($carId);
-        $carData['ACTIVE_DEALS_COUNT'] = count($deals);
-        
-        // 3. Определяем статус авто
-        if (count($deals) > 0) {
-            $carData['STATUS_TEXT'] = GetMessage('CAR_STATUS_IN_WORK');
-            $carData['STATUS_COLOR'] = '#e74c3c';
-            $carData['STATUS_DESCRIPTION'] = GetMessage('CAR_STATUS_IN_WORK_TEXT');
-        } else {
-            $carData['STATUS_TEXT'] = GetMessage('CAR_STATUS_FREE');
-            $carData['STATUS_COLOR'] = '#27ae60';
-            $carData['STATUS_DESCRIPTION'] = GetMessage('CAR_STATUS_FREE_TEXT');
-        }
-        
-        return [
-            'CAR' => $carData,
-            'DEALS' => $deals,
-            'HAS_ERROR' => false
-        ];
     }
     
-    private function getBrandName($brandId)
+    private function getLinkedEntityName($entityId, $entityTypeId)
     {
-        if (!$brandId) return GetMessage('EMPTY_VALUE');
+        if (!$entityId) return '—';
         
-        // Если это привязка к элементам CRM, получаем название
-        $item = CCrmDeal::GetByID($brandId);
-        return $item ? $item['TITLE'] : GetMessage('EMPTY_VALUE');
+        try {
+            $factory = \Bitrix\Crm\Service\Container::getInstance()->getFactory($entityTypeId);
+            if ($factory) {
+                $item = $factory->getItem($entityId);
+                if ($item) {
+                    return $item->getTitle();
+                }
+            }
+        } catch (Exception $e) {
+            // Игнорируем ошибку
+        }
+        
+        return '—';
     }
     
-    private function getModelName($modelId)
+    private function getContactName($contactId)
     {
-        if (!$modelId) return GetMessage('EMPTY_VALUE');
+        if (!$contactId) return '—';
         
-        // Если это привязка к элементам CRM, получаем название
-        $item = CCrmDeal::GetByID($modelId);
-        return $item ? $item['TITLE'] : GetMessage('EMPTY_VALUE');
-    }
-    
-    private function getOwnerName($contactId)
-    {
-        if (!$contactId) return GetMessage('EMPTY_VALUE');
+        try {
+            $contact = CCrmContact::GetByID($contactId);
+            if ($contact) {
+                $name = trim($contact['NAME'] . ' ' . $contact['LAST_NAME']);
+                return $name ?: '—';
+            }
+        } catch (Exception $e) {
+            // Игнорируем ошибку
+        }
         
-        $contact = CCrmContact::GetByID($contactId);
-        if (!$contact) return GetMessage('EMPTY_VALUE');
-        
-        $name = trim($contact['NAME'] . ' ' . $contact['LAST_NAME']);
-        return $name ?: GetMessage('EMPTY_VALUE');
+        return '—';
     }
     
     private function getActiveDeals($carId)
     {
         $deals = [];
         
-        // Получаем только НЕзавершенные сделки
-        $finalStages = ['C1:WON', 'C1:LOSE', 'C1:APOLOGY'];
-        
-        $dbDeals = CCrmDeal::GetList(
-            ['DATE_CREATE' => 'DESC'],
-            [
-                '=UF_CRM_1770588718' => $carId, // Поле связи с авто
-                '=CATEGORY_ID' => 1, // Сервисные сделки
-                '!STAGE_ID' => $finalStages // Исключаем финальные
-            ],
-            false,
-            false,
-            ['ID', 'TITLE', 'DATE_CREATE', 'STAGE_ID', 'ASSIGNED_BY_ID', 'OPPORTUNITY']
-        );
-        
-        while ($deal = $dbDeals->Fetch()) {
-            // Получаем имя ответственного
-            $user = CUser::GetByID($deal['ASSIGNED_BY_ID'])->Fetch();
-            $assignedByName = $user ? trim($user['NAME'] . ' ' . $user['LAST_NAME']) : GetMessage('EMPTY_VALUE');
+        try {
+            // Получаем только НЕзавершенные сделки
+            $finalStages = ['C1:WON', 'C1:LOSE', 'C1:APOLOGY'];
             
-            // Получаем товары из сделки
-            $productRows = \CCrmProductRow::LoadRows('D', $deal['ID']);
-            $productsFormatted = [];
+            // ИСПРАВЛЕНО: первый параметр - массив сортировки, а не false
+            $dbDeals = CCrmDeal::GetList(
+                [], // Пустой массив для сортировки
+                [
+                    '=UF_CRM_1770588718' => $carId, // Поле связи с авто
+                    '=CATEGORY_ID' => 1, // Сервисные сделки
+                    '!STAGE_ID' => $finalStages // Исключаем финальные
+                ],
+                false, // Группировка
+                false, // Навигация
+                ['ID', 'TITLE', 'DATE_CREATE', 'STAGE_ID', 'ASSIGNED_BY_ID', 'OPPORTUNITY']
+            );
             
-            foreach ($productRows as $product) {
-                $productsFormatted[] = [
-                    'NAME' => $product['PRODUCT_NAME'],
-                    'QUANTITY' => $product['QUANTITY']
-                ];
+            if ($dbDeals) {
+                while ($deal = $dbDeals->Fetch()) {
+                    // Получаем имя ответственного
+                    $user = CUser::GetByID($deal['ASSIGNED_BY_ID'])->Fetch();
+                    $assignedByName = $user ? trim($user['NAME'] . ' ' . $user['LAST_NAME']) : '—';
+                    
+                    // Получаем товары из сделки
+                    $productRows = [];
+                    if (class_exists('\CCrmProductRow')) {
+                        $productRows = \CCrmProductRow::LoadRows('D', $deal['ID']);
+                    }
+                    
+                    $productsFormatted = [];
+                    foreach ($productRows as $product) {
+                        $productsFormatted[] = [
+                            'NAME' => $product['PRODUCT_NAME'],
+                            'QUANTITY' => $product['QUANTITY']
+                        ];
+                    }
+                    
+                    $deals[] = [
+                        'ID' => $deal['ID'],
+                        'TITLE' => $deal['TITLE'] ?: 'Сделка #' . $deal['ID'],
+                        'DATE_CREATE' => $deal['DATE_CREATE'],
+                        'STAGE_ID' => $deal['STAGE_ID'],
+                        'STAGE_NAME' => $this->getStageName($deal['STAGE_ID']),
+                        'ASSIGNED_BY_ID' => $deal['ASSIGNED_BY_ID'],
+                        'ASSIGNED_BY_NAME' => $assignedByName,
+                        'OPPORTUNITY' => $deal['OPPORTUNITY'],
+                        'PRODUCT_ROWS' => $productsFormatted
+                    ];
+                }
             }
             
-            $deals[] = [
-                'ID' => $deal['ID'],
-                'TITLE' => $deal['TITLE'] ?: GetMessage('DEAL_TITLE') . ' #' . $deal['ID'],
-                'DATE_CREATE' => $deal['DATE_CREATE'],
-                'STAGE_ID' => $deal['STAGE_ID'],
-                'STAGE_NAME' => $this->getStageName($deal['STAGE_ID']),
-                'ASSIGNED_BY_ID' => $deal['ASSIGNED_BY_ID'],
-                'ASSIGNED_BY_NAME' => $assignedByName,
-                'OPPORTUNITY' => $deal['OPPORTUNITY'],
-                'PRODUCT_ROWS' => $productsFormatted
-            ];
+        } catch (Exception $e) {
+            // Логируем ошибку, но продолжаем работу
+            AddMessage2Log('Ошибка получения сделок: ' . $e->getMessage());
         }
         
         return $deals;
@@ -161,3 +183,4 @@ class CarDetailComponent extends CBitrixComponent
         return $stageNames[$stageId] ?? $stageId;
     }
 }
+?>
