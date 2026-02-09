@@ -49,7 +49,7 @@ class Agents
 
         while ($element = $elements->fetch()) {
             $newQuantity = file_get_contents(
-                'https://www.random.org/integers/?num=1&min=0&max=10&col=1&base=10&format=plain&rnd=new'
+                'https://www.random.org/integers/?num=1&min=0&max=5&col=1&base=10&format=plain&rnd=new'
             );
             $newQuantity = (int)trim($newQuantity);
 
