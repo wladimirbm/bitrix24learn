@@ -153,10 +153,9 @@ class Agents
         
         $rootActivity = $this->GetRootActivity(); // Получаем корневое действие
         try {
-            // 4. Получаем ID сделки
+            // Получаем ID сделки
             $dealId = $document['ID'];
 
-            // 5. Получаем товары из сделки
             // Для СДЕЛОК (не смарт-процесса) entityTypeId = \CCrmOwnerType::Deal
             $ownerTypeAbbr = \CCrmOwnerTypeAbbr::ResolveByTypeID(\CCrmOwnerType::Deal);
             $rows = \CCrmProductRow::LoadRows($ownerTypeAbbr, $dealId);
@@ -166,7 +165,7 @@ class Agents
                 return true; // Выходим, но не прерываем процесс
             }
 
-            // 6. Для каждого товара УМЕНЬШАЕМ остатки
+            // МЕНЬШАЕМ остатки
             $consumedProducts = [];
 
             foreach ($rows as $row) {
@@ -190,7 +189,7 @@ class Agents
                     if ($currentQty < $quantity) {
                         // Недостаточно товара - логируем ошибку
                         $productName = $product['NAME'] ?? $row['PRODUCT_NAME'];
-                        $this->WriteToTrackingService("⚠️ Недостаточно товара: {$productName} (ID:{$productId}). На складе: {$currentQty}, требуется: {$quantity}");
+                        $this->WriteToTrackingService("Недостаточно товара: {$productName} (ID:{$productId}). На складе: {$currentQty}, требуется: {$quantity}");
 
                         // Можно отправить уведомление
                         sendStockAlert($dealId, $productId, $productName, $currentQty, $quantity);
@@ -214,26 +213,26 @@ class Agents
                             'now' => $newQty
                         ];
 
-                        $this->WriteToTrackingService("📦 Списание: {$product['NAME']} (ID:{$productId}): {$currentQty} - {$quantity} = {$newQty}");
+                        $this->WriteToTrackingService("Списание: {$product['NAME']} (ID:{$productId}): {$currentQty} - {$quantity} = {$newQty}");
 
                         // 7. Проверяем, не опустился ли остаток до 0
                         if ($newQty == 0) {
-                            $this->WriteToTrackingService("⚠️ Товар {$product['NAME']} (ID:{$productId}) закончился!");
+                            $this->WriteToTrackingService("Товар {$product['NAME']} (ID:{$productId}) закончился!");
                             // Можно автоматически создать заявку на закупку
                             createAutoPurchaseForZeroStock($productId, $product['NAME']);
                         }
                     } else {
-                        $this->WriteToTrackingService("❌ Ошибка списания товара {$productId}: " . implode(', ', $updateResult->getErrorMessages()));
+                        $this->WriteToTrackingService("Ошибка списания товара {$productId}: " . implode(', ', $updateResult->getErrorMessages()));
                     }
                 } else {
-                    $this->WriteToTrackingService("❌ Товар с ID {$productId} не найден в каталоге");
+                    $this->WriteToTrackingService("Товар с ID {$productId} не найден в каталоге");
                 }
             }
 
-            // 8. Логируем итог
+            // Лог итог
             if (!empty($consumedProducts)) {
                 $totalUsed = array_sum(array_column($consumedProducts, 'used'));
-                $this->WriteToTrackingService("✅ Сделка #{$dealId}: списано " . count($consumedProducts) . " товаров, всего: {$totalUsed} ед.");
+                $this->WriteToTrackingService("Сделка #{$dealId}: списано " . count($consumedProducts) . " товаров, всего: {$totalUsed} ед.");
 
                 // 9. Обновляем поле в сделке (опционально)
                 updateDealConsumptionInfo($dealId, $consumedProducts);
@@ -241,7 +240,7 @@ class Agents
 
             return true;
         } catch (Exception $e) {
-            $this->WriteToTrackingService("❌ Ошибка в роботе списания: " . $e->getMessage());
+            $this->WriteToTrackingService("Ошибка в роботе списания: " . $e->getMessage());
             return false;
         }
     }
