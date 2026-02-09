@@ -33,16 +33,23 @@ class CarDetailComponent extends CBitrixComponent
             }
 
 
-            $fieldName = 'UF_CRM_6_COLOR'; // Это будет ID значения
-            $factory = \Bitrix\Crm\Service\Container::getInstance()->getFactory(1054); // или другой тип смарт-процесса
 
-            if ($factory) {
-                $item = $factory->getItems();
+            $factory = \Bitrix\Crm\Service\Container::getInstance()->getFactory(1054);
 
-                foreach ($item as $element) {
-                    echo $element->getTitle();
-                }
+            if (!$factory) {
+                return null;
             }
+
+            $item = $factory->getItem($carId);
+            if (!$item) {
+                return null;
+            }
+
+            // Метод getFieldValueCaption сам преобразует ID в текст
+            $colorValue = $item->getFieldValueCaption('UF_CRM_6_COLOR');
+
+
+            echo $colorValue; // "В работе", "Новый", "Выполнен" и т.д.
 
 
             $carData = [
