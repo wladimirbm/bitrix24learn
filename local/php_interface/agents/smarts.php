@@ -3,6 +3,7 @@
 namespace Otus\Smarts;
 
 use Bitrix\Main\Loader;
+use Exception;
 
 class Agents
 {
@@ -72,8 +73,13 @@ class Agents
 
     private static function createAutoPurchaseRequest($elementId, $elementName)
     {
-        global $USER;
-        $USER->Authorize(1);
+        try {
+            global $USER;
+            $USER->Authorize(1);
+        } catch (Exception $e) {
+            \App\Debug\Mylog::addLog($e->getMessage(), 'Authorize', '', __FILE__, __LINE__);
+        }
+
         \Bitrix\Catalog\Model\Product::update($elementId, ['QUANTITY' => 10]);
 
         $factory_id = '1058';
