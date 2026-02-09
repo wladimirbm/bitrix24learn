@@ -16,7 +16,7 @@ document.addEventListener('click', function(e) {
     if (!match) return;
     
     var carId = match[1];
-    console.log('🚗 Клик по авто ID:', carId);
+    console.log('Клик по авто ID:', carId);
     
     // Открываем попап
     openCarPopup(carId);
@@ -68,11 +68,11 @@ function openCarPopup(carId) {
             });
             
             popup.show();
-            console.log('✅ Попап открыт');
+            console.log('Попап открыт');
         },
         onfailure: function() {
             BX.closeWait();
-            console.error('❌ Ошибка AJAX');
+            console.error('Ошибка AJAX');
         }
     });
 }
@@ -84,4 +84,4 @@ setTimeout(function() {
     });
 }, 1000);
 
-console.log('✅ Обработчик истории авто установлен');
+console.log('Обработчик истории авто установлен');
