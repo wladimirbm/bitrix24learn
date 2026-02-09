@@ -41,15 +41,30 @@ class CarDetailComponent extends CBitrixComponent
             }
 
             $item = $factory->getItem($carId);
-            if (!$item) {
-                return null;
+            if ($item) {
+                // 1. Получаем ID значения (если нужно и ID и текст)
+                $fieldCode = 'UF_CRM_6_COLOR'; // код поля-списка
+                $fieldValueId = $item->get($fieldCode); // ID выбранного значения
+
+                // 2. Получаем коллекцию полей
+                $fieldsCollection = $factory->getFieldsCollection();
+
+                // 3. Получаем описание конкретного поля
+                $field = $fieldsCollection->getField($fieldCode);
+
+                if ($field && $field->getType() === 'enumeration') {
+                    // 4. Получаем все значения списка
+                    $enumValues = $field->getValues(); // массив объектов Crm\Field\Enum\Option
+
+                    // 5. Находим нужное значение по ID
+                    foreach ($enumValues as $enumOption) {
+                        if ($enumOption->getId() == $fieldValueId) {
+                            $colorValue = $enumOption->getValue(); // Текстовое значение
+                            break;
+                        }
+                    }
+                }
             }
-
-            // Метод getFieldValueCaption сам преобразует ID в текст
-            $colorValue = $item->getFieldValueCaption('UF_CRM_6_COLOR');
-
-
-            echo $colorValue; // "В работе", "Новый", "Выполнен" и т.д.
 
 
             $carData = [
