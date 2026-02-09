@@ -35,7 +35,7 @@ class CarDetailComponent extends CBitrixComponent
 //$photoField = $factory->getFieldsCollection()->getField('UF_CRM_6_COLOR');
 //print_r($photoField);
             //print_r($carItem->getData());
-            print_r($carItem->getCompatibleData());
+            print_r($carItem->getCompatibleData(\Bitrix\Main\ORM\Objectify\Values::ALL));
 
             //$contacts = $carItem->getContacts();
             // Здесь хранится простой массив с данными о привязках к контактам
