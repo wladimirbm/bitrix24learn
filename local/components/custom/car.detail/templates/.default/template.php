@@ -72,7 +72,7 @@ endif;
                 <?php if ($arResult['CAR']['ACTIVE_DEALS_COUNT'] > 0): ?>
                     <span style="font-size: 0.9em; color: #777;">
                         (<?= $arResult['CAR']['ACTIVE_DEALS_COUNT'] ?> 
-                        <?= self::pluralForm(
+                        <?= pluralForm(
                             $arResult['CAR']['ACTIVE_DEALS_COUNT'], 
                             [GetMessage('PLURAL_DEAL_1'), GetMessage('PLURAL_DEAL_2'), GetMessage('PLURAL_DEAL_5')]
                         ) ?>)
