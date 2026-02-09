@@ -1,231 +1,245 @@
-(function() {
-    // Локализация
-    var CarMessages = {
-        'CAR_LOADING': 'Загрузка истории автомобиля...',
-        'CAR_ERROR_TITLE': 'Ошибка',
-        'CAR_ERROR_MESSAGE': 'Не удалось загрузить информацию',
-        'CAR_POPUP_TITLE': 'История автомобиля',
-        'BTN_CLOSE': 'Закрыть',
-        'BTN_OPEN_CARD': 'Карточка авто'
-    };
+// ========== НАСТРОЙКИ ==========
+var CarHistoryConfig = {
+    messages: {
+        loading: 'Загрузка истории автомобиля...',
+        errorTitle: 'Ошибка',
+        errorMessage: 'Не удалось загрузить информацию',
+        popupTitle: 'История автомобиля',
+        btnClose: 'Закрыть'
+    },
+    selectors: {
+        carLink: 'a[href*="/crm/type/1054/details/"]',
+        carButton: '.car-history-button, .car-history-btn, button[data-car-id]',
+        table: '#crm-type-item-list-1054-10parent_3_table'
+    }
+};
 
-    // Основная функция для показа попапа
-    window.showCarDetail = function(carId, event) {
-        console.log('showCarDetail вызван для авто ID:', carId);
-        
-        if (event) {
-            event.preventDefault();
-            event.stopPropagation();
-        }
-        
-        // Проверяем, загружен ли BX
-        if (typeof BX === 'undefined') {
-            console.error('Библиотека Битрикс не загружена');
-            window.open('/crm/type/1054/details/' + carId + '/', '_blank');
-            return;
-        }
-        
-        // Показываем лоадер
-        BX.showWait();
-        
-        // AJAX запрос
-        BX.ajax({
-            url: '/local/components/custom/car.detail/ajax.php',
-            data: {
-                car_id: carId,
-                sessid: BX.bitrix_sessid()
-            },
-            method: 'POST',
-            dataType: 'html',
-            onsuccess: function(html) {
-                console.log('AJAX успешно, получено символов:', html.length);
-                BX.closeWait();
-                
-                // Создаем попап
-                var popupId = 'car-detail-popup-' + carId;
-                var existingPopup = BX.PopupWindowManager.getPopupById(popupId);
-                
-                if (existingPopup) {
-                    existingPopup.destroy();
-                }
-                
-                var popup = new BX.PopupWindow(popupId, null, {
-                    content: html,
-                    width: 900,
-                    height: 650,
-                    minHeight: 400,
-                    minWidth: 600,
-                    closeIcon: true,
-                    title: CarMessages['CAR_POPUP_TITLE'],
-                    overlay: { backgroundColor: 'rgba(0,0,0,0.5)', opacity: 80 },
-                    autoHide: false,
-                    draggable: { restrict: true },
-                    resizable: true,
-                    buttons: [
-                        new BX.PopupWindowButton({
-                            text: CarMessages['BTN_CLOSE'],
-                            className: 'popup-window-button-close',
-                            events: {
-                                click: function() {
-                                    popup.close();
-                                }
+// ========== ОСНОВНАЯ ФУНКЦИЯ ПОПАПА ==========
+function showCarHistory(carId, event) {
+    if (event) {
+        if (event.preventDefault) event.preventDefault();
+        if (event.stopPropagation) event.stopPropagation();
+    }
+    
+    console.log('🚗 Открытие истории авто ID:', carId);
+    
+    // Проверяем BX
+    if (typeof BX === 'undefined') {
+        console.error('❌ Библиотека BX не загружена');
+        window.open('/crm/type/1054/details/' + carId + '/', '_blank');
+        return;
+    }
+    
+    // Показываем лоадер
+    if (BX.showWait) BX.showWait();
+    
+    // AJAX запрос
+    BX.ajax({
+        url: '/local/components/custom/car.detail/ajax.php',
+        data: {
+            car_id: carId,
+            sessid: BX.bitrix_sessid()
+        },
+        method: 'POST',
+        dataType: 'html',
+        onsuccess: function(html) {
+            console.log('✅ AJAX успешен, получено HTML:', html.length, 'символов');
+            if (BX.closeWait) BX.closeWait();
+            
+            // Создаем попап
+            var popupId = 'car-history-popup-' + carId;
+            var existingPopup = BX.PopupWindowManager.getPopupById(popupId);
+            
+            if (existingPopup) {
+                existingPopup.destroy();
+            }
+            
+            var popup = new BX.PopupWindow(popupId, null, {
+                content: html,
+                width: 900,
+                height: 650,
+                closeIcon: true,
+                title: CarHistoryConfig.messages.popupTitle,
+                overlay: true,
+                buttons: [
+                    new BX.PopupWindowButton({
+                        text: CarHistoryConfig.messages.btnClose,
+                        className: 'ui-btn ui-btn-primary',
+                        events: {
+                            click: function() {
+                                popup.close();
                             }
-                        })
-                    ],
-                    events: {
-                        onPopupClose: function() {
-                            this.destroy();
-                        },
-                        onAfterPopupShow: function() {
-                            console.log('Попап успешно показан');
                         }
-                    }
-                });
-                
-                // Показываем попап
-                popup.show();
-                
-                // Добавляем стили для попапа
-                setTimeout(function() {
-                    var contentDiv = popup.getContentContainer();
-                    if (contentDiv) {
-                        contentDiv.style.padding = '0';
-                        contentDiv.style.overflow = 'hidden';
-                    }
-                }, 50);
-            },
-            onfailure: function(data, status) {
-                console.error('AJAX ошибка:', status, data);
-                BX.closeWait();
-                
-                // Если ошибка, открываем карточку авто
-                if (BX.SidePanel && BX.SidePanel.Instance) {
-                    BX.SidePanel.Instance.open('/crm/type/1054/details/' + carId + '/');
-                } else {
-                    window.open('/crm/type/1054/details/' + carId + '/', '_blank');
-                }
-            }
-        });
-    };
-
-    // Вешаем обработчики на ссылки с авто
-    function attachHandlersToCarLinks() {
-        console.log('Поиск ссылок на авто...');
-        
-        // Ищем все ссылки на автомобили в таблице
-        var links = document.querySelectorAll('table a[href*="/crm/type/1054/details/"]');
-        console.log('Найдено ссылок:', links.length);
-        
-        links.forEach(function(link) {
-            // Проверяем, не добавили ли уже обработчик
-            if (link.dataset.historyHandler === 'attached') {
-                return;
-            }
-            
-            // Извлекаем ID авто из ссылки
-            var href = link.getAttribute('href');
-            var match = href.match(/\/details\/(\d+)/);
-            if (!match) return;
-            
-            var carId = match[1];
-            
-            // Сохраняем оригинальный href на случай fallback
-            link.dataset.originalHref = href;
-            link.dataset.carId = carId;
-            link.dataset.historyHandler = 'attached';
-            
-            // Меняем обработчик
-            link.addEventListener('click', function(e) {
-                // Проверяем, не Shift/Ctrl клик
-                if (e.shiftKey || e.ctrlKey || e.metaKey) {
-                    return; // Позволяем стандартное поведение для открытия в новой вкладке
-                }
-                
-                console.log('Клик по ссылке авто ID:', carId);
-                showCarDetail(carId, e);
+                    })
+                ]
             });
             
-            // Добавляем title для подсказки
-            link.title = 'Кликните для просмотра истории обслуживания. Shift+клик для открытия карточки.';
+            popup.show();
+            console.log('✅ Попап показан');
+        },
+        onfailure: function(data, status) {
+            console.error('❌ AJAX ошибка:', status, data);
+            if (BX.closeWait) BX.closeWait();
             
-            console.log('Обработчик добавлен для авто ID:', carId);
-        });
-        
-        // Также обрабатываем динамически добавляемые ссылки
-        setupMutationObserver();
-    }
-
-    // Наблюдатель за изменениями DOM
-    function setupMutationObserver() {
-        if (typeof MutationObserver === 'undefined') return;
-        
-        var observer = new MutationObserver(function(mutations) {
-            var shouldCheck = false;
-            
-            mutations.forEach(function(mutation) {
-                if (mutation.addedNodes.length > 0) {
-                    shouldCheck = true;
-                }
-            });
-            
-            if (shouldCheck) {
-                setTimeout(attachHandlersToCarLinks, 100);
-            }
-        });
-        
-        observer.observe(document.body, {
-            childList: true,
-            subtree: true
-        });
-        
-        console.log('MutationObserver запущен');
-    }
-
-    // Инициализация
-    function init() {
-        console.log('Инициализация модуля истории авто...');
-        
-        // Ждем загрузки таблицы
-        function waitForTable() {
-            var table = document.querySelector('table[data-table-id*="1054"], #crm-type-item-list-1054-');
-            
-            if (table) {
-                console.log('Таблица найдена, добавляем обработчики...');
-                attachHandlersToCarLinks();
-                
-                // Дополнительная проверка через 3 секунды
-                setTimeout(attachHandlersToCarLinks, 3000);
+            // Fallback - открываем карточку
+            if (BX.SidePanel && BX.SidePanel.Instance) {
+                BX.SidePanel.Instance.open('/crm/type/1054/details/' + carId + '/');
             } else {
-                console.log('Таблица не найдена, ждем...');
-                setTimeout(waitForTable, 1000);
+                window.open('/crm/type/1054/details/' + carId + '/', '_blank');
             }
         }
+    });
+}
+
+// ========== УДАЛЕНИЕ СТАРЫХ КНОПОК ==========
+function removeOldButtons() {
+    var buttons = document.querySelectorAll(CarHistoryConfig.selectors.carButton);
+    console.log('🗑️ Удаление старых кнопок:', buttons.length);
+    
+    buttons.forEach(function(button) {
+        button.style.display = 'none';
+        button.remove();
+    });
+}
+
+// ========== ПЕРЕХВАТ ССЫЛОК ==========
+function interceptCarLinks() {
+    console.log('🎯 Перехват ссылок на авто...');
+    
+    // 1. Удаляем старые кнопки
+    removeOldButtons();
+    
+    // 2. Находим все ссылки
+    var links = document.querySelectorAll(CarHistoryConfig.selectors.carLink);
+    console.log('🔗 Найдено ссылок:', links.length);
+    
+    // 3. Для каждой ссылки
+    links.forEach(function(link) {
+        // Получаем ID авто
+        var href = link.getAttribute('href');
+        var match = href.match(/\/details\/(\d+)/);
+        if (!match) return;
         
-        // Запускаем после загрузки DOM
-        if (document.readyState === 'loading') {
-            document.addEventListener('DOMContentLoaded', function() {
-                setTimeout(waitForTable, 1000);
-            });
-        } else {
-            setTimeout(waitForTable, 1000);
-        }
+        var carId = match[1];
+        
+        // Заменяем onclick
+        link.onclick = function(e) {
+            // Разрешаем комбинации клавиш
+            if (e.shiftKey || e.ctrlKey || e.metaKey) {
+                return true;
+            }
+            
+            // Наш обработчик
+            e.preventDefault();
+            e.stopImmediatePropagation();
+            
+            console.log('🖱️ Клик по ссылке авто ID:', carId);
+            showCarHistory(carId, e);
+            
+            return false;
+        };
+        
+        // Добавляем подсказку
+        link.title = 'Клик - история авто\nShift+клик - карточка';
+        
+        console.log('✅ Обработчик добавлен для авто ID:', carId);
+    });
+}
+
+// ========== ОЖИДАНИЕ ТАБЛИЦЫ ==========
+function waitForTableAndIntercept() {
+    console.log('⏳ Ожидание таблицы с авто...');
+    
+    // Ищем таблицу
+    var table = document.querySelector(CarHistoryConfig.selectors.table);
+    
+    if (table) {
+        console.log('✅ Таблица найдена');
+        interceptCarLinks();
+        
+        // Следим за изменениями таблицы
+        observeTableChanges(table);
+    } else {
+        console.log('⏱️ Таблица не найдена, ждем...');
+        setTimeout(waitForTableAndIntercept, 1000);
+    }
+}
+
+// ========== НАБЛЮДАТЕЛЬ ЗА ИЗМЕНЕНИЯМИ ==========
+function observeTableChanges(table) {
+    if (typeof MutationObserver === 'undefined') return;
+    
+    var observer = new MutationObserver(function() {
+        console.log('🔄 Таблица изменена, обновляем обработчики...');
+        setTimeout(interceptCarLinks, 100);
+    });
+    
+    observer.observe(table, {
+        childList: true,
+        subtree: true
+    });
+    
+    console.log('👁️ Наблюдатель за таблицей запущен');
+}
+
+// ========== ЗАГРУЗОЧНЫЙ КОД ==========
+function initializeCarHistory() {
+    console.log('🚀 Инициализация модуля истории авто...');
+    
+    // Ждем загрузки BX
+    if (typeof BX === 'undefined') {
+        console.log('⏳ Ожидание BX...');
+        setTimeout(initializeCarHistory, 500);
+        return;
+    }
+    
+    BX.ready(function() {
+        console.log('✅ BX готов');
+        
+        // Удаляем кнопки сразу
+        removeOldButtons();
+        
+        // Ждем таблицу
+        setTimeout(waitForTableAndIntercept, 1500);
         
         // Периодическая проверка
-        setInterval(attachHandlersToCarLinks, 5000);
+        setInterval(interceptCarLinks, 5000);
+    });
+}
+
+// ========== ГЛОБАЛЬНЫЙ ОБРАБОТЧИК (на всякий случай) ==========
+document.addEventListener('click', function(e) {
+    var link = e.target.closest(CarHistoryConfig.selectors.carLink);
+    if (!link) return;
+    
+    // Проверяем, не обработали ли мы уже эту ссылку
+    if (link.dataset.historyProcessed === 'true') return;
+    
+    // Для неперехваченных ссылок
+    if (!e.shiftKey && !e.ctrlKey && !e.metaKey) {
+        e.preventDefault();
+        e.stopImmediatePropagation();
+        
+        var href = link.getAttribute('href');
+        var match = href.match(/\/details\/(\d+)/);
+        if (match) {
+            console.log('🔄 Глобальный перехват для авто ID:', match[1]);
+            showCarHistory(match[1], e);
+        }
+        
+        return false;
     }
+}, true);
 
-    // Запускаем инициализацию
-    if (typeof BX !== 'undefined') {
-        BX.ready(init);
-    } else {
-        window.addEventListener('load', init);
-    }
+// ========== ЗАПУСК ==========
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initializeCarHistory);
+} else {
+    initializeCarHistory();
+}
 
-    // Экспортируем для отладки
-    window.CarHistory = {
-        showCarDetail: showCarDetail,
-        attachHandlers: attachHandlersToCarLinks
-    };
+// Экспорт для отладки
+window.showCarHistory = showCarHistory;
+window.interceptCarLinks = interceptCarLinks;
 
-    console.log('Модуль истории авто загружен');
-})();
+console.log('📦 Модуль истории авто загружен');
