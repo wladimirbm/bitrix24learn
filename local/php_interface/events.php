@@ -120,30 +120,35 @@ AddEventHandler('crm', 'OnBeforeCrmDealUpdate', function(&$arFields) {
     return true;
 });
 
+
 AddEventHandler('main', 'OnProlog', function() {
-    // Подключаем JS только на страницах контактов
-    if (strpos($_SERVER['REQUEST_URI'], '/crm/contact/details/') !== false) {
-        CJSCore::Init(['popup', 'ui.buttons', 'ui.notification']);
+    // Проверяем, что мы на странице контакта
+    $request = \Bitrix\Main\Application::getInstance()->getContext()->getRequest();
+    $currentPage = $request->getRequestedPage();
+    
+    if (strpos($currentPage, '/crm/contact/details/') !== false) {
+        // 1. Подключаем необходимые JS библиотеки Битрикс
+        CJSCore::Init(['popup', 'ui.buttons', 'ui.notification', 'ui.dialogs.messagebox', 'sidepanel']);
         
-        // Подключаем наш скрипт
+        // 2. Подключаем наш кастомный скрипт
         $asset = \Bitrix\Main\Page\Asset::getInstance();
         $asset->addJs('/local/js/car_detail.js');
         
-        // Передаем языковые сообщения в JS
-        CUtil::InitJSCore([
-            'messages' => [
-                'CAR_LOADING' => GetMessage('CAR_LOADING'),
-                'CAR_ERROR_TITLE' => GetMessage('CAR_ERROR_TITLE'),
-                'CAR_ERROR_MESSAGE' => GetMessage('CAR_ERROR_MESSAGE'),
-                'CAR_POPUP_TITLE' => GetMessage('CAR_POPUP_TITLE'),
-                'BTN_CLOSE' => GetMessage('BTN_CLOSE'),
-                'BTN_OPEN_CARD' => GetMessage('BTN_OPEN_CARD'),
-                'BTN_HISTORY' => GetMessage('BTN_HISTORY')
-            ]
-        ]);
+        // 3. Передаем сообщения в JS через inline script
+        $messages = [
+            'CAR_LOADING' => 'Загрузка истории автомобиля...',
+            'CAR_ERROR_TITLE' => 'Ошибка загрузки',
+            'CAR_ERROR_MESSAGE' => 'Не удалось загрузить информацию об автомобиле. Попробуйте позже.',
+            'CAR_POPUP_TITLE' => 'История обслуживания автомобиля',
+            'BTN_CLOSE' => 'Закрыть',
+            'BTN_OPEN_CARD' => 'Открыть карточку авто',
+            'BTN_HISTORY' => 'История'
+        ];
+        
+        // 4. Выводим скрипт с сообщениями
+        echo '<script>BX.message(' . \Bitrix\Main\Web\Json::encode($messages) . ');</script>';
     }
 });
-
 /*
 $eventManager->addEventHandler('iblock', 'OnAfterIBlockElementAdd', ['\App\Events\IbFieldsHandler', 'onElementAfterUpdate']);
 $eventManager->addEventHandler("iblock", "OnAfterIBlockElementUpdate", ['\App\Events\IbFieldsHandler','onElementAfterUpdate']);
