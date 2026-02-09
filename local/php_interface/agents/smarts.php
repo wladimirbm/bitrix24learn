@@ -36,9 +36,9 @@ class Agents
         ]);
 //return "test";
 
-         while ($element = $elements->fetch()) {
-             \App\Debug\Mylog::addLog($element, 'Товары', '', __FILE__, __LINE__);
-         }
+        //  while ($element = $elements->fetch()) {
+        //      \App\Debug\Mylog::addLog($element, 'Товары', '', __FILE__, __LINE__);
+        //  }
         // die();
 
         while ($element = $elements->fetch()) {
