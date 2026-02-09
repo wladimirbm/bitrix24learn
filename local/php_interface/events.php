@@ -123,6 +123,35 @@ AddEventHandler('crm', 'OnBeforeCrmDealUpdate', function(&$arFields) {
 
 AddEventHandler('main', 'OnEndBufferContent', function(&$content) {
     if (strpos($_SERVER['REQUEST_URI'], '/crm/contact/details/') !== false) {
+        $script = <<<HTML
+        <script>
+        // Глобальные переменные для модуля истории авто
+        window.CAR_HISTORY_CONFIG = {
+            ajaxUrl: '/local/components/custom/car.detail/ajax.php',
+            popupTitle: 'История автомобиля',
+            loadingText: 'Загрузка истории...'
+        };
+        </script>
+        <script src="/local/js/car_detail.js"></script>
+        <style>
+        .car-history-popup .popup-window-content {
+            padding: 0 !important;
+        }
+        .car-history-popup .popup-window-titlebar {
+            background: #2fc6f6;
+            color: white;
+        }
+        </style>
+HTML;
+        
+        $content = str_replace('</body>', $script . '</body>', $content);
+    }
+});
+
+
+/*
+AddEventHandler('main', 'OnEndBufferContent', function(&$content) {
+    if (strpos($_SERVER['REQUEST_URI'], '/crm/contact/details/') !== false) {
         $script = '
         <script>
         // Простая локализация
@@ -143,7 +172,7 @@ AddEventHandler('main', 'OnEndBufferContent', function(&$content) {
 });
 
 
-/*
+
 AddEventHandler('main', 'OnProlog', function() {
     // Проверяем, что мы на странице контакта
     $request = \Bitrix\Main\Application::getInstance()->getContext()->getRequest();
