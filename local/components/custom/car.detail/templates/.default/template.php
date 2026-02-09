@@ -104,7 +104,9 @@ function getStageColor($stageId)
             </div>
         <?php else: ?>
             <div style="max-height: 500px; overflow-y: auto; padding-right: 5px;">
-                <?php foreach ($arResult['DEALS'] as $deal): 
+                <?php
+                echo "<pre>";print_r($arResult['DEALS']);echo "</pre>";
+                foreach ($arResult['DEALS'] as $deal): 
                     $stageColor = getStageColor($deal['STAGE_ID']);
                 ?>
                 <div style="background: white; border-left: 4px solid <?= $stageColor ?>; 
