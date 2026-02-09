@@ -31,7 +31,18 @@ class CarDetailComponent extends CBitrixComponent
             if (!$carItem) {
                 return ['ERROR' => 'Автомобиль не найден', 'HAS_ERROR' => true];
             }
-print_r($carItem);
+
+
+            $field = $carItem->get('UF_CRM_6_COLOR'); // Это будет ID значения
+            // Чтобы получить текстовое значение:
+            $fieldDescription = $factory->getFieldsCollection()->getField('UF_CRM_6_COLOR');
+
+            if ($fieldDescription && $fieldDescription->getType() === 'list') {
+                $items = $fieldDescription->getItems(); // Массив значений списка
+                $colorValue = $items[$field]['VALUE'] ?? ''; // Текстовое значение
+            }
+
+
             $carData = [
                 'ID' => $carItem->getId(),
                 'BRAND' => $this->getLinkedEntityName($carItem->get('UF_CRM_6_BRAND'), 1040),
@@ -40,7 +51,7 @@ print_r($carItem);
                 'NUMBER' => $carItem->get('UF_CRM_6_NUMBER') ?? '—',
                 'YEAR' => $carItem->get('UF_CRM_6_YEAR') ?? '',
                 'MILEAGE' => $carItem->get('UF_CRM_6_MILEAGE') ?? '',
-                'COLOR' => $carItem->get('UF_CRM_6_COLOR') ?? '',
+                'COLOR' => $colorValue ?? ($carItem->get('UF_CRM_6_COLOR') ?? ''),
                 'OWNER_NAME' => $this->getContactName($carItem->get('UF_CRM_6_CONTACT'))
             ];
 
