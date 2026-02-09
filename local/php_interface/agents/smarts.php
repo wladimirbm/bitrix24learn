@@ -90,6 +90,7 @@ class Agents
             return false;
         }
 
+
         $item = $factory->createItem();
 
         $item->setFromCompatibleData([
@@ -103,7 +104,15 @@ class Agents
 
         if (!$result->isSuccess()) {
             \App\Debug\Mylog::addLog(print_r($result->getErrorMessages(), true), 'Ошибка создания заявки через Operation', '', __FILE__, __LINE__);
-            return false;
+
+            $item = $factory->createItem();
+            $item->setTitle('[АВТО] Закупка: ' . $elementName);
+            $item->setStageId('DT1058_11:SUCCESS');
+            $item->setAssignedById(13);
+
+            $result = $item->save();
+
+            \App\Debug\Mylog::addLog(print_r($result->getErrorMessages(), true), 'Ошибка создания заявки через save', '', __FILE__, __LINE__);
         }
 
         $requestId = $item->getId();
