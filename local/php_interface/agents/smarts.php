@@ -8,9 +8,12 @@ class Agents
 {
     public static function updatePartsStock()
     {
+
+        \App\Debug\Mylog::addLog(1, 'Start', '', __FILE__, __LINE__);
         Loader::includeModule('catalog');
         Loader::includeModule('iblock');
         Loader::includeModule('crm');
+        \App\Debug\Mylog::addLog(2, 'Loader', '', __FILE__, __LINE__);
 
         $iblockId = 14;     // ID инфоблока каталога
         $sectionId = 16;    // ID раздела "Запчасти"
@@ -34,7 +37,7 @@ class Agents
             ],
             'select' => ['ID', 'NAME']
         ]);
-//return "test";
+        //return "test";
 
         //  while ($element = $elements->fetch()) {
         //      \App\Debug\Mylog::addLog($element, 'Товары', '', __FILE__, __LINE__);
@@ -77,7 +80,7 @@ class Agents
 
         $item->setFromCompatibleData([
             'TITLE' => '[АВТО] Закупка: ' . $elementName,
-            'STAGE_ID' => 'DT1058_11:SUCCESS', 
+            'STAGE_ID' => 'DT1058_11:SUCCESS',
             'ASSIGNED_BY_ID' => 13
         ]);
 
@@ -152,7 +155,7 @@ class Agents
     public static function bpcodephpDeal()
     {
         $document = [];
-        
+
         $rootActivity = $this->GetRootActivity(); // Получаем корневое действие
         try {
             // Получаем ID сделки
