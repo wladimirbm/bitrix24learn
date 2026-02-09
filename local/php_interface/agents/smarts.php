@@ -70,8 +70,8 @@ class Agents
 
     private static function createAutoPurchaseRequest($elementId, $elementName)
     {
-        global $USER;
-        $USER->Authorize(1);
+        //global $USER;
+        //$USER->Authorize(1);
         \Bitrix\Catalog\Model\Product::update($elementId, ['QUANTITY' => 10]);
 
         $factory_id = '1058';
