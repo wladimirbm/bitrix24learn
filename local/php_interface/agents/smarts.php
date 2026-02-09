@@ -102,7 +102,7 @@ class Agents
         $context = new \Bitrix\Crm\Service\Context();
         $context->setUserId(13);
 
-        $operation = $factory->getAddOperation($item);
+        $operation = $factory->getAddOperation($itemб $context);
         $result = $operation->launch();
 
         if (!$result->isSuccess()) {
