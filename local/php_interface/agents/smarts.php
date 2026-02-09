@@ -99,6 +99,9 @@ class Agents
             'ASSIGNED_BY_ID' => 13
         ]);
 
+        $context = new \Bitrix\Crm\Service\Context();
+        $context->setUserId(13);
+
         $operation = $factory->getAddOperation($item);
         $result = $operation->launch();
 
