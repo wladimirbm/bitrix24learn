@@ -31,7 +31,7 @@ class CarDetailComponent extends CBitrixComponent
             if (!$carItem) {
                 return ['ERROR' => 'Автомобиль не найден', 'HAS_ERROR' => true];
             }
-
+dump($carItem);
             $carData = [
                 'ID' => $carItem->getId(),
                 'BRAND' => $this->getLinkedEntityName($carItem->get('UF_CRM_6_BRAND'), 1040),
