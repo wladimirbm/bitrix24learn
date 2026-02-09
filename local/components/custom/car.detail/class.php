@@ -32,17 +32,21 @@ class CarDetailComponent extends CBitrixComponent
                 return ['ERROR' => 'Автомобиль не найден', 'HAS_ERROR' => true];
             }
 
-//$photoField = $factory->getFieldsCollection()->getField('UF_CRM_6_COLOR');
-//print_r($photoField);
+            //$photoField = $factory->getFieldsCollection()->getField('UF_CRM_6_COLOR');
+            //print_r($photoField);
             //print_r($carItem->getData());
-            print_r($carItem->getCompatibleData(\Bitrix\Main\ORM\Objectify\Values::ALL));
+            $rsGender = CUserFieldEnum::GetList(array(), array(
+                "ID" => $carItem->get('UF_CRM_6_COLOR'),
+            ));
+            if ($arGender = $rsGender->GetNext())
+                $colorValue = $arGender["VALUE"];
 
             //$contacts = $carItem->getContacts();
             // Здесь хранится простой массив с данными о привязках к контактам
             $existingBindings = $carItem->getContactBindings();
             // print_r($existingBindings);
 
-            $colorValue = $this->getSmartProcessEnumFieldValue(1054, $carId, 'UF_CRM_6_COLOR');
+            //$colorValue = $this->getSmartProcessEnumFieldValue(1054, $carId, 'UF_CRM_6_COLOR');
 
 
             $carData = [
