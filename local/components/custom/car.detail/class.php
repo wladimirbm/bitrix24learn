@@ -37,7 +37,7 @@ class CarDetailComponent extends CBitrixComponent
             // Чтобы получить текстовое значение:
             //$factory = \Bitrix\Crm\Service\Container::getInstance()->getFactory(1054);
             $fieldDescription = \Bitrix\Crm\Service\Container::getInstance()->getFactory(1054)->getFieldsCollection()->getField('UF_CRM_6_COLOR');
-
+echo $fieldDescription->getType();
             if ($fieldDescription && $fieldDescription->getType() === 'list') {
                 $items = $fieldDescription->getItems(); // Массив значений списка
                 $colorValue = $items[$field]['VALUE'] ?? ''; // Текстовое значение
