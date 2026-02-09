@@ -147,7 +147,106 @@ class Agents
         return true;
     }
 
-    public static function bpcodephp()
+    public static function bpcodephpDeal()
+    {
+        $document = [];
+        
+        $rootActivity = $this->GetRootActivity(); // Получаем корневое действие
+        try {
+            // 4. Получаем ID сделки
+            $dealId = $document['ID'];
+
+            // 5. Получаем товары из сделки
+            // Для СДЕЛОК (не смарт-процесса) entityTypeId = \CCrmOwnerType::Deal
+            $ownerTypeAbbr = \CCrmOwnerTypeAbbr::ResolveByTypeID(\CCrmOwnerType::Deal);
+            $rows = \CCrmProductRow::LoadRows($ownerTypeAbbr, $dealId);
+
+            if (empty($rows)) {
+                $this->WriteToTrackingService("В сделке #{$dealId} нет товаров для списания");
+                return true; // Выходим, но не прерываем процесс
+            }
+
+            // 6. Для каждого товара УМЕНЬШАЕМ остатки
+            $consumedProducts = [];
+
+            foreach ($rows as $row) {
+                $productId = (int)$row['PRODUCT_ID'];
+                $quantity = (float)$row['QUANTITY'];
+
+                if ($productId <= 0 || $quantity <= 0) {
+                    continue;
+                }
+
+                // Получаем текущее количество товара
+                $dbProduct = \Bitrix\Catalog\Model\Product::getList([
+                    'filter' => ['ID' => $productId],
+                    'select' => ['ID', 'QUANTITY', 'NAME']
+                ]);
+
+                if ($product = $dbProduct->fetch()) {
+                    $currentQty = (float)$product['QUANTITY'];
+
+                    // Проверяем, достаточно ли товара на складе
+                    if ($currentQty < $quantity) {
+                        // Недостаточно товара - логируем ошибку
+                        $productName = $product['NAME'] ?? $row['PRODUCT_NAME'];
+                        $this->WriteToTrackingService("⚠️ Недостаточно товара: {$productName} (ID:{$productId}). На складе: {$currentQty}, требуется: {$quantity}");
+
+                        // Можно отправить уведомление
+                        sendStockAlert($dealId, $productId, $productName, $currentQty, $quantity);
+                        continue;
+                    }
+
+                    // ВЫЧИТАЕМ количество
+                    $newQty = $currentQty - $quantity;
+
+                    // Обновляем количество
+                    $updateResult = \Bitrix\Catalog\Model\Product::update($productId, [
+                        'QUANTITY' => $newQty
+                    ]);
+
+                    if ($updateResult->isSuccess()) {
+                        $consumedProducts[] = [
+                            'id' => $productId,
+                            'name' => $product['NAME'] ?? $row['PRODUCT_NAME'],
+                            'used' => $quantity,
+                            'was' => $currentQty,
+                            'now' => $newQty
+                        ];
+
+                        $this->WriteToTrackingService("📦 Списание: {$product['NAME']} (ID:{$productId}): {$currentQty} - {$quantity} = {$newQty}");
+
+                        // 7. Проверяем, не опустился ли остаток до 0
+                        if ($newQty == 0) {
+                            $this->WriteToTrackingService("⚠️ Товар {$product['NAME']} (ID:{$productId}) закончился!");
+                            // Можно автоматически создать заявку на закупку
+                            createAutoPurchaseForZeroStock($productId, $product['NAME']);
+                        }
+                    } else {
+                        $this->WriteToTrackingService("❌ Ошибка списания товара {$productId}: " . implode(', ', $updateResult->getErrorMessages()));
+                    }
+                } else {
+                    $this->WriteToTrackingService("❌ Товар с ID {$productId} не найден в каталоге");
+                }
+            }
+
+            // 8. Логируем итог
+            if (!empty($consumedProducts)) {
+                $totalUsed = array_sum(array_column($consumedProducts, 'used'));
+                $this->WriteToTrackingService("✅ Сделка #{$dealId}: списано " . count($consumedProducts) . " товаров, всего: {$totalUsed} ед.");
+
+                // 9. Обновляем поле в сделке (опционально)
+                updateDealConsumptionInfo($dealId, $consumedProducts);
+            }
+
+            return true;
+        } catch (Exception $e) {
+            $this->WriteToTrackingService("❌ Ошибка в роботе списания: " . $e->getMessage());
+            return false;
+        }
+    }
+
+    public static function bpcodephpD1058()
     {
 
         $document = [];
@@ -158,7 +257,7 @@ class Agents
             $rows = \CCrmProductRow::LoadRows($ownerTypeAbbr, $requestId);
 
             if (empty($rows)) {
-                AddMessage2Log("В заявке #{$requestId} нет товаров");
+                $this->WriteToTrackingService("В заявке #{$requestId} нет товаров");
                 return true; // Выходим, но не прерываем процесс
             }
 
@@ -196,23 +295,23 @@ class Agents
                             'new_total' => $newQty
                         ];
 
-                        AddMessage2Log("Товар {$productId}: {$currentQty} + {$quantity} = {$newQty}");
+                        $this->WriteToTrackingService("Товар {$productId}: {$currentQty} + {$quantity} = {$newQty}");
                     } else {
-                        AddMessage2Log("Ошибка обновления товара {$productId}: " . implode(', ', $updateResult->getErrorMessages()));
+                        $this->WriteToTrackingService("Ошибка обновления товара {$productId}: " . implode(', ', $updateResult->getErrorMessages()));
                     }
                 } else {
-                    AddMessage2Log("Товар с ID {$productId} не найден в каталоге");
+                    $this->WriteToTrackingService("Товар с ID {$productId} не найден в каталоге");
                 }
             }
 
             // 5. Логируем результат
             if (!empty($updatedProducts)) {
-                AddMessage2Log("Заявка #{$requestId}: обновлено " . count($updatedProducts) . " товаров");
+                $this->WriteToTrackingService("Заявка #{$requestId}: обновлено " . count($updatedProducts) . " товаров");
             }
 
             return true;
         } catch (Exception $e) {
-            AddMessage2Log("Ошибка в роботе закупки: " . $e->getMessage());
+            $this->WriteToTrackingService("Ошибка в роботе закупки: " . $e->getMessage());
             return false;
         }
     }

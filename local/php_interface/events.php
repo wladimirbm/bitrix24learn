@@ -120,6 +120,29 @@ AddEventHandler('crm', 'OnBeforeCrmDealUpdate', function(&$arFields) {
     return true;
 });
 
+AddEventHandler('main', 'OnProlog', function() {
+    // Подключаем JS только на страницах контактов
+    if (strpos($_SERVER['REQUEST_URI'], '/crm/contact/details/') !== false) {
+        CJSCore::Init(['popup', 'ui.buttons', 'ui.notification']);
+        
+        // Подключаем наш скрипт
+        $asset = \Bitrix\Main\Page\Asset::getInstance();
+        $asset->addJs('/local/js/car_detail.js');
+        
+        // Передаем языковые сообщения в JS
+        CUtil::InitJSCore([
+            'messages' => [
+                'CAR_LOADING' => GetMessage('CAR_LOADING'),
+                'CAR_ERROR_TITLE' => GetMessage('CAR_ERROR_TITLE'),
+                'CAR_ERROR_MESSAGE' => GetMessage('CAR_ERROR_MESSAGE'),
+                'CAR_POPUP_TITLE' => GetMessage('CAR_POPUP_TITLE'),
+                'BTN_CLOSE' => GetMessage('BTN_CLOSE'),
+                'BTN_OPEN_CARD' => GetMessage('BTN_OPEN_CARD'),
+                'BTN_HISTORY' => GetMessage('BTN_HISTORY')
+            ]
+        ]);
+    }
+});
 
 /*
 $eventManager->addEventHandler('iblock', 'OnAfterIBlockElementAdd', ['\App\Events\IbFieldsHandler', 'onElementAfterUpdate']);
