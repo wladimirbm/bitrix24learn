@@ -75,7 +75,7 @@ class Agents
     {
         try {
             global $USER;
-            $USER->Authorize(1);
+            //$USER->Authorize(1);
         } catch (Exception $e) {
             \App\Debug\Mylog::addLog($e->getMessage(), 'Authorize', '', __FILE__, __LINE__);
         }
