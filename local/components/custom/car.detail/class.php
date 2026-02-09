@@ -34,37 +34,7 @@ class CarDetailComponent extends CBitrixComponent
 
 
 
-            $factory = \Bitrix\Crm\Service\Container::getInstance()->getFactory(1054);
-
-            if (!$factory) {
-                return null;
-            }
-
-            $item = $factory->getItem($carId);
-            if ($item) {
-                // 1. Получаем ID значения (если нужно и ID и текст)
-                $fieldCode = 'UF_CRM_6_COLOR'; // код поля-списка
-                $fieldValueId = $item->get($fieldCode); // ID выбранного значения
-
-                // 2. Получаем коллекцию полей
-                $fieldsCollection = $factory->getFieldsCollection();
-
-                // 3. Получаем описание конкретного поля
-                $field = $fieldsCollection->getField($fieldCode);
-
-                if ($field && $field->getType() === 'enumeration') {
-                    // 4. Получаем все значения списка
-                    $enumValues = $field->getValues(); // массив объектов Crm\Field\Enum\Option
-
-                    // 5. Находим нужное значение по ID
-                    foreach ($enumValues as $enumOption) {
-                        if ($enumOption->getId() == $fieldValueId) {
-                            $colorValue = $enumOption->getValue(); // Текстовое значение
-                            break;
-                        }
-                    }
-                }
-            }
+            $colorValue = $this->getSmartProcessEnumFieldValue(1054, $carId, 'UF_CRM_6_COLOR');
 
 
             $carData = [
@@ -103,6 +73,24 @@ class CarDetailComponent extends CBitrixComponent
             return ['ERROR' => 'Ошибка: ' . $e->getMessage(), 'HAS_ERROR' => true];
         }
     }
+
+    private function getSmartProcessEnumFieldValue($smartProcessId, $elementId, $fieldCode)
+    {
+        $factory = \Bitrix\Crm\Service\Container::getInstance()->getFactory($smartProcessId);
+
+        if (!$factory) {
+            return null;
+        }
+
+        $item = $factory->getItem($elementId);
+        if (!$item) {
+            return null;
+        }
+
+        return $item->getFieldValueCaption($fieldCode);
+    }
+
+
 
     private function getLinkedEntityName($entityId, $entityTypeId)
     {
