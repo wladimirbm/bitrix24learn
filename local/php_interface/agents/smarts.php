@@ -93,9 +93,6 @@ class Agents
         $ownerTypeAbbr = \CCrmOwnerTypeAbbr::ResolveByTypeID(1058);
         \App\Debug\Mylog::addLog($ownerTypeAbbr, 'Полученный ownerTypeAbbr для 1058', '', __FILE__, __LINE__);
 
-        $ownerTypeAbbr = \CCrmOwnerTypeAbbr::ResolveByTypeID(1058);
-        error_log('Полученный ownerTypeAbbr для 1058: ' . $ownerTypeAbbr);
-
         $rows = array();
         $rows[] = array(
             'PRODUCT_ID' => $elementId, // ID товара из каталога
@@ -126,11 +123,11 @@ class Agents
         }
 
         // if (\Bitrix\Main\Loader::includeModule('im')) {
-            // \CIMMessage::Add(array(  
-            // 	'FROM_USER_ID' => 1,  
-            // 	'TO_USER_ID' => 21, 
-            // 	'MESSAGE' => 'Пишу в чат тебе', 
-            // ));  
+        // \CIMMessage::Add(array(  
+        // 	'FROM_USER_ID' => 1,  
+        // 	'TO_USER_ID' => 21, 
+        // 	'MESSAGE' => 'Пишу в чат тебе', 
+        // ));  
         // }
 
         if (Loader::IncludeModule('im')) {
@@ -138,7 +135,7 @@ class Agents
                 "NOTIFY_TITLE" => "Автоматическая закупка", //заголовок
                 "MESSAGE" => '✅ Автозакупка: ' . $elementName . '. Остаток восстановлен до 10 единиц.',
                 "MESSAGE_TYPE" => IM_MESSAGE_SYSTEM,
-                "TO_USER_ID" => 1, // 13 ID закупщика
+                "TO_USER_ID" => 13, // 13 ID закупщика
                 "FROM_USER_ID" => 1, // От имени какого пользователя (например, система)
                 "NOTIFY_TYPE" => IM_NOTIFY_SYSTEM,
                 "NOTIFY_MODULE" => "main",
@@ -148,5 +145,75 @@ class Agents
         }
 
         return true;
+    }
+
+    public static function bpcodephp()
+    {
+
+
+        try {
+            // 3. Получаем товары из текущей заявки
+            $requestId = $document['ID'];
+            $ownerTypeAbbr = \CCrmOwnerTypeAbbr::ResolveByTypeID(1058);
+            $rows = \CCrmProductRow::LoadRows($ownerTypeAbbr, $requestId);
+
+            if (empty($rows)) {
+                AddMessage2Log("В заявке #{$requestId} нет товаров");
+                return true; // Выходим, но не прерываем процесс
+            }
+
+            // 4. Для каждого товара обновляем остатки
+            $updatedProducts = [];
+
+            foreach ($rows as $row) {
+                $productId = (int)$row['PRODUCT_ID'];
+                $quantity = (float)$row['QUANTITY'];
+
+                if ($productId <= 0 || $quantity <= 0) {
+                    continue;
+                }
+
+                // Получаем текущее количество товара
+                $dbProduct = \Bitrix\Catalog\Model\Product::getList([
+                    'filter' => ['ID' => $productId],
+                    'select' => ['ID', 'QUANTITY']
+                ]);
+
+                if ($product = $dbProduct->fetch()) {
+                    $currentQty = (float)$product['QUANTITY'];
+                    $newQty = $currentQty + $quantity;
+
+                    // Обновляем количество
+                    $updateResult = \Bitrix\Catalog\Model\Product::update($productId, [
+                        'QUANTITY' => $newQty
+                    ]);
+
+                    if ($updateResult->isSuccess()) {
+                        $updatedProducts[] = [
+                            'id' => $productId,
+                            'name' => $row['PRODUCT_NAME'],
+                            'added' => $quantity,
+                            'new_total' => $newQty
+                        ];
+
+                        AddMessage2Log("Товар {$productId}: {$currentQty} + {$quantity} = {$newQty}");
+                    } else {
+                        AddMessage2Log("Ошибка обновления товара {$productId}: " . implode(', ', $updateResult->getErrorMessages()));
+                    }
+                } else {
+                    AddMessage2Log("Товар с ID {$productId} не найден в каталоге");
+                }
+            }
+
+            // 5. Логируем результат
+            if (!empty($updatedProducts)) {
+                AddMessage2Log("Заявка #{$requestId}: обновлено " . count($updatedProducts) . " товаров");
+            }
+
+            return true;
+        } catch (Exception $e) {
+            AddMessage2Log("Ошибка в роботе закупки: " . $e->getMessage());
+            return false;
+        }
     }
 }

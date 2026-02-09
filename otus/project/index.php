@@ -20,6 +20,8 @@ $APPLICATION->SetTitle('Проектная работа "Внедрение Би
 <p><a href="/bitrix/admin/perfmon_table.php?lang=ru&table_name=b_agent&apply_filter=Y&by=ID&order=desc">Таблица</a></p>
 <h3>Триггеры</h3>
 <p><a href="/">Код</a></p>
+<h3>Цифровые рабочие места (создание прав для создания заявки на закупку из агента)</h3>
+<p><a href="/automation/type/automated_solution/list/">Список</a></p>
 
 
 <? require($_SERVER["DOCUMENT_ROOT"] . "/bitrix/footer.php"); ?> 
