@@ -27,16 +27,16 @@ function getStageColor($stageId)
 ?>
 
 <style>
-.popup-window-content div {
+.popup-window-content > div {
     padding: 0 !important;
 }
 </style>
 
-<div style="width: 1000px; padding: 30px; font-family: 'Segoe UI', Arial, sans-serif; font-size: 18px; background: #f5f7f8;">
-    
+<div style="width: 950px; font-family: 'Segoe UI', Arial, sans-serif; font-size: 18px;">
+
     <!-- Заголовок -->
     <div style="margin-bottom: 25px;">
-        <h2 style="margin: 0; color: #0B66C3; font-size: 22px; font-weight: 600; padding-bottom: 10px; border-bottom: 1px solid #e6e9ed;">
+        <h2 style="margin: 0 0 20px 0; color: #0B66C3; font-size: 22px; font-weight: 600;">
             Информация об автомобиле
         </h2>
     </div>
@@ -44,8 +44,8 @@ function getStageColor($stageId)
     <div style="display: flex; gap: 30px; min-height: 500px;">
         
         <!-- Левая колонка - информация об авто -->
-        <div style="flex: 1; min-width: 400px; background: white; border-radius: 6px; padding: 25px; box-shadow: 0 2px 8px rgba(0,0,0,0.05);">
-            <div style="margin-bottom: 25px;">
+        <div style="flex: 1; min-width: 350px;">
+            <div style="margin-bottom: 20px;">
                 <div style="font-size: 20px; font-weight: 700; color: #424956; margin-bottom: 5px;">
                     <?= $arResult['CAR']['BRAND'] ?> <?= $arResult['CAR']['MODEL'] ?>
                 </div>
@@ -106,137 +106,124 @@ function getStageColor($stageId)
         </div>
         
         <!-- Правая колонка - все активные сделки -->
-        <div style="flex: 1; min-width: 500px;">
-            <div style="background: white; border-radius: 6px; padding: 25px; box-shadow: 0 2px 8px rgba(0,0,0,0.05);">
-                <div style="margin-bottom: 25px;">
-                    <h3 style="margin: 0 0 10px 0; color: #0B66C3; font-size: 20px; font-weight: 600;">
-                        Связанные сделки
-                    </h3>
-                    <div style="color: #525c69; font-size: 16px;">
-                        <?php if (!empty($arResult['DEALS'])): ?>
-                            <?= count($arResult['DEALS']) ?> активных сделок
-                        <?php else: ?>
-                            Нет активных сделок
-                        <?php endif; ?>
-                    </div>
+        <div style="flex: 1; min-width: 450px;">
+            <h3 style="margin: 0 0 20px 0; color: #0B66C3; font-size: 20px; font-weight: 600;">
+                Связанные сделки
+                <?php if (!empty($arResult['DEALS'])): ?>
+                    <span style="font-size: 0.8em; color: #666;">
+                        (<?= count($arResult['DEALS']) ?>)
+                    </span>
+                <?php endif; ?>
+            </h3>
+            
+            <?php if (empty($arResult['DEALS'])): ?>
+                <div style="text-align: center; padding: 40px 20px; color: #777; font-style: italic;">
+                    Нет активных сделок по этому автомобилю
                 </div>
-                
-                <?php if (empty($arResult['DEALS'])): ?>
-                    <div style="text-align: center; padding: 40px 20px; color: #a8adb4; font-style: italic; border: 2px dashed #edeef0; border-radius: 6px;">
-                        Нет активных сделок по этому автомобилю
-                    </div>
-                <?php else: ?>
-                    <div style="max-height: 500px; overflow-y: auto; padding-right: 5px;">
-                        <?php foreach ($arResult['DEALS'] as $deal): 
-                            $stageColor = getStageColor($deal['STAGE_ID']);
-                        ?>
-                        <div style="background: white; border: 1px solid #e6e9ed; border-radius: 6px; 
-                                    padding: 20px; margin-bottom: 15px; transition: all 0.2s;
-                                    border-left: 4px solid <?= $stageColor ?>;">
-                            
-                            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 15px;">
-                                <div style="flex: 1;">
-                                    <div style="margin-bottom: 8px;">
-                                        <h4 style="margin: 0;">
-                                            <a href="/crm/deal/details/<?= $deal['ID'] ?>/" 
-                                               target="_blank"
-                                               style="color: #0B66C3; text-decoration: none; font-size: 18px; font-weight: 600;">
-                                                <?= $deal['TITLE'] ?>
-                                            </a>
-                                        </h4>
-                                    </div>
-                                    
-                                    <div style="font-size: 14px; color: #828b95;">
-                                        <span style="margin-right: 15px;">ID: <?= $deal['ID'] ?></span>
-                                        <span>Создана: <?= $deal['DATE_CREATE'] ?></span>
-                                    </div>
+            <?php else: ?>
+                <div style="max-height: 500px; overflow-y: auto; padding-right: 5px;">
+                    <?php
+                    
+                    foreach ($arResult['DEALS'] as $deal): 
+                        $stageColor = getStageColor($deal['STAGE_ID']);
+                    ?>
+                    <div style="background: white; border-left: 4px solid <?= $stageColor ?>; 
+                                border: 1px solid #e0e0e0; border-radius: 8px; 
+                                padding: 15px; margin-bottom: 15px; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+                        
+                        <!-- Заголовок и стадия -->
+                        <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px;">
+                            <div style="flex: 1;">
+                                <h4 style="margin: 0 0 5px 0;">
+                                    <a href="/crm/deal/details/<?= $deal['ID'] ?>/" 
+                                       target="_blank"
+                                       style="color: #1d539f; text-decoration: none; font-size: 1.1em;">
+                                        <?= $deal['TITLE'] ?>
+                                    </a>
+                                </h4>
+                                <div style="font-size: 0.85em; color: #666;">
+                                    <strong>ID:</strong> <?= $deal['ID'] ?> | 
+                                    <strong>Создана:</strong> <?= $deal['DATE_CREATE'] ?>
                                 </div>
-                                
-                                <div style="margin-left: 15px;">
-                                    <span style="background: <?= $stageColor ?>; color: white; padding: 6px 12px; 
-                                                border-radius: 15px; font-size: 14px; font-weight: 600; 
-                                                display: inline-block; min-width: 140px; text-align: center;">
-                                        <?= $deal['STAGE_NAME'] ?>
+                            </div>
+                            
+                            <div style="margin-left: 10px; text-align: right;">
+                                <span style="background: <?= $stageColor ?>; color: white; padding: 4px 10px; 
+                                            border-radius: 15px; font-size: 0.85em; font-weight: bold; 
+                                            display: inline-block; min-width: 120px; text-align: center;">
+                                    <?= $deal['STAGE_NAME'] ?>
+                                </span>
+                            </div>
+                        </div>
+                        
+                        <!-- Основная информация -->
+                        <div style="color: #555; font-size: 0.9em; background: #f9f9f9; 
+                                    padding: 10px; border-radius: 5px; margin-top: 10px;">
+                            
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                                <div>
+                                    <strong>Сумма:</strong><br>
+                                    <span style="font-size: 1.1em; font-weight: bold; color: #2c3e50;">
+                                        <?= $deal['OPPORTUNITY'] ?>
                                     </span>
                                 </div>
-                            </div>
-                            
-                            <div style="background: #f8fafc; border-radius: 6px; padding: 15px; margin-top: 15px;">
-                                <div style="display: flex; justify-content: space-between;">
-                                    <div>
-                                        <div style="color: #828b95; font-size: 14px; margin-bottom: 5px;">Сумма</div>
-                                        <div style="font-size: 20px; font-weight: 700; color: #31c469;">
-                                            <?= $deal['OPPORTUNITY'] ?>
-                                        </div>
-                                    </div>
-                                    
-                                    <div style="text-align: right;">
-                                        <div style="color: #828b95; font-size: 14px; margin-bottom: 5px;">Ответственный</div>
-                                        <div style="font-weight: 600; color: #424956;">
-                                            <?= $deal['ASSIGNED_BY_NAME'] ?>
-                                        </div>
-                                    </div>
-                                </div>
                                 
-                                <?php if (!empty($deal['PRODUCT_ROWS'])): ?>
-                                <div style="margin-top: 15px; padding-top: 15px; border-top: 1px solid #e6e9ed;">
-                                    <div style="color: #828b95; font-size: 14px; margin-bottom: 10px;">
-                                        Запчасти
-                                    </div>
-                                    <div style="display: flex; flex-wrap: wrap; gap: 8px;">
-                                        <?php foreach ($deal['PRODUCT_ROWS'] as $product): ?>
-                                        <div style="background: white; border: 1px solid #e6e9ed; 
-                                                    border-radius: 4px; padding: 6px 12px; 
-                                                    font-size: 14px;">
-                                            <?= $product['NAME'] ?>
-                                            <span style="color: #828b95; font-weight: 600; margin-left: 6px;">
-                                                ×<?= $product['QUANTITY'] ?> шт.
-                                            </span>
-                                        </div>
-                                        <?php endforeach; ?>
-                                    </div>
+                                <div style="text-align: right;">
+                                    <strong>Ответственный:</strong><br>
+                                    <?= $deal['ASSIGNED_BY_NAME'] ?>
                                 </div>
-                                <?php endif; ?>
                             </div>
                             
-                            <div style="margin-top: 15px; text-align: right;">
-                                <a href="/crm/deal/details/<?= $deal['ID'] ?>/" 
-                                   target="_blank"
-                                   style="color: #828b95; font-size: 15px; text-decoration: none; 
-                                          display: inline-flex; align-items: center; padding: 8px 16px;
-                                          border: 1px solid #e6e9ed; border-radius: 4px; transition: all 0.2s;
-                                          background: white;">
-                                    <span style="margin-right: 8px;">Перейти к сделке</span>
-                                    <span>→</span>
-                                </a>
+                            <!-- Запчасти -->
+                            <?php if (!empty($deal['PRODUCT_ROWS'])): ?>
+                            <div style="margin-top: 10px; padding-top: 10px; border-top: 1px dashed #ddd;">
+                                <strong style="color: #555;">Запчасти:</strong>
+                                <div style="margin-top: 5px;">
+                                    <?php foreach ($deal['PRODUCT_ROWS'] as $product): ?>
+                                    <div style="display: inline-block; background: white; border: 1px solid #e0e0e0; 
+                                                border-radius: 4px; padding: 3px 8px; margin: 0 5px 5px 0; 
+                                                font-size: 0.85em;">
+                                        <?= $product['NAME'] ?>
+                                        <span style="color: #777; font-weight: bold; margin-left: 3px;">
+                                            ×<?= $product['QUANTITY'] ?> шт.
+                                        </span>
+                                    </div>
+                                    <?php endforeach; ?>
+                                </div>
                             </div>
+                            <?php endif; ?>
                         </div>
-                        <?php endforeach; ?>
-                    </div>
-                    
-                    <!-- Статистика -->
-                    <div style="margin-top: 25px; padding: 15px; background: #f8fafc; border-radius: 6px; 
-                                font-size: 16px; color: #424956; display: flex; justify-content: space-between;">
-                        <div>
-                            <strong>Всего сделок:</strong> <?= count($arResult['DEALS']) ?>
-                        </div>
-                        <div>
-                            <strong>Общая сумма:</strong> 
-                            <?php
-                            $totalAmount = 0;
-                            foreach ($arResult['DEALS'] as $deal) {
-                                preg_match('/[\d\s]+/', $deal['OPPORTUNITY'], $matches);
-                                if ($matches) {
-                                    $amount = (int)str_replace(' ', '', $matches[0]);
-                                    $totalAmount += $amount;
-                                }
-                            }
-                            echo '<span style="color: #31c469; font-weight: 700; margin-left: 5px;">' . number_format($totalAmount, 0, '', ' ') . ' ₽</span>';
-                            ?>
+                        
+                        <!-- Ссылка на сделку -->
+                        <div style="margin-top: 10px; text-align: right;">
+                            <a href="/crm/deal/details/<?= $deal['ID'] ?>/" 
+                               target="_blank"
+                               style="color: #7f8c8d; font-size: 0.85em; text-decoration: none;">
+                                Перейти к сделке →
+                            </a>
                         </div>
                     </div>
-                <?php endif; ?>
-            </div>
+                    <?php endforeach; ?>
+                </div>
+                
+                <!-- Статистика -->
+                <div style="margin-top: 15px; padding: 10px; background: #f8f9fa; border-radius: 5px; 
+                            font-size: 0.9em; color: #555;">
+                    <strong>Всего сделок:</strong> <?= count($arResult['DEALS']) ?> | 
+                    <strong>Общая сумма:</strong> 
+                    <?php
+                    $totalAmount = 0;
+                    foreach ($arResult['DEALS'] as $deal) {
+                        preg_match('/[\d\s]+/', $deal['OPPORTUNITY'], $matches);
+                        if ($matches) {
+                            $amount = (int)str_replace(' ', '', $matches[0]);
+                            $totalAmount += $amount;
+                        }
+                    }
+                    echo number_format($totalAmount, 0, '', ' ') . ' ₽';
+                    ?>
+                </div>
+            <?php endif; ?>
         </div>
     </div>
 </div>
