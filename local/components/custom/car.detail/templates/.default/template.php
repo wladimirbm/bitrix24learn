@@ -1,7 +1,7 @@
 <?php
 if (!defined("B_PROLOG_INCLUDED") || B_PROLOG_INCLUDED !== true) die();
 
-$this->IncludeComponentLang('template.php');
+//$this->IncludeComponentLang('template.php');
 
 if ($arResult['HAS_ERROR'] ?? false): ?>
     <div style="padding: 40px; text-align: center; color: #e74c3c;">
