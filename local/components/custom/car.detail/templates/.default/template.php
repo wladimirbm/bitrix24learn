@@ -32,7 +32,7 @@ function getStageColor($stageId)
 }
 </style>
 
-<div style="width: 950px; font-family: 'Segoe UI', Arial, sans-serif; font-size: 18px;">
+<div style="width: 850px; font-family: 'Segoe UI', Arial, sans-serif; font-size: 18px;">
 
     <!-- Заголовок -->
     <div style="margin-bottom: 25px;">
@@ -41,7 +41,7 @@ function getStageColor($stageId)
         </h2>
     </div>
     
-    <div style="display: flex; gap: 30px; min-height: 500px;">
+    <div style="display: flex; gap: 30px; min-height: 500px; padding: 10px;">
         
         <!-- Левая колонка - информация об авто -->
         <div style="flex: 1; min-width: 350px;">
