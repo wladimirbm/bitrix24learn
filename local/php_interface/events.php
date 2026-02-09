@@ -141,7 +141,7 @@ AddEventHandler('main', 'OnEndBufferContent', function(&$content) {
         $content = str_replace('</body>', $script . '</body>', $content);
     }
 });
-?>
+
 
 /*
 AddEventHandler('main', 'OnProlog', function() {
