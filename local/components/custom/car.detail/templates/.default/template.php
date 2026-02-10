@@ -27,7 +27,7 @@ function getStageColor($stageId)
 ?>
 
 <style>
-.popup-window-content { overflow: hidden; }
+.popup-window-content { overflow: hidden !important; }
 .popup-window-content > div {
     padding: 0 !important;
 }
