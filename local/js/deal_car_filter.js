@@ -6,32 +6,46 @@
 (function() {
     'use strict';
     
-    // ID типа смарт-процесса "Гараж" (из вопроса)
     const SMART_PROCESS_TYPE_ID = 1054;
-    
-    // Идентификатор сущности для фильтра в запросе
     const ENTITY_CODE = 'DYNAMICS_' + SMART_PROCESS_TYPE_ID;
-    
-    // Переменная для хранения ID текущего выбранного контакта
     let currentContactId = null;
-    
-    // Observer для отслеживания изменений
     let clientObserver = null;
+    let initializationAttempts = 0;
+    const MAX_INIT_ATTEMPTS = 10;
     
     /**
      * Инициализация модуля
      */
     function init() {
+        initializationAttempts++;
+        
         // Ждем полной загрузки DOM
         BX.ready(function() {
-            // 1. Находим блок "Клиент"
-            const clientBlock = document.querySelector('[data-cid="CLIENT"]');
+            console.log('DealCarFilter: Инициализация, попытка', initializationAttempts);
+            
+            // 1. Находим блок "Клиент" - ПРОБУЕМ РАЗНЫЕ СЕЛЕКТОРЫ
+            const clientBlock = findClientBlock();
             
             if (!clientBlock) {
-                console.warn('DealCarFilter: Блок клиента не найден');
-                setTimeout(init, 1000);
+                console.warn('DealCarFilter: Блок клиента не найден, текущий URL:', window.location.pathname);
+                
+                // Если страница все еще загружается - пробуем еще раз
+                if (initializationAttempts < MAX_INIT_ATTEMPTS) {
+                    setTimeout(init, 500);
+                } else {
+                    console.error('DealCarFilter: Не удалось найти блок клиента после', MAX_INIT_ATTEMPTS, 'попыток');
+                    
+                    // Пробуем подключиться позже через событие загрузки страницы
+                    BX.addCustomEvent(window, 'onCrmEntityEditorLoad', function() {
+                        console.log('DealCarFilter: Событие onCrmEntityEditorLoad, повторная инициализация');
+                        initializationAttempts = 0;
+                        setTimeout(init, 300);
+                    });
+                }
                 return;
             }
+            
+            console.log('DealCarFilter: Блок клиента найден:', clientBlock);
             
             // 2. Начинаем отслеживание изменений в блоке клиента
             startObservingClientBlock(clientBlock);
@@ -42,15 +56,103 @@
             // 4. Ищем уже выбранный контакт
             checkInitialContact(clientBlock);
             
-            console.log('DealCarFilter: Модуль инициализирован');
+            // 5. Вешаем глобальные обработчики на динамическую загрузку
+            setupGlobalEventHandlers();
+            
+            console.log('DealCarFilter: Модуль успешно инициализирован');
         });
+    }
+    
+    /**
+     * Поиск блока "Клиент" разными способами
+     */
+    function findClientBlock() {
+        // Пробуем разные селекторы, которые могут содержать блок клиента
+        
+        // 1. По data-cid (из вашего HTML)
+        let block = document.querySelector('[data-cid="CLIENT"]');
+        if (block) return block;
+        
+        // 2. По классу блока клиента
+        block = document.querySelector('.crm-entity-widget-content-block[data-field-type="client"]');
+        if (block) return block;
+        
+        // 3. По тексту "Клиент" в заголовке
+        const elementsWithClientText = document.querySelectorAll('.ui-entity-editor-block-title-text');
+        for (let element of elementsWithClientText) {
+            if (element.textContent && element.textContent.trim() === 'Клиент') {
+                // Ищем родительский блок
+                let parent = element.closest('.ui-entity-editor-content-block');
+                if (parent) return parent;
+            }
+        }
+        
+        // 4. По наличию полей "Контакт" и "Компания"
+        const contactFields = document.querySelectorAll('.crm-entity-widget-content-search-input[placeholder*="контакт"], .crm-entity-widget-content-search-input[placeholder*="Контакт"]');
+        for (let field of contactFields) {
+            let parentBlock = field.closest('.ui-entity-editor-content-block');
+            if (parentBlock) return parentBlock;
+        }
+        
+        // 5. По структуре CRM сделки (общий поиск)
+        block = document.querySelector('.crm-entity-card-container, .crm-entity-wrap, .ui-entity-editor');
+        if (block) {
+            // Внутри контейнера ищем блок с клиентом
+            const clientInside = block.querySelector('.crm-entity-widget-content-block-inner');
+            if (clientInside) {
+                return clientInside.closest('.ui-entity-editor-content-block') || clientInside;
+            }
+        }
+        
+        return null;
+    }
+    
+    /**
+     * Глобальные обработчики событий
+     */
+    function setupGlobalEventHandlers() {
+        // Событие, которое срабатывает при AJAX-обновлении страницы
+        BX.addCustomEvent('onAjaxSuccess', function() {
+            console.log('DealCarFilter: AJAX обновление страницы, проверяем блоки');
+            setTimeout(checkAndReinit, 1000);
+        });
+        
+        // Событие при изменении URL (SPA навигация)
+        BX.addCustomEvent(window, 'onHistoryStateChanged', function() {
+            console.log('DealCarFilter: Изменен URL, переинициализация');
+            setTimeout(init, 500);
+        });
+    }
+    
+    /**
+     * Проверка и переинициализация
+     */
+    function checkAndReinit() {
+        const clientBlock = findClientBlock();
+        const carField = document.getElementById('UF_CRM_1770588718');
+        
+        if (clientBlock && carField) {
+            console.log('DealCarFilter: Блоки найдены после AJAX');
+            // Уже инициализировано
+        } else if (!clientObserver) {
+            console.log('DealCarFilter: Переинициализация после AJAX');
+            initializationAttempts = 0;
+            init();
+        }
     }
     
     /**
      * Проверка, выбран ли контакт при первоначальной загрузке страницы
      */
     function checkInitialContact(clientBlock) {
-        const contactBadge = clientBlock.querySelector('.crm-entity-widget-img-contact + .crm-entity-widget-badge');
+        // Ищем значок контакта разными способами
+        let contactBadge = clientBlock.querySelector('.crm-entity-widget-img-contact + .crm-entity-widget-badge');
+        
+        if (!contactBadge) {
+            // Альтернативный поиск
+            contactBadge = clientBlock.querySelector('[data-entity-id]');
+        }
+        
         if (contactBadge) {
             const entityId = contactBadge.getAttribute('data-entity-id');
             if (entityId) {
@@ -66,14 +168,23 @@
     function resetCarSelectorCache() {
         console.log('DealCarFilter: Сброс кеша селектора автомобилей');
         
-        // Находим все селекторы, связанные с полем "Автомобиль"
-        const carSelectorElements = document.querySelectorAll('[id*="UF_CRM_1770588718"], [data-field-id="UF_CRM_1770588718"]');
+        // Находим поле "Автомобиль" разными способами
+        const carFields = [
+            document.getElementById('UF_CRM_1770588718'),
+            ...document.querySelectorAll('[id*="UF_CRM_1770588718"]'),
+            ...document.querySelectorAll('[name*="UF_CRM_1770588718"]'),
+            ...document.querySelectorAll('[data-field-id*="UF_CRM_1770588718"]')
+        ].filter(Boolean);
         
-        carSelectorElements.forEach(function(element) {
-            const selectorId = element.id;
+        carFields.forEach(function(field) {
+            const element = field.nodeName === 'INPUT' ? field.parentElement : field;
+            if (!element) return;
             
-            // Закрываем попап, если открыт
+            // Закрываем попап селектора
+            const selectorId = element.id || '';
             let selectorInstance = null;
+            
+            // Пробуем разные API для получения экземпляра селектора
             if (window.BX && BX.UI && BX.UI.SelectorManager && BX.UI.SelectorManager.instances) {
                 selectorInstance = BX.UI.SelectorManager.instances[selectorId];
             }
@@ -87,18 +198,20 @@
                 console.log('DealCarFilter: Попап селектора закрыт', selectorId);
             }
             
-            // Очищаем поле
-            const hiddenInput = document.getElementById('UF_CRM_1770588718');
-            if (hiddenInput) hiddenInput.value = '';
-            
-            const tileContainer = element.querySelector('[data-role="tile-container"]');
-            if (tileContainer) {
-                const items = tileContainer.querySelectorAll('[data-role="tile-item"]');
+            // Очищаем значение
+            if (field.value) field.value = '';
+        });
+        
+        // Очищаем видимые плитки
+        const tileContainers = document.querySelectorAll('[data-role="tile-container"]');
+        tileContainers.forEach(container => {
+            const items = container.querySelectorAll('[data-role="tile-item"]');
+            if (items.length > 0) {
                 items.forEach(item => item.remove());
+                console.log('DealCarFilter: Очищены плитки выбора');
             }
         });
         
-        // Очищаем глобальный кеш
         clearGlobalSelectorCache();
     }
     
@@ -109,18 +222,17 @@
         const cacheStores = [
             window.BX && BX.Main && BX.Main.SelectorManager && BX.Main.SelectorManager.DataStore,
             window.BX && BX.UI && BX.UI.SelectorManager && BX.UI.SelectorManager.DataStore,
-            window.BX && BX.Main && BX.Main.selectorManager && BX.Main.selectorManager.dataStore
-        ];
+            window.BX && BX.Main && BX.Main.selectorManager && BX.Main.selectorManager.dataStore,
+            window.BXMainSelectorDataStore // Еще один возможный вариант
+        ].filter(Boolean);
         
         cacheStores.forEach(store => {
-            if (store) {
-                Object.keys(store).forEach(key => {
-                    if (key.includes('DYNAMICS_1054') || key.includes('1054') || key.includes('UF_CRM_1770588718')) {
-                        delete store[key];
-                        console.log('DealCarFilter: Удален кеш:', key);
-                    }
-                });
-            }
+            Object.keys(store).forEach(key => {
+                if (key.includes('DYNAMICS_1054') || key.includes('1054') || key.includes('UF_CRM_1770588718')) {
+                    delete store[key];
+                    console.log('DealCarFilter: Удален кеш:', key);
+                }
+            });
         });
     }
     
@@ -133,55 +245,92 @@
         clientObserver = new MutationObserver(function(mutations) {
             let contactChanged = false;
             
-            mutations.forEach(function(mutation) {
-                if (mutation.type === 'attributes' && mutation.attributeName === 'data-entity-id') {
+            for (let mutation of mutations) {
+                // Изменение атрибута data-entity-id
+                if (mutation.type === 'attributes' && 
+                    (mutation.attributeName === 'data-entity-id' || mutation.attributeName === 'class')) {
                     contactChanged = true;
+                    break;
                 }
                 
+                // Добавление/удаление элементов
                 if (mutation.type === 'childList') {
-                    const addedNodes = Array.from(mutation.addedNodes);
-                    const removedNodes = Array.from(mutation.removedNodes);
+                    const nodes = [...mutation.addedNodes, ...mutation.removedNodes];
+                    const hasBadgeChanges = nodes.some(node => 
+                        node.nodeType === 1 && 
+                        (node.classList && node.classList.contains('crm-entity-widget-badge') ||
+                         node.querySelector && node.querySelector('.crm-entity-widget-badge'))
+                    );
                     
-                    const contactBadge = clientBlock.querySelector('.crm-entity-widget-img-contact + .crm-entity-widget-badge');
-                    if (contactBadge || removedNodes.some(node => node.classList && node.classList.contains('crm-entity-widget-badge'))) {
+                    if (hasBadgeChanges) {
                         contactChanged = true;
+                        break;
                     }
                 }
-            });
+            }
             
             if (contactChanged) {
                 setTimeout(function() {
-                    const contactIcon = clientBlock.querySelector('.crm-entity-widget-img-contact');
-                    if (!contactIcon) return;
-                    
-                    const contactBadge = contactIcon.nextElementSibling;
+                    // Ищем текущий значок контакта
+                    const contactBadge = clientBlock.querySelector('.crm-entity-widget-badge[data-entity-id]');
                     let newContactId = null;
                     
-                    if (contactBadge && contactBadge.classList.contains('crm-entity-widget-badge')) {
+                    if (contactBadge) {
                         newContactId = contactBadge.getAttribute('data-entity-id');
+                    } else {
+                        // Проверяем, есть ли вообще значок (может контакт сброшен)
+                        const anyBadge = clientBlock.querySelector('.crm-entity-widget-badge');
+                        if (!anyBadge || !anyBadge.hasAttribute('data-entity-id')) {
+                            newContactId = null;
+                        }
                     }
                     
+                    // Если контакт изменился
                     if (newContactId !== previousContactId) {
                         previousContactId = newContactId;
                         currentContactId = newContactId;
                         
-                        if (newContactId) {
-                            console.log('DealCarFilter: Выбран контакт ID:', newContactId);
-                        } else {
-                            console.log('DealCarFilter: Контакт сброшен');
-                        }
+                        console.log('DealCarFilter: Контакт изменен:', 
+                            newContactId ? 'ID:' + newContactId : 'сброшен');
                         
+                        // Сбрасываем кеш селектора
                         resetCarSelectorCache();
                     }
-                }, 100);
+                }, 50); // Маленькая задержка для стабилизации DOM
             }
         });
         
+        // Начинаем наблюдение
         clientObserver.observe(clientBlock, {
             childList: true,
             subtree: true,
             attributes: true,
-            attributeFilter: ['data-entity-id', 'class', 'style']
+            attributeFilter: ['data-entity-id', 'class', 'style', 'placeholder']
+        });
+        
+        // Также наблюдаем за всем документом на случай динамической подгрузки
+        const globalObserver = new MutationObserver(function(mutations) {
+            for (let mutation of mutations) {
+                if (mutation.type === 'childList') {
+                    const addedNodes = [...mutation.addedNodes];
+                    const hasClientBlock = addedNodes.some(node => 
+                        node.nodeType === 1 && 
+                        (node.matches && node.matches('[data-cid="CLIENT"]')) ||
+                        (node.querySelector && node.querySelector('[data-cid="CLIENT"]'))
+                    );
+                    
+                    if (hasClientBlock) {
+                        console.log('DealCarFilter: Динамически добавлен блок клиента');
+                        setTimeout(init, 300);
+                        break;
+                    }
+                }
+            }
+        });
+        
+        globalObserver.observe(document.body, {
+            childList: true,
+            subtree: true
         });
     }
     
@@ -189,33 +338,38 @@
      * Перехват запросов селектора "Автомобиль"
      */
     function interceptSelectorRequests() {
-        // 1. Перехват первоначальной загрузки данных (getData)
-        BX.addCustomEvent('UI::Selector::Item:onBeforeLoad', function(control, params) {
-            if (!isCarSelector(control, params)) return;
-            console.log('DealCarFilter: Перехвачен запрос getData');
-            applyContactFilter(params);
-        });
+        console.log('DealCarFilter: Настройка перехвата запросов селектора');
         
-        // 2. Перехват поисковых запросов (doSearch)
-        BX.addCustomEvent('UI::Selector::onBeforeSearch', function(control, params) {
-            if (!isCarSelector(control, params)) return;
-            console.log('DealCarFilter: Перехвачен запрос doSearch');
-            applyContactFilter(params);
-        });
-        
-        // 3. Отладочное событие при открытии попапа
-        BX.addCustomEvent('UI::Selector::onShow', function(control) {
-            if (isCarSelector(control)) {
-                console.log('DealCarFilter: Открыт попап селектора, контакт:', currentContactId);
-            }
-        });
+        // Событие для первоначальной загрузки
+        if (BX.addCustomEvent) {
+            BX.addCustomEvent('UI::Selector::Item:onBeforeLoad', function(control, params) {
+                if (!isCarSelector(control, params)) return;
+                console.log('DealCarFilter: Перехвачен запрос getData');
+                applyContactFilter(params);
+            });
+            
+            // Событие для поиска
+            BX.addCustomEvent('UI::Selector::onBeforeSearch', function(control, params) {
+                if (!isCarSelector(control, params)) return;
+                console.log('DealCarFilter: Перехвачен запрос doSearch');
+                applyContactFilter(params);
+            });
+            
+            // Событие при открытии
+            BX.addCustomEvent('UI::Selector::onShow', function(control) {
+                if (isCarSelector(control)) {
+                    console.log('DealCarFilter: Открыт попап селектора, текущий контакт:', currentContactId);
+                }
+            });
+        }
     }
     
     /**
-     * Применение фильтра по контакту к параметрам запроса
+     * Применение фильтра по контакту
      */
     function applyContactFilter(params) {
-        // Если контакт выбран - добавляем фильтр
+        if (!params || !params.data) return;
+        
         if (currentContactId) {
             if (!params.data.FILTER) {
                 params.data.FILTER = {};
@@ -225,7 +379,7 @@
                 '=CONTACT_ID': currentContactId
             };
             
-            console.log('DealCarFilter: Добавлен фильтр для контакта', currentContactId, 'в', params.data.action || 'request');
+            console.log('DealCarFilter: Добавлен фильтр для контакта', currentContactId);
         } else {
             if (params.data.FILTER && params.data.FILTER[ENTITY_CODE]) {
                 delete params.data.FILTER[ENTITY_CODE];
@@ -238,46 +392,48 @@
      * Проверка, что это селектор поля "Автомобиль"
      */
     function isCarSelector(control, params) {
-        // 1. По entityTypes в параметрах запроса
-        if (params && params.data && params.data.entityTypes) {
-            if (params.data.entityTypes[ENTITY_CODE]) {
+        if (!control) return false;
+        
+        // Проверка по параметрам запроса
+        if (params && params.data) {
+            // По entityTypes
+            if (params.data.entityTypes && params.data.entityTypes[ENTITY_CODE]) {
                 return true;
             }
-        }
-        
-        // 2. По options в параметрах запроса
-        if (params && params.data && params.data.options) {
-            if (params.data.options['enableCrmDynamics'] && 
-                params.data.options['enableCrmDynamics'][SMART_PROCESS_TYPE_ID.toString()] === 'Y') {
-                return true;
-            }
-        }
-        
-        // 3. По ID контрола
-        if (control && control.id) {
-            if (control.id.indexOf('UF_CRM_1770588718') !== -1 ||
-                control.id.indexOf('crm-uf-crm-1770588718') !== -1) {
-                return true;
-            }
-        }
-        
-        // 4. По container элемента
-        if (control && control.container) {
-            const containerId = control.container.id || '';
-            const containerHtml = control.container.outerHTML || '';
             
-            if (containerId.indexOf('UF_CRM_1770588718') !== -1 ||
-                containerHtml.indexOf('UF_CRM_1770588718') !== -1 ||
-                containerHtml.indexOf('Автомобиль') !== -1) {
-                return true;
+            // По options
+            if (params.data.options && params.data.options.enableCrmDynamics) {
+                const dynamics = params.data.options.enableCrmDynamics;
+                if (dynamics[SMART_PROCESS_TYPE_ID] === 'Y' || dynamics[SMART_PROCESS_TYPE_ID.toString()] === 'Y') {
+                    return true;
+                }
             }
         }
         
-        return false;
+        // Проверка по ID и классам
+        const element = control.container || control;
+        if (!element) return false;
+        
+        const elementId = element.id || '';
+        const elementHtml = element.outerHTML || element.innerHTML || '';
+        
+        // Ищем признаки поля "Автомобиль"
+        const carFieldIndicators = [
+            'UF_CRM_1770588718',
+            'Автомобиль',
+            'crm-uf-crm-1770588718',
+            'dynamic_1054',
+            'DYNAMICS_1054'
+        ];
+        
+        return carFieldIndicators.some(indicator => 
+            elementId.includes(indicator) || 
+            elementHtml.includes(indicator)
+        );
     }
     
     /**
-     * Публичные методы
+     * Публичные методы для отладки
      */
     window.DealCarFilter = {
         getCurrentContact: function() {
@@ -285,27 +441,16 @@
         },
         
         setContactForDebug: function(contactId) {
-            const oldContactId = currentContactId;
             currentContactId = contactId;
-            console.log('DealCarFilter: Установлен контакт для отладки:', contactId, '(был:', oldContactId, ')');
+            console.log('DealCarFilter: Установлен контакт для отладки:', contactId);
             resetCarSelectorCache();
             return currentContactId;
         },
         
         resetContact: function() {
             currentContactId = null;
-            console.log('DealCarFilter: Контакт сброшен вручную');
+            console.log('DealCarFilter: Контакт сброшен');
             resetCarSelectorCache();
-        },
-        
-        openCarSelector: function() {
-            const selectorBtn = document.querySelector('[id*="UF_CRM_1770588718"] [data-role="tile-select"]');
-            if (selectorBtn) {
-                selectorBtn.click();
-                console.log('DealCarFilter: Селектор автомобилей открыт принудительно');
-            } else {
-                console.warn('DealCarFilter: Кнопка открытия селектора не найдена');
-            }
         },
         
         getStatus: function() {
@@ -314,31 +459,14 @@
                 currentContactId: currentContactId,
                 smartProcessType: SMART_PROCESS_TYPE_ID,
                 entityCode: ENTITY_CODE,
-                observerActive: !!clientObserver
+                observerActive: !!clientObserver,
+                initializationAttempts: initializationAttempts,
+                pageUrl: window.location.pathname
             };
         },
         
-        testAddFilter: function() {
-            const testParams = {
-                data: {
-                    entityTypes: {},
-                    action: 'doSearch'
-                }
-            };
-            testParams.data.entityTypes[ENTITY_CODE] = { options: {} };
-            
-            const fakeControl = { id: 'test_UF_CRM_1770588718' };
-            const testContactId = currentContactId || 999;
-            
-            const originalContactId = currentContactId;
-            currentContactId = testContactId;
-            
-            applyContactFilter(testParams);
-            
-            currentContactId = originalContactId;
-            
-            console.log('DealCarFilter: Тест фильтра', testParams);
-            return testParams;
+        findClientBlock: function() {
+            return findClientBlock();
         },
         
         reinit: function() {
@@ -347,12 +475,34 @@
                 clientObserver = null;
             }
             
+            initializationAttempts = 0;
             currentContactId = null;
-            init();
-            console.log('DealCarFilter: Модуль переинициализирован');
+            
+            console.log('DealCarFilter: Принудительная переинициализация');
+            setTimeout(init, 100);
+        },
+        
+        testSelectorDetection: function() {
+            const testElements = document.querySelectorAll('[id*="UF_CRM"], [data-field-id*="UF_CRM"]');
+            console.log('DealCarFilter: Найдены элементы:', testElements.length);
+            testElements.forEach(el => console.log('  -', el.id || el.dataset.fieldId, el));
         }
     };
     
-    // Инициализируем модуль при загрузке
-    init();
+    // Запуск при полной загрузке страницы
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', function() {
+            setTimeout(init, 500);
+        });
+    } else {
+        setTimeout(init, 500);
+    }
+    
+    // Дополнительный запуск через 2 секунды на случай динамической загрузки
+    setTimeout(function() {
+        if (!clientObserver && initializationAttempts === 0) {
+            console.log('DealCarFilter: Запуск по таймауту');
+            init();
+        }
+    }, 2000);
 })();
