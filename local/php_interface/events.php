@@ -120,73 +120,30 @@ AddEventHandler('main', 'OnEndBufferContent', function (&$content) {
     }
 });
 
-// Обработчик для подключения фильтра автомобилей в сделках
-// AddEventHandler('main', 'OnBeforeProlog', function () {
-//     // Только для страниц сделок
-//     if (preg_match('#/crm/deal/(edit|details)/#', $_SERVER['REQUEST_URI'])) {
 
-//         // Подключаем скрипт фильтрации
-//         $asset = \Bitrix\Main\Page\Asset::getInstance();
-//         $asset->addJs('/local/js/deal_car_filter.js');
-
-//         // ПОДКЛЮЧАЕМ ТЕСТОВЫЙ СКРИПТ (временно)
-//         $asset->addJs('/local/js/test_tile_selector.js');
-//     }
-// });
-
-/*
-AddEventHandler('main', 'OnEndBufferContent', function(&$content) {
-    if (strpos($_SERVER['REQUEST_URI'], '/crm/contact/details/') !== false) {
-        $script = '
-        <script>
-        // Простая локализация
-        window.CarMessages = {
-            CAR_LOADING: "Загрузка истории автомобиля...",
-            CAR_ERROR_TITLE: "Ошибка загрузки",
-            CAR_ERROR_MESSAGE: "Не удалось загрузить информацию об автомобиле",
-            CAR_POPUP_TITLE: "История обслуживания автомобиля",
-            BTN_CLOSE: "Закрыть",
-            BTN_OPEN_CARD: "Открыть карточку авто",
-            BTN_HISTORY: "История"
-        };
-        </script>
-        <script src="/local/js/car_detail.js"></script>';
-        
-        $content = str_replace('</body>', $script . '</body>', $content);
-    }
-});
-
-
-
-AddEventHandler('main', 'OnProlog', function() {
-    // Проверяем, что мы на странице контакта
-    $request = \Bitrix\Main\Application::getInstance()->getContext()->getRequest();
-    $currentPage = $request->getRequestedPage();
+// Подключаем только на страницах сделок CRM
+AddEventHandler('main', 'OnEpilog', function() {
+    $currentPage = $GLOBALS['APPLICATION']->GetCurPage();
     
-    if (strpos($currentPage, '/crm/contact/details/') !== false) {
-        // 1. Подключаем необходимые JS библиотеки Битрикс
-        CJSCore::Init(['popup', 'ui.buttons', 'ui.notification', 'ui.dialogs.messagebox', 'sidepanel']);
+    // Проверяем, что находимся на странице сделки (создание или редактирование)
+    if (strpos($currentPage, '/crm/deal/details/') !== false || 
+        strpos($currentPage, '/crm/deal/edit/') !== false ||
+        strpos($currentPage, '/crm/deal/show/') !== false) {
         
-        // 2. Подключаем наш кастомный скрипт
-        $asset = \Bitrix\Main\Page\Asset::getInstance();
-        $asset->addJs('/local/js/car_detail.js');
+        // Регистрируем наш JavaScript модуль с зависимостью от UI и Core
+        CJSCore::RegisterExt('deal_car_filter', [
+            'js' => '/local/js/deal_car_filter.js',
+            'rel' => ['ui', 'core']  // Обязательные зависимости для работы с селектором
+        ]);
         
-        // 3. Передаем сообщения в JS через inline script
-        $messages = [
-            'CAR_LOADING' => 'Загрузка истории автомобиля...',
-            'CAR_ERROR_TITLE' => 'Ошибка загрузки',
-            'CAR_ERROR_MESSAGE' => 'Не удалось загрузить информацию об автомобиле. Попробуйте позже.',
-            'CAR_POPUP_TITLE' => 'История обслуживания автомобиля',
-            'BTN_CLOSE' => 'Закрыть',
-            'BTN_OPEN_CARD' => 'Открыть карточку авто',
-            'BTN_HISTORY' => 'История'
-        ];
-        
-        // 4. Выводим скрипт с сообщениями
-        echo '<script>BX.message(' . \Bitrix\Main\Web\Json::encode($messages) . ');</script>';
+        // Инициализируем модуль
+        CJSCore::Init(['deal_car_filter']);
     }
 });
-*/
+
+
+
+
 /*
 $eventManager->addEventHandler('iblock', 'OnAfterIBlockElementAdd', ['\App\Events\IbFieldsHandler', 'onElementAfterUpdate']);
 $eventManager->addEventHandler("iblock", "OnAfterIBlockElementUpdate", ['\App\Events\IbFieldsHandler','onElementAfterUpdate']);
