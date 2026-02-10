@@ -11,14 +11,11 @@
 
   function findContactId() {
     const elements = document.querySelectorAll("[data-cid]");
-
     for (let element of elements) {
       const dataCid = element.getAttribute("data-cid");
       if (dataCid && dataCid.startsWith("CONTACT_")) {
         const match = dataCid.match(/CONTACT_(\d+)_/);
-        if (match && match[1]) {
-          return match[1];
-        }
+        if (match && match[1]) return match[1];
       }
     }
     return null;
@@ -29,7 +26,6 @@
     isProcessing = true;
 
     const contactId = findContactId();
-
     if (!contactId) {
       isProcessing = false;
       return;
@@ -41,10 +37,7 @@
 
     loadFilteredCars(contactId);
 
-    setTimeout(() => {
-      isProcessing = false;
-    }, 1000);
-
+    setTimeout(() => { isProcessing = false; }, 1000);
     return false;
   }
 
@@ -55,47 +48,93 @@
       return;
     }
 
-    const params = new URLSearchParams();
-    params.append("mode", "ajax");
-    params.append("c", "bitrix:main.ui.selector");
-    params.append("action", "getData");
-    params.append("sessid", csrfToken);
+    const formData = new FormData();
+    formData.append("mode", "ajax");
+    formData.append("c", "bitrix:main.ui.selector");
+    formData.append("action", "getData");
+    formData.append("sessid", csrfToken);
 
-    const dataParams = {
+    const params = {
       "options[useNewCallback]": "Y",
       "options[eventInit]": "BX.Main.User.SelectorController::init",
       "options[eventOpen]": "BX.Main.User.SelectorController::open",
       "options[lazyLoad]": "Y",
       "options[context]": "crmEntityCreate",
+      "options[contextCode]": "",
+      "options[enableSonetgroups]": "N",
+      "options[enableUsers]": "N",
+      "options[useClientDatabase]": "N",
+      "options[enableAll]": "N",
+      "options[enableDepartments]": "N",
       "options[enableCrm]": "Y",
       "options[crmPrefixType]": "SHORT",
       "options[enableCrmDynamics][1054]": "Y",
+      "options[addTabCrmDynamics][1054]": "N",
+      "options[addTabCrmContacts]": "N",
+      "options[addTabCrmCompanies]": "N",
+      "options[addTabCrmLeads]": "N",
+      "options[addTabCrmDeals]": "N",
+      "options[addTabCrmOrders]": "N",
+      "options[addTabCrmQuotes]": "N",
+      "options[addTabCrmSmartInvoices]": "N",
+      "options[crmDynamicTitles][DYNAMICS_1040]": "Марка автомобиля",
+      "options[crmDynamicTitles][DYNAMICS_1046]": "Модель автомобиля",
+      "options[crmDynamicTitles][DYNAMICS_1054]": "Гараж",
+      "options[crmDynamicTitles][DYNAMICS_1058]": "Заявка на закупку",
       "options[multiple]": "N",
       "options[extranetContext]": "false",
       "options[useSearch]": "N",
-      "entityTypes[DYNAMICS_1054][options][typeId]": "1054",
+      "options[userNameTemplate]": "#NAME# #LAST_NAME#",
+      "options[allowEmailInvitation]": "N",
+      "options[departmentSelectDisable]": "Y",
+      "options[allowAddUser]": "N",
+      "options[allowAddCrmContact]": "N",
+      "options[allowAddSocNetGroup]": "N",
+      "options[allowSearchEmailUsers]": "N",
+      "options[allowSearchCrmEmailUsers]": "N",
+      "options[allowSearchNetworkUsers]": "N",
+      "entityTypes[GROUPS][options][context]": "crmEntityCreate",
+      "entityTypes[GROUPS][options][enableAll]": "N",
+      "entityTypes[GROUPS][options][enableEmpty]": "N",
+      "entityTypes[GROUPS][options][enableUserManager]": "N",
+      "entityTypes[EMAILUSERS][options][allowAdd]": "N",
+      "entityTypes[EMAILUSERS][options][allowAddCrmContact]": "N",
+      "entityTypes[EMAILUSERS][options][allowSearchCrmEmailUsers]": "N",
+      "entityTypes[EMAILUSERS][options][addTab]": "N",
       "entityTypes[DYNAMICS_1054][options][enableSearch]": "Y",
+      "entityTypes[DYNAMICS_1054][options][searchById]": "Y",
+      "entityTypes[DYNAMICS_1054][options][addTab]": "N",
+      "entityTypes[DYNAMICS_1054][options][typeId]": "1054",
+      "entityTypes[DYNAMICS_1054][options][onlyWithEmail]": "N",
       "entityTypes[DYNAMICS_1054][options][prefixType]": "SHORT",
+      "entityTypes[DYNAMICS_1054][options][returnItemUrl]": "Y",
       "entityTypes[DYNAMICS_1054][options][title]": "Гараж",
-      [`FILTER[${ENTITY_CODE}][=CONTACT_ID]`]: contactId,
     };
 
-    for (const [key, value] of Object.entries(dataParams)) {
-      params.append(`data[${key}]`, value);
+    for (const [key, value] of Object.entries(params)) {
+      formData.append(key, value);
     }
+
+    // ВАРИАНТЫ ФИЛЬТРА - пробуем по очереди
+    const filterVariants = [
+      `entityTypes[${ENTITY_CODE}][options][contactId]`,
+      `entityTypes[${ENTITY_CODE}][options][CONTACT_ID]`,
+      `entityTypes[${ENTITY_CODE}][options][filter][CONTACT_ID]`,
+      `options[filter][${ENTITY_CODE}][CONTACT_ID]`,
+      `FILTER[${ENTITY_CODE}][CONTACT_ID]`,
+    ];
+
+    filterVariants.forEach(variant => {
+      formData.append(variant, contactId);
+    });
 
     fetch("/bitrix/services/main/ajax.php", {
       method: "POST",
-      body: params,
-      headers: {
-        "Content-Type": "application/x-www-form-urlencoded",
-        "X-Requested-With": "XMLHttpRequest",
-      },
+      body: formData,
+      headers: { "X-Requested-With": "XMLHttpRequest" },
     })
-      .then((response) => response.json())
-      .then((data) => {
-        console.log("Запрос отправлен, ответ:", data);
-        
+      .then(response => response.json())
+      .then(data => {
         if (data.status === "success" && data.data?.ENTITIES?.[ENTITY_CODE]?.ITEMS) {
           const cars = data.data.ENTITIES[ENTITY_CODE].ITEMS;
           if (Object.keys(cars).length > 0) {
@@ -105,12 +144,11 @@
             fallbackToStandard();
           }
         } else {
-          console.error("Ошибка или нет данных:", data.errors);
           fallbackToStandard();
         }
       })
-      .catch((error) => {
-        console.error("Ошибка сети:", error);
+      .catch(error => {
+        console.error("Ошибка:", error);
         fallbackToStandard();
       });
   }
@@ -151,7 +189,7 @@
     let html = `<h3 style="margin-top:0;color:#2a72cc;">Выберите автомобиль</h3>`;
     html += `<div id="car-list">`;
 
-    Object.values(cars).forEach((car) => {
+    Object.values(cars).forEach(car => {
       html += `
         <div style="padding:8px;border-bottom:1px solid #eee;cursor:pointer;"
              onclick="window.DealCarFilter.selectCar('${car.entityId}', '${car.name.replace(/'/g, "\\'")}')">
@@ -176,6 +214,7 @@
 
     const tileContainer = document.querySelector('[data-role="tile-container"]');
     if (tileContainer) {
+      tileContainer.innerHTML = '';
       const tile = document.createElement("span");
       tile.setAttribute("data-role", "tile-item");
       tile.setAttribute("data-bx-id", "D" + carId);
@@ -184,7 +223,6 @@
         <span data-role="tile-item-name">${carName}</span>
         <span data-role="remove" class="ui-tile-selector-item-remove"></span>
       `;
-      tileContainer.innerHTML = '';
       tileContainer.appendChild(tile);
     }
 
@@ -198,15 +236,7 @@
       setTimeout(setupButtonHandler, 500);
       return;
     }
-
     button.addEventListener("click", handleCarSelectClick, true);
-  }
-
-  function startContactChecker() {
-    setInterval(() => {
-      const contactId = findContactId();
-      if (contactId) currentContactId = contactId;
-    }, 1000);
   }
 
   window.DealCarFilter = {
@@ -218,8 +248,10 @@
 
   function init() {
     setTimeout(setupButtonHandler, 1000);
-    startContactChecker();
-    console.log("DealCarFilter инициализирован");
+    setInterval(() => {
+      const contactId = findContactId();
+      if (contactId) currentContactId = contactId;
+    }, 1000);
   }
 
   if (document.readyState === "loading") {
