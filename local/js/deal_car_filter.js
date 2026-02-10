@@ -66,39 +66,29 @@
     return false;
   }
 
-  /**
-   * Загрузить отфильтрованные автомобили
-   */
   function loadFilteredCars(contactId) {
     console.log("DealCarFilter: Загрузка автомобилей для контакта", contactId);
 
     // Получаем CSRF токен
     const csrfToken =
-      document.querySelector('meta[name="csrf-token"]')?.content ||
-      document.querySelector('input[name="sessid"]')?.value;
+        document.querySelector('meta[name="csrf-token"]')?.content ||
+        document.querySelector('input[name="sessid"]')?.value;
 
     if (!csrfToken) {
-      console.error("DealCarFilter: Нет CSRF токена");
-      return;
+        console.error("DealCarFilter: Нет CSRF токена");
+        return;
     }
 
-    // Формируем данные ТОЧНО как в оригинальном запросе
     const formData = new FormData();
     formData.append("mode", "ajax");
     formData.append("c", "bitrix:main.ui.selector");
     formData.append("action", "getData");
     formData.append("sessid", csrfToken);
 
-    // ============ ВСЕ ОРИГИНАЛЬНЫЕ ПАРАМЕТРЫ ============
+    // Все оригинальные параметры (как в твоем примере)
     formData.append("data[options][useNewCallback]", "Y");
-    formData.append(
-      "data[options][eventInit]",
-      "BX.Main.User.SelectorController::init",
-    );
-    formData.append(
-      "data[options][eventOpen]",
-      "BX.Main.User.SelectorController::open",
-    );
+    formData.append("data[options][eventInit]", "BX.Main.User.SelectorController::init");
+    formData.append("data[options][eventOpen]", "BX.Main.User.SelectorController::open");
     formData.append("data[options][lazyLoad]", "Y");
     formData.append("data[options][context]", "crmEntityCreate");
     formData.append("data[options][contextCode]", "");
@@ -118,19 +108,10 @@
     formData.append("data[options][addTabCrmOrders]", "N");
     formData.append("data[options][addTabCrmQuotes]", "N");
     formData.append("data[options][addTabCrmSmartInvoices]", "N");
-    formData.append(
-      "data[options][crmDynamicTitles][DYNAMICS_1040]",
-      "Марка автомобиля",
-    );
-    formData.append(
-      "data[options][crmDynamicTitles][DYNAMICS_1046]",
-      "Модель автомобиля",
-    );
+    formData.append("data[options][crmDynamicTitles][DYNAMICS_1040]", "Марка автомобиля");
+    formData.append("data[options][crmDynamicTitles][DYNAMICS_1046]", "Модель автомобиля");
     formData.append("data[options][crmDynamicTitles][DYNAMICS_1054]", "Гараж");
-    formData.append(
-      "data[options][crmDynamicTitles][DYNAMICS_1058]",
-      "Заявка на закупку",
-    );
+    formData.append("data[options][crmDynamicTitles][DYNAMICS_1058]", "Заявка на закупку");
     formData.append("data[options][multiple]", "N");
     formData.append("data[options][extranetContext]", "false");
     formData.append("data[options][useSearch]", "N");
@@ -143,104 +124,105 @@
     formData.append("data[options][allowSearchEmailUsers]", "N");
     formData.append("data[options][allowSearchCrmEmailUsers]", "N");
     formData.append("data[options][allowSearchNetworkUsers]", "N");
-
+    
     // Entity Types
-    formData.append(
-      "data[entityTypes][GROUPS][options][context]",
-      "crmEntityCreate",
-    );
+    formData.append("data[entityTypes][GROUPS][options][context]", "crmEntityCreate");
     formData.append("data[entityTypes][GROUPS][options][enableAll]", "N");
     formData.append("data[entityTypes][GROUPS][options][enableEmpty]", "N");
-    formData.append(
-      "data[entityTypes][GROUPS][options][enableUserManager]",
-      "N",
-    );
+    formData.append("data[entityTypes][GROUPS][options][enableUserManager]", "N");
     formData.append("data[entityTypes][EMAILUSERS][options][allowAdd]", "N");
-    formData.append(
-      "data[entityTypes][EMAILUSERS][options][allowAddCrmContact]",
-      "N",
-    );
-    formData.append(
-      "data[entityTypes][EMAILUSERS][options][allowSearchCrmEmailUsers]",
-      "N",
-    );
+    formData.append("data[entityTypes][EMAILUSERS][options][allowAddCrmContact]", "N");
+    formData.append("data[entityTypes][EMAILUSERS][options][allowSearchCrmEmailUsers]", "N");
     formData.append("data[entityTypes][EMAILUSERS][options][addTab]", "N");
-    formData.append(
-      "data[entityTypes][DYNAMICS_1054][options][enableSearch]",
-      "Y",
-    );
-    formData.append(
-      "data[entityTypes][DYNAMICS_1054][options][searchById]",
-      "Y",
-    );
+    formData.append("data[entityTypes][DYNAMICS_1054][options][enableSearch]", "Y");
+    formData.append("data[entityTypes][DYNAMICS_1054][options][searchById]", "Y");
     formData.append("data[entityTypes][DYNAMICS_1054][options][addTab]", "N");
-    formData.append(
-      "data[entityTypes][DYNAMICS_1054][options][typeId]",
-      "1054",
-    );
-    formData.append(
-      "data[entityTypes][DYNAMICS_1054][options][onlyWithEmail]",
-      "N",
-    );
-    formData.append(
-      "data[entityTypes][DYNAMICS_1054][options][prefixType]",
-      "SHORT",
-    );
-    formData.append(
-      "data[entityTypes][DYNAMICS_1054][options][returnItemUrl]",
-      "Y",
-    );
-    formData.append(
-      "data[entityTypes][DYNAMICS_1054][options][title]",
-      "Гараж",
-    );
+    formData.append("data[entityTypes][DYNAMICS_1054][options][typeId]", "1054");
+    formData.append("data[entityTypes][DYNAMICS_1054][options][onlyWithEmail]", "N");
+    formData.append("data[entityTypes][DYNAMICS_1054][options][prefixType]", "SHORT");
+    formData.append("data[entityTypes][DYNAMICS_1054][options][returnItemUrl]", "Y");
+    formData.append("data[entityTypes][DYNAMICS_1054][options][title]", "Гараж");
+    
+    // ============ ЭКСПЕРИМЕНТАЛЬНЫЙ ФИЛЬТР ============
+    // Вариант 1: стандартный фильтр
+    const filterKey1 = `data[FILTER][${ENTITY_CODE}][=CONTACT_ID]`;
+    formData.append(filterKey1, contactId);
+    
+    // Вариант 2: через options (если вариант 1 не работает)
+    formData.append("data[options][filter][DYNAMICS_1054][=CONTACT_ID]", contactId);
+    
+    // Вариант 3: просто CONTACT_ID без =
+    formData.append(`data[FILTER][${ENTITY_CODE}][CONTACT_ID]`, contactId);
+    
+    console.log("DealCarFilter: Отправка запроса с фильтром CONTACT_ID=" + contactId);
 
-    // ============ ФИЛЬТР ПО КОНТАКТУ ============
-    // Пробуем разные варианты имени поля
-    const filterKey = `data[FILTER][${ENTITY_CODE}][=CONTACT_ID]`;
-    formData.append(filterKey, contactId);
-    console.log("DealCarFilter: Фильтр добавлен:", filterKey, "=", contactId);
+    // ВРЕМЕННО: добавляем параметр для отладки
+    formData.append("debug", "1");
 
-    // Отправляем запрос
     fetch("/bitrix/services/main/ajax.php", {
-      method: "POST",
-      body: formData,
-      headers: {
-        "X-Requested-With": "XMLHttpRequest",
-      },
+        method: "POST",
+        body: formData,
+        headers: {
+            "X-Requested-With": "XMLHttpRequest",
+        },
     })
-      .then((response) => response.json())
-      .then((data) => {
-        console.log("DealCarFilter: Ответ сервера:", data);
+        .then((response) => response.json())
+        .then((data) => {
+            console.log("DealCarFilter: Полный ответ сервера:", data);
 
-        if (data.status === "success") {
-          // Проверяем, есть ли автомобили в ответе
-          const cars = data.data?.ENTITIES?.[ENTITY_CODE]?.ITEMS || {};
-          console.log(
-            "DealCarFilter: Найдено автомобилей:",
-            Object.keys(cars).length,
-          );
+            if (data.status === "success") {
+                const cars = data.data?.ENTITIES?.[ENTITY_CODE]?.ITEMS || {};
+                const carCount = Object.keys(cars).length;
+                
+                console.log("DealCarFilter: Найдено автомобилей:", carCount);
+                
+                if (carCount === 0) {
+                    console.warn("DealCarFilter: Фильтр не сработал или у контакта нет авто");
+                    alert("Для выбранного контакта нет автомобилей.\nПопробуйте выбрать авто без фильтра.");
+                    
+                    // Временно отключаем наш обработчик для одного клика
+                    const button = document.querySelector('[data-role="tile-select"]');
+                    if (button) {
+                        button.removeEventListener("click", handleCarSelectClick, true);
+                        setTimeout(() => button.click(), 50);
+                        setTimeout(() => {
+                            button.addEventListener("click", handleCarSelectClick, true);
+                        }, 100);
+                    }
+                } else {
+                    showCarSelection(data.data);
+                }
+            } else {
+                console.error("DealCarFilter: Ошибка сервера:", data.errors);
+                alert("Ошибка загрузки автомобилей. Пробуем стандартный выбор.");
+                
+                // Временно отключаем наш обработчик
+                const button = document.querySelector('[data-role="tile-select"]');
+                if (button) {
+                    button.removeEventListener("click", handleCarSelectClick, true);
+                    setTimeout(() => button.click(), 50);
+                    setTimeout(() => {
+                        button.addEventListener("click", handleCarSelectClick, true);
+                    }, 100);
+                }
+            }
+        })
+        .catch((error) => {
+            console.error("DealCarFilter: Ошибка сети:", error);
+            alert("Ошибка сети. Пробуем стандартный выбор.");
+            
+            const button = document.querySelector('[data-role="tile-select"]');
+            if (button) {
+                button.removeEventListener("click", handleCarSelectClick, true);
+                setTimeout(() => button.click(), 50);
+                setTimeout(() => {
+                    button.addEventListener("click", handleCarSelectClick, true);
+                }, 100);
+            }
+        });
+}
 
-          if (Object.keys(cars).length === 0) {
-            console.warn(
-              "DealCarFilter: Для контакта нет автомобилей или фильтр не работает",
-            );
-            // Пробуем без фильтра
-            loadAllCars();
-          } else {
-            showCarSelection(data.data);
-          }
-        } else {
-          console.error("DealCarFilter: Ошибка:", data.errors);
-          // Пробуем без фильтра
-          loadAllCars();
-        }
-      })
-      .catch((error) => {
-        console.error("DealCarFilter: Ошибка запроса:", error);
-        loadAllCars();
-      });
-  }
+
 
   /**
    * Загрузка всех автомобилей (без фильтра)
