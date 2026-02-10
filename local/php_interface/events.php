@@ -11,15 +11,15 @@ AddEventHandler('crm', 'OnBeforeCrmDealAdd', function (&$arFields) {
     }
 
     if ($arFields['CATEGORY_ID'] != 1) {
-        return true; 
+        return true;
     }
 
     $carId = $arFields['UF_CRM_1770588718'];
 
     $finalStages = [
-        'C1:WON',      
-        'C1:LOSE',     
-        'C1:APOLOGY'   
+        'C1:WON',
+        'C1:LOSE',
+        'C1:APOLOGY'
     ];
     if (!CModule::IncludeModule("crm")) {
         echo '!CModule::IncludeModule("crm")';
@@ -29,8 +29,8 @@ AddEventHandler('crm', 'OnBeforeCrmDealAdd', function (&$arFields) {
         [],
         [
             '=UF_CRM_1770588718' => $carId,
-            '=CATEGORY_ID' => 1, 
-            '!STAGE_ID' => $finalStages 
+            '=CATEGORY_ID' => 1,
+            '!STAGE_ID' => $finalStages
         ],
         false,
         false,
@@ -59,30 +59,30 @@ AddEventHandler('crm', 'OnBeforeCrmDealAdd', function (&$arFields) {
     return true;
 });
 
-AddEventHandler('crm', 'OnBeforeCrmDealUpdate', function(&$arFields) {
+AddEventHandler('crm', 'OnBeforeCrmDealUpdate', function (&$arFields) {
     if (empty($arFields['ID'])) {
         return true;
     }
-    
+
     if (empty($arFields['UF_CRM_1770588718'])) {
         return true;
     }
-    
+
     $carId = $arFields['UF_CRM_1770588718'];
     $dealId = $arFields['ID'];
-    
+
     $deal = CCrmDeal::GetByID($dealId, false);
-    
+
     if (!$deal || $deal['CATEGORY_ID'] != 1) {
         return true;
     }
-    
+
     if ($deal['UF_CRM_1770588718'] == $carId) {
         return true;
     }
-    
+
     $finalStages = ['C1:WON', 'C1:LOSE', 'C1:APOLOGY'];
-    
+
     $dbDeals = CCrmDeal::GetListEx(
         [],
         [
@@ -95,7 +95,7 @@ AddEventHandler('crm', 'OnBeforeCrmDealUpdate', function(&$arFields) {
         false,
         ['ID', 'TITLE']
     );
-    
+
     if ($dbDeals && $existingDeal = $dbDeals->Fetch()) {
 
         global $APPLICATION;
@@ -105,13 +105,13 @@ AddEventHandler('crm', 'OnBeforeCrmDealUpdate', function(&$arFields) {
         );
         return false;
     }
-    
+
     return true;
 });
 
 
 
-AddEventHandler('main', 'OnEndBufferContent', function(&$content) {
+AddEventHandler('main', 'OnEndBufferContent', function (&$content) {
     if (strpos($_SERVER['REQUEST_URI'], '/crm/contact/details/') !== false) {
         if (strpos($content, 'local/js/car_detail.js') === false) {
             $script = '<script src="/local/js/car_detail.js"></script>';
@@ -121,13 +121,16 @@ AddEventHandler('main', 'OnEndBufferContent', function(&$content) {
 });
 
 // Обработчик для подключения фильтра автомобилей в сделках
-AddEventHandler('main', 'OnBeforeProlog', function() {
+AddEventHandler('main', 'OnBeforeProlog', function () {
     // Только для страниц сделок
     if (preg_match('#/crm/deal/(edit|details)/#', $_SERVER['REQUEST_URI'])) {
-        
+
         // Подключаем скрипт фильтрации
         $asset = \Bitrix\Main\Page\Asset::getInstance();
         $asset->addJs('/local/js/deal_car_filter.js');
+
+        // ПОДКЛЮЧАЕМ ТЕСТОВЫЙ СКРИПТ (временно)
+        $asset->addJs('/local/js/test_tile_selector.js');
     }
 });
 
