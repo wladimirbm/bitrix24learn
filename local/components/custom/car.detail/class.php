@@ -159,7 +159,7 @@ class CarDetailComponent extends CBitrixComponent
                 [
                     '=UF_CRM_1770588718' => $carId, // Поле связи с авто
                     '=CATEGORY_ID' => 1,           // Только сервисные сделки (воронка 1)
-                    '!STAGE_ID' => $finalStages    // Исключаем финальные стадии
+                    //'!STAGE_ID' => $finalStages    // Исключаем финальные стадии
                 ],
                 false, // Группировка
                 false, // Навигация
@@ -211,6 +211,8 @@ class CarDetailComponent extends CBitrixComponent
 
     private function getStageName($stageId)
     {
+        //b_crm_status
+
         $stageNames = [
             // Активные стадии (текущие)
             'C1:NEW' => 'Приёмка',
