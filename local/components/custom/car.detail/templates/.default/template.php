@@ -125,7 +125,7 @@ function getStageColor($stageId)
                     <?php
                     
                     foreach ($arResult['DEALS'] as $deal): 
-                        $stageColor = getStageColor($deal['STAGE_ID']);
+                        $stageColor = $deal['STAGE_COLOR']; //getStageColor($deal['STAGE_ID']);
                     ?>
                     <div style="background: white; border-left: 4px solid <?= $stageColor ?>; 
                                 border: 1px solid #e0e0e0; border-radius: 8px; 

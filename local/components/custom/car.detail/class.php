@@ -187,7 +187,9 @@ class CarDetailComponent extends CBitrixComponent
                     }
 
                     // Определяем название стадии
-                    $stageName = $this->getStageName($deal['STAGE_ID']);
+                    $stage = $this->getStageName($deal['STAGE_ID']);
+                    $stageName = $stage['NAME'];
+                    $stageColor = $stage['COLOR'];
 
                     $deals[] = [
                         'ID' => $deal['ID'],
@@ -195,6 +197,7 @@ class CarDetailComponent extends CBitrixComponent
                         'DATE_CREATE' => FormatDate('d.m.Y, H:i', MakeTimeStamp($deal['DATE_CREATE'])),
                         'STAGE_ID' => $deal['STAGE_ID'],
                         'STAGE_NAME' => $stageName,
+                        'STAGE_COLOR' => $stageColor,
                         'ASSIGNED_BY_NAME' => htmlspecialcharsbx($assignedByName),
                         'OPPORTUNITY' => $deal['OPPORTUNITY'] ? number_format($deal['OPPORTUNITY'], 0, '', ' ') . ' ₽' : '0 ₽',
                         'PRODUCT_ROWS' => $productsFormatted
@@ -226,6 +229,15 @@ class CarDetailComponent extends CBitrixComponent
             'C1:LOSE' => 'Сделка провалена',
             'C1:APOLOGY' => 'Анализ причин провала'
         ];
+
+        $stageNames = \Bitrix\Crm\StatusTable::getList([
+            'filter' => [
+                'STATUS_ID' => $stageId
+            ],
+            'select' => ['NAME', 'COLOR']
+        ])->fetch();
+
+        return $stageNames ? $stageNames : null;
 
         return $stageNames[$stageId] ?? $stageId;
     }
