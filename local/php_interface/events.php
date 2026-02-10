@@ -5,37 +5,32 @@ use Bitrix\Main\Loader;
 
 $eventManager = \Bitrix\Main\EventManager::getInstance();
 
-// /local/php_interface/init.php
 AddEventHandler('crm', 'OnBeforeCrmDealAdd', function (&$arFields) {
-    // Проверяем, что указан автомобиль
     if (empty($arFields['UF_CRM_1770588718'])) {
         return true; // Если авто не указано - пропускаем проверку
     }
 
-    // Проверяем, что сделка из нужной воронки (Сервисное обслуживание)
     if ($arFields['CATEGORY_ID'] != 1) {
-        return true; // Проверяем только для сервисных сделок
+        return true; 
     }
 
     $carId = $arFields['UF_CRM_1770588718'];
 
-    // Финальные стадии вашей воронки
     $finalStages = [
-        'C1:WON',      // Выполнено
-        'C1:LOSE',     // Сделка провалена
-        'C1:APOLOGY'   // Анализ причин провала
+        'C1:WON',      
+        'C1:LOSE',     
+        'C1:APOLOGY'   
     ];
     if (!CModule::IncludeModule("crm")) {
         echo '!CModule::IncludeModule("crm")';
         return;
     }
-    // Ищем НЕзакрытые сделки по этому авто
     $dbDeals = CCrmDeal::GetListEx(
         [],
         [
             '=UF_CRM_1770588718' => $carId,
-            '=CATEGORY_ID' => 1, // Только сделки сервисного обслуживания
-            '!STAGE_ID' => $finalStages // Исключаем финальные стадии
+            '=CATEGORY_ID' => 1, 
+            '!STAGE_ID' => $finalStages 
         ],
         false,
         false,
@@ -43,7 +38,6 @@ AddEventHandler('crm', 'OnBeforeCrmDealAdd', function (&$arFields) {
     );
 
     if ($deal = $dbDeals->Fetch()) {
-        // Отправляем уведомление ответственному
         if (CModule::IncludeModule('im')) {
             CIMNotify::Add([
                 'TO_USER_ID' => $arFields['ASSIGNED_BY_ID'],
@@ -66,12 +60,10 @@ AddEventHandler('crm', 'OnBeforeCrmDealAdd', function (&$arFields) {
 });
 
 AddEventHandler('crm', 'OnBeforeCrmDealUpdate', function(&$arFields) {
-    // Если нет ID - это создание, пропускаем
     if (empty($arFields['ID'])) {
         return true;
     }
     
-    // Если автомобиль не меняется - пропускаем
     if (empty($arFields['UF_CRM_1770588718'])) {
         return true;
     }
@@ -79,19 +71,16 @@ AddEventHandler('crm', 'OnBeforeCrmDealUpdate', function(&$arFields) {
     $carId = $arFields['UF_CRM_1770588718'];
     $dealId = $arFields['ID'];
     
-    // Получаем текущую сделку для проверки
     $deal = CCrmDeal::GetByID($dealId, false);
     
     if (!$deal || $deal['CATEGORY_ID'] != 1) {
         return true;
     }
     
-    // Если автомобиль не меняется - пропускаем
     if ($deal['UF_CRM_1770588718'] == $carId) {
         return true;
     }
     
-    // Проверяем, не занят ли новый автомобиль
     $finalStages = ['C1:WON', 'C1:LOSE', 'C1:APOLOGY'];
     
     $dbDeals = CCrmDeal::GetListEx(
@@ -124,7 +113,6 @@ AddEventHandler('crm', 'OnBeforeCrmDealUpdate', function(&$arFields) {
 
 AddEventHandler('main', 'OnEndBufferContent', function(&$content) {
     if (strpos($_SERVER['REQUEST_URI'], '/crm/contact/details/') !== false) {
-        // Проверяем, не добавили ли уже скрипт
         if (strpos($content, 'local/js/car_detail.js') === false) {
             $script = '<script src="/local/js/car_detail.js"></script>';
             $content = str_replace('</body>', $script . '</body>', $content);
@@ -136,19 +124,9 @@ AddEventHandler('main', 'OnEndBufferContent', function(&$content) {
 AddEventHandler('main', 'OnBeforeProlog', function() {
     // Только для страниц сделок
     if (preg_match('#/crm/deal/(edit|details)/#', $_SERVER['REQUEST_URI'])) {
-        
-        // 1. Подключаем компонент (он добавит JS)
-        global $APPLICATION;
-        $APPLICATION->IncludeComponent(
-            'custom:deal.car.filter',
-            '',
-            array(),
-            false
-        );
-        
-        // 2. ИЛИ напрямую подключаем JS файл (если не хотите использовать компонент)
-        // $asset = Bitrix\Main\Page\Asset::getInstance();
-        // $asset->addJs('/local/js/deal_car_filter.js');
+      
+        $asset = Bitrix\Main\Page\Asset::getInstance();
+        $asset->addJs('/local/js/deal_car_filter.js');
     }
 });
 
