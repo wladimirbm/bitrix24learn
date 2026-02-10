@@ -1,6 +1,6 @@
 /**
  * Фильтрация автомобилей по выбранному контакту в сделке
- * УПРОЩЕННАЯ РАБОЧАЯ ВЕРСИЯ
+ * ВЕРСИЯ С ПРОВЕРКОЙ КОНТАКТА
  */
 
 (function() {
@@ -14,8 +14,9 @@
     // Состояние
     let currentContactId = null;
     let isInitialized = false;
+    let originalButtonHandler = null;
     
-    console.log('DealCarFilter: Загрузка упрощенной версии');
+    console.log('DealCarFilter: Загрузка версии с проверкой контакта');
     
     // ==================== ОСНОВНЫЕ ФУНКЦИИ ====================
     
@@ -24,26 +25,17 @@
      */
     function findContactIdInDOM() {
         // Ищем секцию контакта по data-cid
-        const contactElements = document.querySelectorAll('[data-cid]');
+        const contactSection = document.querySelector('[data-cid^="CONTACT_"]');
         
-        for (let element of contactElements) {
-            const dataCid = element.getAttribute('data-cid');
-            if (dataCid && dataCid.startsWith('CONTACT_')) {
-                const match = dataCid.match(/CONTACT_(\d+)_/);
-                if (match && match[1]) {
-                    return match[1];
-                }
+        if (contactSection) {
+            const dataCid = contactSection.getAttribute('data-cid');
+            const match = dataCid.match(/CONTACT_(\d+)_/);
+            if (match && match[1]) {
+                return match[1];
             }
         }
         
         return null;
-    }
-    
-    /**
-     * Получить текущий контакт (из памяти или DOM)
-     */
-    function getCurrentContact() {
-        return currentContactId;
     }
     
     /**
@@ -65,17 +57,11 @@
             tiles.forEach(tile => tile.remove());
         }
         
-        // 3. Найти и пересоздать кнопку "выбрать"
-        recreateSelectButton();
-        
-        // 4. Очистить кеш селектора
-        clearSelectorCache();
-        
         console.log('DealCarFilter: Селектор сброшен');
     }
     
     /**
-     * Пересоздать кнопку "выбрать" с новым обработчиком
+     * Пересоздать кнопку "выбрать" с проверкой контакта
      */
     function recreateSelectButton() {
         const selectButton = document.querySelector('[data-role="tile-select"]');
@@ -84,6 +70,9 @@
             return;
         }
         
+        // Сохраняем оригинальную кнопку для восстановления
+        const originalButton = selectButton.cloneNode(true);
+        
         // Клонируем кнопку
         const newButton = selectButton.cloneNode(true);
         const parent = selectButton.parentNode;
@@ -91,85 +80,119 @@
         // Заменяем старую кнопку
         parent.replaceChild(newButton, selectButton);
         
-        // Вешаем новый обработчик
-        newButton.addEventListener('click', function(event) {
+        // Вешаем новый обработчик С ПРОВЕРКОЙ
+        newButton.addEventListener('click', function handleButtonClick(event) {
             console.log('DealCarFilter: Клик на кнопку "выбрать"');
             console.log('DealCarFilter: Текущий контакт:', currentContactId);
+            
+            // ВАЖНО: Если контакт НЕ выбран - ВОССТАНАВЛИВАЕМ СТАНДАРТНОЕ ПОВЕДЕНИЕ
+            if (!currentContactId) {
+                console.log('DealCarFilter: Контакт не выбран! Используем стандартный селектор');
+                
+                // Удаляем наш обработчик
+                newButton.removeEventListener('click', handleButtonClick);
+                
+                // Восстанавливаем оригинальную кнопку
+                const restoredButton = originalButton.cloneNode(true);
+                parent.replaceChild(restoredButton, newButton);
+                
+                // Кликаем на восстановленную кнопку для стандартного поведения
+                setTimeout(() => {
+                    restoredButton.click();
+                }, 10);
+                
+                return; // Прекращаем выполнение нашего кода
+            }
+            
+            // Если контакт ВЫБРАН - выполняем нашу логику
+            console.log('DealCarFilter: Контакт выбран, применяем фильтр');
             
             // Предотвращаем стандартное поведение
             event.preventDefault();
             event.stopPropagation();
             
-            // Запускаем загрузку данных
+            // Загружаем данные с фильтром
             loadCarData();
         });
         
-        console.log('DealCarFilter: Кнопка пересоздана');
+        console.log('DealCarFilter: Кнопка пересоздана с проверкой контакта');
     }
     
     /**
-     * Загрузить данные автомобилей
+     * Загрузить данные автомобилей (только при выбранном контакте)
      */
     function loadCarData() {
-        console.log('DealCarFilter: Загрузка данных автомобилей');
-        
-        // Создаем параметры запроса
-        const params = new URLSearchParams();
-        
-        // Базовые параметры
-        params.append('mode', 'ajax');
-        params.append('c', 'bitrix:main.ui.selector');
-        params.append('action', 'getData');
-        
-        // Опции
-        params.append('data[options][useNewCallback]', 'Y');
-        params.append('data[options][context]', 'crmEntityCreate');
-        params.append('data[options][enableCrm]', 'Y');
-        params.append('data[options][crmPrefixType]', 'SHORT');
-        params.append('data[options][enableCrmDynamics][1054]', 'Y');
-        params.append('data[options][multiple]', 'N');
-        
-        // Entity Types
-        params.append('data[entityTypes][DYNAMICS_1054][options][typeId]', '1054');
-        params.append('data[entityTypes][DYNAMICS_1054][options][enableSearch]', 'Y');
-        params.append('data[entityTypes][DYNAMICS_1054][options][searchById]', 'Y');
-        params.append('data[entityTypes][DYNAMICS_1054][options][prefixType]', 'SHORT');
-        params.append('data[entityTypes][DYNAMICS_1054][options][returnItemUrl]', 'Y');
-        params.append('data[entityTypes][DYNAMICS_1054][options][title]', 'Гараж');
-        
-        // ДОБАВЛЯЕМ ФИЛЬТР ПО КОНТАКТУ
-        if (currentContactId) {
-            params.append(`data[FILTER][${ENTITY_CODE}][=CONTACT_ID]`, currentContactId);
-            console.log('DealCarFilter: Добавлен фильтр для контакта', currentContactId);
+        // Двойная проверка
+        if (!currentContactId) {
+            console.warn('DealCarFilter: Попытка загрузки без выбранного контакта');
+            return;
         }
         
+        console.log('DealCarFilter: Загрузка данных автомобилей для контакта', currentContactId);
+        
+        // Получаем CSRF token
+        const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') ||
+                         document.querySelector('input[name="sessid"]')?.value;
+        
+        if (!csrfToken) {
+            console.error('DealCarFilter: CSRF token не найден');
+            return;
+        }
+        
+        // Создаем FormData
+        const formData = new FormData();
+        
+        // Базовые параметры
+        formData.append('mode', 'ajax');
+        formData.append('c', 'bitrix:main.ui.selector');
+        formData.append('action', 'getData');
+        formData.append('sessid', csrfToken);
+        
+        // Опции (как в стандартном запросе)
+        formData.append('data[options][useNewCallback]', 'Y');
+        formData.append('data[options][context]', 'crmEntityCreate');
+        formData.append('data[options][enableCrm]', 'Y');
+        formData.append('data[options][crmPrefixType]', 'SHORT');
+        formData.append('data[options][enableCrmDynamics][1054]', 'Y');
+        formData.append('data[options][multiple]', 'N');
+        
+        // Entity Types
+        formData.append('data[entityTypes][DYNAMICS_1054][options][typeId]', '1054');
+        formData.append('data[entityTypes][DYNAMICS_1054][options][enableSearch]', 'Y');
+        formData.append('data[entityTypes][DYNAMICS_1054][options][searchById]', 'Y');
+        formData.append('data[entityTypes][DYNAMICS_1054][options][prefixType]', 'SHORT');
+        formData.append('data[entityTypes][DYNAMICS_1054][options][returnItemUrl]', 'Y');
+        formData.append('data[entityTypes][DYNAMICS_1054][options][title]', 'Гараж');
+        
+        // ВАЖНО: ДОБАВЛЯЕМ ФИЛЬТР ПО КОНТАКТУ
+        formData.append(`data[FILTER][${ENTITY_CODE}][=CONTACT_ID]`, currentContactId);
+        console.log('DealCarFilter: Добавлен фильтр для контакта', currentContactId);
+        
         // Отправляем запрос
-        sendSelectorRequest(params);
+        sendSelectorRequest(formData);
     }
     
     /**
      * Отправить запрос к селектору
      */
-    function sendSelectorRequest(params) {
-        const url = '/bitrix/services/main/ajax.php?' + params.toString();
-        console.log('DealCarFilter: Отправка запроса:', url.substring(0, 150) + '...');
+    function sendSelectorRequest(formData) {
+        console.log('DealCarFilter: Отправка запроса с фильтром');
         
-        // Используем fetch для отправки
-        fetch(url, {
-            method: 'GET',
+        fetch('/bitrix/services/main/ajax.php', {
+            method: 'POST',
+            body: formData,
             headers: {
                 'X-Requested-With': 'XMLHttpRequest'
             }
         })
         .then(response => response.json())
         .then(data => {
-            console.log('DealCarFilter: Получен ответ от сервера');
+            console.log('DealCarFilter: Ответ от сервера:', data);
             
-            // Обрабатываем данные
-            if (data && data.data && data.data.ENTITIES && data.data.ENTITIES[ENTITY_CODE]) {
+            if (data.status === 'success' && data.data && data.data.ENTITIES && data.data.ENTITIES[ENTITY_CODE]) {
                 processCarData(data.data.ENTITIES[ENTITY_CODE]);
             } else {
-                console.warn('DealCarFilter: Нет данных об автомобилях в ответе');
+                console.warn('DealCarFilter: Нет данных в ответе или ошибка:', data.errors || 'неизвестная ошибка');
             }
         })
         .catch(error => {
@@ -184,16 +207,17 @@
         console.log('DealCarFilter: Обработка данных автомобилей');
         console.log('DealCarFilter: Найдено автомобилей:', Object.keys(carData.ITEMS || {}).length);
         
-        // Здесь можно отобразить данные в попапе
-        // Пока просто логируем
         if (carData.ITEMS) {
             Object.values(carData.ITEMS).forEach(car => {
                 console.log('Автомобиль:', car.id, '-', car.name);
             });
+            
+            // Открываем попап с данными
+            openCarSelectorPopup(carData);
+        } else {
+            console.warn('DealCarFilter: Нет автомобилей для выбранного контакта');
+            alert('Нет автомобилей для выбранного контакта');
         }
-        
-        // Открываем попап с данными
-        openCarSelectorPopup(carData);
     }
     
     /**
@@ -202,7 +226,7 @@
     function openCarSelectorPopup(carData) {
         console.log('DealCarFilter: Открытие попапа выбора');
         
-        // Создаем простой попап для выбора
+        // Создаем простой попап
         const popupHtml = `
             <div id="deal-car-filter-popup" style="
                 position: fixed;
@@ -218,7 +242,7 @@
                 overflow-y: auto;
                 min-width: 300px;
             ">
-                <h3 style="margin-top: 0;">Выберите автомобиль</h3>
+                <h3 style="margin-top: 0;">Выберите автомобиль (контакт: ${currentContactId})</h3>
                 <div id="car-list"></div>
                 <button onclick="document.getElementById('deal-car-filter-popup').remove()" 
                         style="margin-top: 10px; padding: 5px 10px;">
@@ -256,8 +280,6 @@
                 
                 carList.appendChild(carItem);
             });
-        } else {
-            carList.innerHTML = '<p>Нет автомобилей для выбранного контакта</p>';
         }
     }
     
@@ -304,43 +326,50 @@
     }
     
     /**
-     * Очистить кеш селектора
-     */
-    function clearSelectorCache() {
-        if (window.BX && BX.Main && BX.Main.SelectorManager && BX.Main.SelectorManager.DataStore) {
-            Object.keys(BX.Main.SelectorManager.DataStore).forEach(key => {
-                if (key.includes('DYNAMICS_1054') || key.includes(CAR_FIELD_ID)) {
-                    delete BX.Main.SelectorManager.DataStore[key];
-                }
-            });
-        }
-    }
-    
-    /**
      * Отслеживать выбор контакта
      */
     function watchForContactSelection() {
         const observer = new MutationObserver(function(mutations) {
+            let contactChanged = false;
+            
             for (let mutation of mutations) {
-                // Проверяем изменения в data-cid
-                if (mutation.type === 'attributes' && mutation.attributeName === 'data-cid') {
-                    const dataCid = mutation.target.getAttribute('data-cid');
-                    if (dataCid && dataCid.startsWith('CONTACT_')) {
-                        handleContactChange();
-                        break;
-                    }
+                // Изменение data-cid
+                if (mutation.type === 'attributes' && 
+                    mutation.attributeName === 'data-cid' &&
+                    mutation.target.getAttribute('data-cid') &&
+                    mutation.target.getAttribute('data-cid').startsWith('CONTACT_')) {
+                    contactChanged = true;
+                    break;
                 }
                 
-                // Проверяем добавление элементов
+                // Добавление узлов
                 if (mutation.type === 'childList') {
                     for (let node of mutation.addedNodes) {
-                        if (node.nodeType === 1 && node.hasAttribute && 
-                            node.getAttribute('data-cid') && node.getAttribute('data-cid').startsWith('CONTACT_')) {
-                            handleContactChange();
-                            break;
+                        if (node.nodeType === 1) {
+                            if (node.getAttribute && node.getAttribute('data-cid') && 
+                                node.getAttribute('data-cid').startsWith('CONTACT_')) {
+                                contactChanged = true;
+                                break;
+                            }
                         }
                     }
                 }
+            }
+            
+            if (contactChanged) {
+                setTimeout(() => {
+                    const newContactId = findContactIdInDOM();
+                    if (newContactId && newContactId !== currentContactId) {
+                        currentContactId = newContactId;
+                        console.log('DealCarFilter: Контакт изменен! ID:', currentContactId);
+                        
+                        // Сбрасываем селектор
+                        resetCarSelector();
+                        
+                        // Пересоздаем кнопку с новым контактом
+                        recreateSelectButton();
+                    }
+                }, 200);
             }
         });
         
@@ -352,23 +381,6 @@
         });
         
         console.log('DealCarFilter: Наблюдение за контактом запущено');
-    }
-    
-    /**
-     * Обработать изменение контакта
-     */
-    function handleContactChange() {
-        setTimeout(() => {
-            const newContactId = findContactIdInDOM();
-            
-            if (newContactId && newContactId !== currentContactId) {
-                currentContactId = newContactId;
-                console.log('DealCarFilter: Контакт изменен, ID:', currentContactId);
-                
-                // Сбрасываем селектор автомобилей
-                resetCarSelector();
-            }
-        }, 100);
     }
     
     /**
@@ -407,7 +419,7 @@
          * Получить текущий контакт
          */
         getContact: function() {
-            return getCurrentContact();
+            return currentContactId;
         },
         
         /**
@@ -424,6 +436,7 @@
         loadCars: function() {
             if (!currentContactId) {
                 console.warn('DealCarFilter: Контакт не выбран');
+                alert('Сначала выберите контакт');
                 return;
             }
             loadCarData();
@@ -441,24 +454,11 @@
             const selectBtn = document.querySelector('[data-role="tile-select"]');
             console.log('Кнопка выбора:', selectBtn ? 'найдена' : 'не найдена');
             
-            const carField = document.getElementById(CAR_FIELD_ID);
-            console.log('Поле автомобиля:', carField ? 'найдено' : 'не найдено');
-            console.log('Значение поля:', carField ? carField.value : 'N/A');
-            
             return {
                 contact: currentContactId,
                 contactInDOM: findContactIdInDOM(),
-                initialized: isInitialized,
-                hasButton: !!selectBtn
+                initialized: isInitialized
             };
-        },
-        
-        /**
-         * Тестовый запрос
-         */
-        testRequest: function() {
-            console.log('DealCarFilter: Тестовый запрос');
-            loadCarData();
         }
     };
     
