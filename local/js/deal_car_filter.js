@@ -1,7 +1,6 @@
 /**
  * Фильтрация автомобилей по выбранному контакту в сделке
- * Автоматически добавляет фильтр =CONTACT_ID в запросы селектора "Автомобиль"
- * ПРОСТАЯ РЕАЛИЗАЦИЯ ЧЕРЕЗ ГЛОБАЛЬНЫЙ ПЕРЕХВАТ ЗАПРОСОВ
+ * Минимальная рабочая версия
  */
 
 (function() {
@@ -10,172 +9,209 @@
     const SMART_PROCESS_TYPE_ID = 1054;
     const ENTITY_CODE = 'DYNAMICS_' + SMART_PROCESS_TYPE_ID;
     
-    // Будем получать ID контакта ПРЯМО ПЕРЕД каждым запросом
-    console.log('DealCarFilter: Простая версия загружена');
+    console.log('DealCarFilter: Минимальная версия загружена');
     
     /**
-     * Получить ID выбранного контакта ПРЯМО СЕЙЧАС из DOM
+     * ПОЛУЧИТЬ ID КОНТАКТА СЕЙЧАС
      */
-    function getCurrentContactId() {
-        // Ищем значок контакта ВО ВСЕМ ДОКУМЕНТЕ
-        const contactBadges = document.querySelectorAll('.crm-entity-widget-badge[data-entity-id]');
+    function getContactIdNow() {
+        // Способ 1: Ищем значок с data-entity-id ВО ВСЕЙ ФОРМЕ
+        const allBadges = document.querySelectorAll('.crm-entity-widget-badge');
         
-        for (let badge of contactBadges) {
-            // Проверяем, что это именно значок контакта (рядом с иконкой контакта)
-            const prevElement = badge.previousElementSibling;
-            if (prevElement && prevElement.classList.contains('crm-entity-widget-img-contact')) {
-                const contactId = badge.getAttribute('data-entity-id');
-                if (contactId) {
-                    return contactId;
-                }
+        for (let badge of allBadges) {
+            // Ищем значок рядом с иконкой контакта
+            const prev = badge.previousElementSibling;
+            if (prev && prev.classList.contains('crm-entity-widget-img-contact')) {
+                const id = badge.getAttribute('data-entity-id');
+                if (id) return id;
             }
+        }
+        
+        // Способ 2: Ищем ЛЮБОЙ data-entity-id в блоке клиента
+        const clientBlock = document.querySelector('[data-cid="CLIENT"]');
+        if (clientBlock) {
+            const anyId = clientBlock.querySelector('[data-entity-id]');
+            if (anyId) return anyId.getAttribute('data-entity-id');
         }
         
         return null;
     }
     
     /**
-     * Перехватываем ВСЕ запросы селекторов и проверяем, наш ли это
+     * ПЕРЕХВАТИТЬ ЗАПРОСЫ СЕЛЕКТОРА
      */
-    function interceptAllSelectorRequests() {
-        console.log('DealCarFilter: Начинаем перехват всех запросов селектора');
+    function setupSelectorInterception() {
+        console.log('DealCarFilter: Настройка перехвата...');
         
-        // 1. Перехват через нативное переопределение fetch
-        const originalFetch = window.fetch;
-        window.fetch = function(resource, init) {
-            if (typeof resource === 'string' && resource.includes('/bitrix/services/main/ajax.php')) {
-                return originalFetch.apply(this, arguments).then(response => {
-                    // Клонируем response для чтения
-                    const clonedResponse = response.clone();
+        // 1. Перехватываем через ПЕРЕОПРЕДЕЛЕНИЕ BX.ajax.runAction
+        if (window.BX && BX.ajax && BX.ajax.runAction) {
+            const originalRunAction = BX.ajax.runAction;
+            BX.ajax.runAction = function(action, params) {
+                // Если это запрос к селектору
+                if (action === 'main.ui.selector:getData' || 
+                    (params && params.data && params.data.action === 'getData')) {
                     
-                    clonedResponse.text().then(text => {
-                        try {
-                            const data = JSON.parse(text);
-                            // Если это ответ от селектора
-                            if (data && data.data && data.data.ENTITIES && data.data.ENTITIES[ENTITY_CODE]) {
-                                console.log('DealCarFilter: Получен ответ от селектора', data);
-                            }
-                        } catch(e) {}
-                    });
+                    console.log('DealCarFilter: Перехвачен runAction:', action);
                     
-                    return response;
-                });
-            }
-            return originalFetch.apply(this, arguments);
-        };
-        
-        // 2. Перехват через BX.ajax (основной способ Битрикса)
-        if (window.BX && BX.ajax && BX.ajax.prepareData) {
-            const originalPrepareData = BX.ajax.prepareData;
-            BX.ajax.prepareData = function(params) {
-                const result = originalPrepareData.apply(this, arguments);
-                
-                // Проверяем, это ли наш запрос к селектору
-                if (result && result.data && 
-                    result.data.action && 
-                    (result.data.action === 'getData' || result.data.action === 'doSearch') &&
-                    result.data.entityTypes && 
-                    result.data.entityTypes[ENTITY_CODE]) {
+                    const contactId = getContactIdNow();
+                    console.log('DealCarFilter: Найден контакт:', contactId);
                     
-                    console.log('DealCarFilter: Перехвачен запрос селектора через BX.ajax');
-                    
-                    // ПОЛУЧАЕМ КОНТАКТ ПРЯМО ПЕРЕД ОТПРАВКОЙ
-                    const contactId = getCurrentContactId();
-                    console.log('DealCarFilter: Текущий контакт (перед запросом):', contactId);
-                    
-                    if (contactId) {
-                        // Добавляем фильтр
-                        if (!result.data.FILTER) {
-                            result.data.FILTER = {};
-                        }
-                        result.data.FILTER[ENTITY_CODE] = {
-                            '=CONTACT_ID': contactId
-                        };
-                        console.log('DealCarFilter: Фильтр добавлен:', result.data.FILTER);
+                    if (contactId && params.data && params.data.entityTypes && 
+                        params.data.entityTypes[ENTITY_CODE]) {
+                        
+                        if (!params.data.FILTER) params.data.FILTER = {};
+                        params.data.FILTER[ENTITY_CODE] = { '=CONTACT_ID': contactId };
+                        
+                        console.log('DealCarFilter: Фильтр добавлен в runAction');
                     }
                 }
                 
-                return result;
+                return originalRunAction.apply(this, arguments);
             };
         }
         
-        // 3. Перехват через XMLHttpRequest (на всякий случай)
+        // 2. Перехватываем через XMLHttpRequest (работает точно)
         const originalXHROpen = XMLHttpRequest.prototype.open;
+        const originalXHRSend = XMLHttpRequest.prototype.send;
+        
         XMLHttpRequest.prototype.open = function(method, url) {
+            this._dealCarFilterUrl = url;
+            return originalXHROpen.apply(this, arguments);
+        };
+        
+        XMLHttpRequest.prototype.send = function(body) {
+            const url = this._dealCarFilterUrl;
+            
+            // Если это запрос к селектору
             if (url && url.includes('/bitrix/services/main/ajax.php') && 
                 url.includes('main.ui.selector')) {
                 
-                this.addEventListener('load', function() {
+                console.log('DealCarFilter: Перехвачен XHR запрос к селектору');
+                
+                // Парсим body для добавления фильтра
+                if (body && typeof body === 'string') {
                     try {
-                        const response = JSON.parse(this.responseText);
-                        if (response && response.data && response.data.ENTITIES && 
-                            response.data.ENTITIES[ENTITY_CODE]) {
-                            console.log('DealCarFilter: Получен ответ через XMLHttpRequest');
+                        const params = new URLSearchParams(body);
+                        const action = params.get('action');
+                        
+                        if (action === 'getData' || action === 'doSearch') {
+                            // Получаем контакт ПЕРЕД отправкой
+                            const contactId = getContactIdNow();
+                            console.log('DealCarFilter: Контакт для XHR:', contactId);
+                            
+                            if (contactId) {
+                                // Добавляем параметр фильтра
+                                params.append(`data[FILTER][${ENTITY_CODE}][=CONTACT_ID]`, contactId);
+                                body = params.toString();
+                                console.log('DealCarFilter: Тело запроса с фильтром:', body);
+                            }
                         }
-                    } catch(e) {}
-                });
+                    } catch(e) {
+                        console.error('DealCarFilter: Ошибка парсинга тела:', e);
+                    }
+                }
             }
             
-            return originalXHROpen.apply(this, arguments);
+            return originalXHRSend.call(this, body);
         };
+        
+        console.log('DealCarFilter: Перехват настроен');
     }
     
     /**
-     * Инициализация
+     * ПУБЛИЧНЫЕ МЕТОДЫ ДЛЯ ОТЛАДКИ
      */
-    function init() {
-        console.log('DealCarFilter: Инициализация простой версии');
+    window.DealCarFilter = {
+        // Получить текущий контакт
+        getContact: function() {
+            return getContactIdNow();
+        },
         
-        // Ждем немного, чтобы DOM точно загрузился
-        setTimeout(function() {
-            interceptAllSelectorRequests();
+        // Тест: показать все элементы для отладки
+        debug: function() {
+            console.log('=== DealCarFilter Debug ===');
             
-            // Публичные методы для отладки
-            window.DealCarFilter = {
-                getCurrentContact: function() {
-                    return getCurrentContactId();
-                },
-                
-                testFilter: function() {
-                    const contactId = getCurrentContactId();
-                    console.log('DealCarFilter: Тест - контакт:', contactId);
-                    console.log('DealCarFilter: Тест - найденные значки:', 
-                        document.querySelectorAll('.crm-entity-widget-badge[data-entity-id]').length);
-                    
-                    // Покажем все значки с data-entity-id
-                    const allBadges = document.querySelectorAll('[data-entity-id]');
-                    allBadges.forEach((badge, i) => {
-                        console.log('Значок', i, ':', badge.getAttribute('data-entity-id'), badge);
-                    });
-                    
-                    return contactId;
-                },
-                
-                getStatus: function() {
-                    return {
-                        initialized: true,
-                        currentContact: getCurrentContactId(),
-                        smartProcessType: SMART_PROCESS_TYPE_ID,
-                        entityCode: ENTITY_CODE,
-                        pageUrl: window.location.pathname
-                    };
+            // 1. Все значки
+            const badges = document.querySelectorAll('.crm-entity-widget-badge');
+            console.log('Значки найдены:', badges.length);
+            badges.forEach((b, i) => {
+                console.log(`Значок ${i}:`, {
+                    text: b.textContent,
+                    dataId: b.getAttribute('data-entity-id'),
+                    prevElement: b.previousElementSibling ? 
+                        b.previousElementSibling.className : 'нет'
+                });
+            });
+            
+            // 2. Все data-entity-id
+            const allIds = document.querySelectorAll('[data-entity-id]');
+            console.log('Все data-entity-id:', allIds.length);
+            allIds.forEach((el, i) => {
+                console.log(`data-entity-id ${i}:`, el.getAttribute('data-entity-id'), el);
+            });
+            
+            // 3. Блок клиента
+            const client = document.querySelector('[data-cid="CLIENT"]');
+            console.log('Блок клиента:', client ? 'найден' : 'не найден', client);
+            
+            // 4. Текущий контакт
+            console.log('Текущий контакт (через getContactIdNow):', getContactIdNow());
+            
+            return getContactIdNow();
+        },
+        
+        // Принудительно добавить фильтр в следующий запрос
+        testFilter: function(contactId) {
+            console.log('DealCarFilter: Тест фильтра для контакта:', contactId || getContactIdNow());
+            
+            // Создаем тестовый запрос
+            const testParams = {
+                data: {
+                    action: 'getData',
+                    entityTypes: {},
+                    FILTER: {}
                 }
             };
             
-            console.log('DealCarFilter: Простая версия инициализирована');
-            console.log('DealCarFilter: Используй DealCarFilter.testFilter() для проверки');
+            testParams.data.entityTypes[ENTITY_CODE] = { options: {} };
+            testParams.data.FILTER[ENTITY_CODE] = { '=CONTACT_ID': contactId || getContactIdNow() || 'TEST' };
             
-        }, 1000); // Задержка 1 секунда
+            console.log('Тестовые параметры:', testParams);
+            return testParams;
+        },
+        
+        // Статус
+        status: function() {
+            return {
+                contact: getContactIdNow(),
+                typeId: SMART_PROCESS_TYPE_ID,
+                entity: ENTITY_CODE,
+                url: window.location.pathname
+            };
+        }
+    };
+    
+    /**
+     * ЗАПУСК
+     */
+    function init() {
+        console.log('DealCarFilter: Запуск минимальной версии');
+        
+        // Даем время странице загрузиться
+        setTimeout(() => {
+            setupSelectorInterception();
+            console.log('DealCarFilter: Готов. Используй DealCarFilter.debug() для проверки');
+        }, 1500);
     }
     
-    // Запускаем при полной загрузке
+    // Запускаем
     if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', init);
     } else {
         init();
     }
     
-    // Дублирующий запуск через 3 секунды на случай динамической загрузки
+    // Повторный запуск через 3 секунды на всякий случай
     setTimeout(init, 3000);
     
 })();
