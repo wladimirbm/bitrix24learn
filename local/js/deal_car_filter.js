@@ -1,10 +1,19 @@
 /**
  * Фильтрация автомобилей по контакту в сделке Битрикс24
+ * Версия для работы в iframe/slider
  */
 
 (function() {
+    // Защита от многократного запуска
+    if (window.DEAL_CAR_FILTER_LOADED) {
+        return;
+    }
+    window.DEAL_CAR_FILTER_LOADED = true;
+    
+    console.log('[Car Filter] Загрузка скрипта (защита от дублей)');
+    
     // Конфигурация
-    const config = window.DEAL_CAR_FILTER_CONFIG || {
+    const config = {
         garageEntityId: 1054,
         carFieldCode: 'UF_CRM_1770716463',
         contactId: null,
@@ -18,22 +27,36 @@
     function initCarFilter() {
         console.log('[Car Filter] Инициализация фильтра автомобилей');
         
-        if (!config.isEditPage) {
-            console.log('[Car Filter] Не страница редактирования, пропускаем');
+        // Проверяем, что мы в iframe сделки
+        if (!isDealPage()) {
+            console.log('[Car Filter] Не страница сделки, пропускаем');
             return;
         }
         
         // 1. Находим поле контакта
         const contactField = findContactField();
         if (!contactField) {
-            console.log('[Car Filter] Поле контакта не найдено, повтор через 1 сек');
-            setTimeout(initCarFilter, 1000);
+            console.log('[Car Filter] Поле контакта не найдено, ждем...');
+            // Ожидаем только 5 секунд, потом останавливаем
+            setTimeout(function() {
+                const contactFieldRetry = findContactField();
+                if (!contactFieldRetry) {
+                    console.log('[Car Filter] Поле контакта так и не найдено, останавливаем');
+                    return;
+                }
+                continueInit(contactFieldRetry);
+            }, 1000);
             return;
         }
         
+        continueInit(contactField);
+    }
+    
+    // Продолжение инициализации после нахождения контакта
+    function continueInit(contactField) {
         console.log('[Car Filter] Поле контакта найдено:', contactField);
         
-        // 2. Находим поле автомобиля (в режиме просмотра)
+        // 2. Находим поле автомобиля
         const carField = findCarField();
         if (!carField) {
             console.log('[Car Filter] Поле автомобиля не найдено');
@@ -49,15 +72,15 @@
             window.currentContactId = initialContactId;
         }
         
-        // 4. Если поле УЖЕ в режиме редактирования, сразу ищем tile selector
+        // 4. Если поле УЖЕ в режиме редактирования
         if (carField.classList.contains('ui-entity-editor-content-block-edit')) {
-            console.log('[Car Filter] Поле уже в режиме редактирования, ищем tile selector');
+            console.log('[Car Filter] Поле уже в режиме редактирования');
             setTimeout(function() {
                 const tileSelector = findTileSelectorInEditMode();
                 if (tileSelector) {
                     setupTileSelectorFilter(tileSelector);
                 }
-            }, 500);
+            }, 800);
         }
         
         // 5. Настраиваем отслеживание перехода в режим редактирования
@@ -69,24 +92,34 @@
         console.log('[Car Filter] Инициализация завершена');
     }
     
+    // Проверяем, что мы на странице сделки
+    function isDealPage() {
+        // Проверяем URL
+        const url = window.location.href;
+        return url.includes('/crm/deal/') || 
+               url.includes('IFRAME=Y') || 
+               document.querySelector('[data-cid="CLIENT"]') !== null;
+    }
+    
     // Находит поле контакта в виджете CLIENT
     function findContactField() {
-        // Ищем по data-cid (режим просмотра)
+        // Основной способ: по data-cid
         let contactBlock = document.querySelector('[data-cid="CLIENT"]');
         
         if (!contactBlock) {
-            // Ищем в режиме редактирования
-            contactBlock = document.querySelector('.crm-entity-widget-client-block');
+            // Дополнительные способы поиска
+            contactBlock = document.querySelector('.crm-entity-widget-client-block') ||
+                          document.querySelector('.crm-entity-widget-participants-block');
         }
         
         return contactBlock;
     }
     
-    // Находит поле автомобиля - для режима просмотра
+    // Находит поле автомобиля
     function findCarField() {
         console.log('[Car Filter] Поиск поля автомобиля...');
         
-        // ОСНОВНОЙ СПОСОБ: по data-cid
+        // По data-cid
         let carField = document.querySelector('[data-cid="UF_CRM_1770716463"]');
         if (carField) {
             console.log('[Car Filter] Поле найдено по data-cid');
@@ -117,298 +150,165 @@
                 if (mutation.type === 'attributes' && mutation.attributeName === 'class') {
                     const target = mutation.target;
                     
-                    // Проверяем, перешел ли блок в режим редактирования
                     if (target.classList.contains('ui-entity-editor-content-block-edit')) {
                         console.log('[Car Filter] Поле перешло в режим редактирования');
                         
-                        // Даем время на отрисовку tile selector
                         setTimeout(function() {
                             const tileSelector = findTileSelectorInEditMode();
                             if (tileSelector) {
                                 setupTileSelectorFilter(tileSelector);
                             }
-                        }, 300);
+                        }, 500);
                     }
                 }
             });
         });
         
-        // Наблюдаем за изменениями класса
         observer.observe(carField, {
             attributes: true,
             attributeFilter: ['class']
         });
         
-        // Также отслеживаем клик по полю
+        // Отслеживаем клик
         carField.addEventListener('click', function() {
             console.log('[Car Filter] Клик по полю авто');
-            // Через 500мс ищем tile selector
             setTimeout(function() {
                 const tileSelector = findTileSelectorInEditMode();
                 if (tileSelector) {
                     setupTileSelectorFilter(tileSelector);
                 }
-            }, 500);
+            }, 600);
         });
     }
     
     // Ищет tile selector в режиме редактирования
     function findTileSelectorInEditMode() {
-        console.log('[Car Filter] Поиск tile selector в режиме редактирования');
+        console.log('[Car Filter] Поиск tile selector');
         
-        // Ищем активный tile selector
-        let tileSelector = null;
-        
-        // СПОСОБ 1: Ищем внутри блока с data-cid
+        // Ищем внутри блока с data-cid
         const carBlock = document.querySelector('[data-cid="UF_CRM_1770716463"]');
         if (carBlock) {
-            tileSelector = carBlock.querySelector('.ui-tile-selector-selector-wrap');
+            const tileSelector = carBlock.querySelector('.ui-tile-selector-selector-wrap');
             if (tileSelector) {
-                console.log('[Car Filter] Tile selector найден внутри data-cid блока');
+                console.log('[Car Filter] Tile selector найден');
                 return tileSelector;
             }
         }
         
-        // СПОСОБ 2: Ищем по ID с кодом поля
-        const elements = document.querySelectorAll('[id*="1770716463"]');
-        for (let element of elements) {
-            if (element.classList.contains('ui-tile-selector-selector-wrap')) {
-                console.log('[Car Filter] Tile selector найден по ID');
-                return element;
-            }
+        // Ищем по всему документу
+        const allSelectors = document.querySelectorAll('.ui-tile-selector-selector-wrap');
+        if (allSelectors.length > 0) {
+            console.log('[Car Filter] Найдено tile selectors:', allSelectors.length);
+            return allSelectors[0];
         }
         
-        // СПОСОБ 3: Ищем все tile selectors
-        const allTileSelectors = document.querySelectorAll('.ui-tile-selector-selector-wrap');
-        if (allTileSelectors.length === 1) {
-            console.log('[Car Filter] Найден единственный tile selector на странице');
-            return allTileSelectors[0];
-        }
-        
-        console.log('[Car Filter] Tile selector не найден в режиме редактирования');
+        console.log('[Car Filter] Tile selector не найден');
         return null;
     }
     
     // Настраивает фильтр для tile selector
     function setupTileSelectorFilter(tileSelector) {
-        console.log('[Car Filter] Настройка фильтра для tile selector');
+        console.log('[Car Filter] Настройка фильтра');
         
         const contactId = window.currentContactId || getCurrentContactId();
         if (!contactId) {
-            console.log('[Car Filter] Контакт не выбран, фильтр не применяется');
+            console.log('[Car Filter] Контакт не выбран');
             return;
         }
         
         console.log('[Car Filter] Применяем фильтр для контакта:', contactId);
         
-        // Пробуем несколько способов применения фильтра
+        // Прямое применение фильтра
         applyFilterDirectly(tileSelector, contactId);
-        
-        // Также пробуем получить объект tile selector
-        const tileInstance = getTileSelectorInstance(tileSelector);
-        if (tileInstance) {
-            applyFilterToTileInstance(tileInstance, contactId);
-        }
     }
     
-    // Пытается получить объект tile selector из DOM элемента
-    function getTileSelectorInstance(tileElement) {
-        console.log('[Car Filter] Попытка получить объект tile selector');
-        
-        // Способ 1: из свойства _instance
-        if (tileElement._instance) {
-            console.log('[Car Filter] Объект найден в _instance');
-            return tileElement._instance;
-        }
-        
-        // Способ 2: через BX.UI.TileSelectorManager
-        if (typeof BX !== 'undefined' && BX.UI && BX.UI.TileSelectorManager) {
-            const selectorId = tileElement.id;
-            if (selectorId) {
-                const instance = BX.UI.TileSelectorManager.getById(selectorId);
-                if (instance) {
-                    console.log('[Car Filter] Объект найден через BX.UI.TileSelectorManager');
-                    return instance;
-                }
-            }
-        }
-        
-        // Способ 3: ищем input внутри и его autocomplete
-        const input = tileElement.querySelector('input[type="text"]');
-        if (input && input._AC) {
-            console.log('[Car Filter] Найден autocomplete объекта');
-            return input._AC;
-        }
-        
-        // Способ 4: ищем в глобальном объекте BX
-        if (window.BX && window.BX._components) {
-            for (let key in window.BX._components) {
-                const component = window.BX._components[key];
-                if (component && component._container === tileElement) {
-                    console.log('[Car Filter] Объект найден в BX._components');
-                    return component;
-                }
-            }
-        }
-        
-        console.log('[Car Filter] Не удалось получить объект tile selector');
-        return null;
-    }
-    
-    // Прямое применение фильтра через модификацию DOM и событий
+    // Прямое применение фильтра
     function applyFilterDirectly(tileElement, contactId) {
         console.log('[Car Filter] Прямое применение фильтра');
         
-        // 1. Находим input внутри tile selector
+        // 1. Находим input
         const input = tileElement.querySelector('input[type="text"]');
         if (!input) {
-            console.log('[Car Filter] Input не найден внутри tile selector');
+            console.log('[Car Filter] Input не найден');
             return;
         }
         
-        // 2. Проверяем, есть ли autocomplete объект
+        // 2. Проверяем autocomplete объект
         if (input._AC) {
-            console.log('[Car Filter] Найден autocomplete объект, модифицируем параметры');
+            console.log('[Car Filter] Найден autocomplete объект');
             
-            // Модифицируем параметры поиска
+            // Модифицируем параметры
             if (input._AC._params) {
                 input._AC._params.filter = input._AC._params.filter || {};
                 input._AC._params.filter['CONTACT_ID'] = contactId;
-                console.log('[Car Filter] Фильтр добавлен в _AC._params');
+                console.log('[Car Filter] Фильтр в _AC._params');
             }
             
-            // Также пробуем модифицировать searchOptions
             if (input._AC._searchOptions) {
                 input._AC._searchOptions.dynamic_1054 = input._AC._searchOptions.dynamic_1054 || {};
                 input._AC._searchOptions.dynamic_1054.filter = { 'CONTACT_ID': contactId };
-                console.log('[Car Filter] Фильтр добавлен в _AC._searchOptions');
+                console.log('[Car Filter] Фильтр в _AC._searchOptions');
             }
             
-            // Очищаем текущие данные
+            // Очищаем
             if (typeof input._AC.clearItems === 'function') {
                 input._AC.clearItems();
             }
         }
         
-        // 3. Модифицируем data-атрибуты
-        const filterData = {
-            dynamic_1054: {
-                filter: { 'CONTACT_ID': contactId }
-            }
-        };
+        // 3. Добавляем data-атрибут
+        tileElement.setAttribute('data-filter', JSON.stringify({
+            dynamic_1054: { filter: { 'CONTACT_ID': contactId } }
+        }));
         
-        tileElement.setAttribute('data-filter', JSON.stringify(filterData));
-        console.log('[Car Filter] Добавлен data-filter атрибут');
-        
-        // 4. Добавляем обработчик для перехвата AJAX запросов
+        // 4. Перехватываем AJAX
         interceptAjaxRequests(contactId);
     }
     
-    // Применяет фильтр к объекту tile selector
-    function applyFilterToTileInstance(tileInstance, contactId) {
-        if (!tileInstance) return;
-        
-        console.log('[Car Filter] Применение фильтра к объекту tile selector');
-        
-        const filter = {
-            dynamic_1054: {
-                filter: { 'CONTACT_ID': contactId },
-                searchable: 'title'
-            }
-        };
-        
-        // Пробуем разные свойства объекта
-        const properties = ['_searchOptions', '_entityOptions', '_params', 'searchOptions', 'entityOptions', 'params'];
-        
-        for (let prop of properties) {
-            if (tileInstance[prop]) {
-                console.log('[Car Filter] Найдено свойство:', prop);
-                
-                if (prop === '_params' || prop === 'params') {
-                    tileInstance[prop].filter = tileInstance[prop].filter || {};
-                    Object.assign(tileInstance[prop].filter, filter.dynamic_1054.filter);
-                } else {
-                    tileInstance[prop] = Object.assign({}, tileInstance[prop], filter);
-                }
-                
-                console.log('[Car Filter] Фильтр применен через свойство', prop);
-                break;
-            }
-        }
-        
-        // Очищаем текущий выбор если есть метод
-        if (typeof tileInstance.clear === 'function') {
-            tileInstance.clear();
-        }
-        
-        // Перезагружаем данные если есть метод
-        if (typeof tileInstance._loadEntities === 'function') {
-            tileInstance._loadEntities();
-        }
-    }
-    
-    // Перехватывает AJAX запросы селектора
+    // Перехватывает AJAX запросы
     function interceptAjaxRequests(contactId) {
         if (typeof BX === 'undefined' || !BX.ajax) return;
         
-        console.log('[Car Filter] Настройка перехвата AJAX запросов');
+        console.log('[Car Filter] Настройка перехвата AJAX');
         
-        // Сохраняем оригинальный метод
         const originalAjax = BX.ajax;
         
-        // Перехватываем
         BX.ajax = function(config) {
-            // Проверяем, это ли запрос селектора
             if (config.url && config.url.includes('/bitrix/services/main/ajax.php') && 
                 config.data && (config.data.action === 'getData' || config.data.action === 'search')) {
                 
-                // Проверяем, относится ли запрос к нашему полю
                 const dataStr = JSON.stringify(config.data);
-                if (dataStr.includes('dynamic_1054') || dataStr.includes('1770716463')) {
+                if (dataStr.includes('dynamic_1054')) {
+                    console.log('[Car Filter] Перехвачен запрос для dynamic_1054');
                     
-                    console.log('[Car Filter] Перехвачен AJAX запрос селектора');
-                    
-                    // Модифицируем данные запроса
                     if (typeof config.data === 'string') {
                         try {
                             const params = new URLSearchParams(config.data);
                             let data = JSON.parse(params.get('data') || '{}');
                             
-                            // Добавляем фильтр
                             if (data.entities && data.entities.includes('dynamic_1054')) {
                                 data.dynamic_1054 = data.dynamic_1054 || {};
                                 data.dynamic_1054.filter = { 'CONTACT_ID': contactId };
+                                params.set('data', JSON.stringify(data));
+                                config.data = params.toString();
                             }
-                            
-                            // Обновляем параметры
-                            params.set('data', JSON.stringify(data));
-                            config.data = params.toString();
-                            console.log('[Car Filter] AJAX запрос модифицирован (string)');
-                        } catch(e) {
-                            console.error('[Car Filter] Ошибка парсинга:', e);
-                        }
+                        } catch(e) {}
                     } else if (typeof config.data === 'object') {
-                        // Если data - объект
                         config.data.data = config.data.data || {};
-                        
-                        // Добавляем фильтр
                         if (config.data.data.entities && config.data.data.entities.includes('dynamic_1054')) {
                             config.data.data.dynamic_1054 = config.data.data.dynamic_1054 || {};
                             config.data.data.dynamic_1054.filter = { 'CONTACT_ID': contactId };
-                            console.log('[Car Filter] AJAX запрос модифицирован (object)');
                         }
                     }
                 }
             }
             
-            // Вызываем оригинальный метод
             return originalAjax.apply(this, arguments);
         };
     }
     
-    // Настраивает отслеживание изменений контакта
+    // Отслеживает изменения контакта
     function setupContactObserver(contactField) {
-        // Используем MutationObserver для отслеживания изменений DOM
         const observer = new MutationObserver(function(mutations) {
             mutations.forEach(function(mutation) {
                 if (mutation.type === 'childList' || mutation.type === 'subtree') {
@@ -417,7 +317,6 @@
                         console.log('[Car Filter] Контакт изменен:', contactId);
                         window.currentContactId = contactId;
                         
-                        // Обновляем фильтр если tile selector уже открыт
                         const tileSelector = findTileSelectorInEditMode();
                         if (tileSelector) {
                             setupTileSelectorFilter(tileSelector);
@@ -427,7 +326,6 @@
             });
         });
         
-        // Наблюдаем за изменениями в блоке контакта
         observer.observe(contactField, {
             childList: true,
             subtree: true,
@@ -438,20 +336,19 @@
         console.log('[Car Filter] Наблюдатель за контактом установлен');
     }
     
-    // Запускаем инициализацию при загрузке страницы
+    // Запуск
     if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', function() {
-            setTimeout(initCarFilter, 2000);
+            setTimeout(initCarFilter, 1500);
         });
     } else {
-        setTimeout(initCarFilter, 2000);
+        setTimeout(initCarFilter, 1500);
     }
     
-    // Экспортируем функции для отладки
+    // Для отладки
     window.DEAL_CAR_FILTER = {
         init: initCarFilter,
-        getCurrentContactId: getCurrentContactId,
-        setupTileSelectorFilter: setupTileSelectorFilter
+        getCurrentContactId: getCurrentContactId
     };
     
 })();
