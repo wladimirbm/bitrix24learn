@@ -65,11 +65,11 @@ function getStageColor($stageId)
                         font-size: 16px; 
                         margin-bottom: 25px;">
                 <?= $arResult['CAR']['STATUS_TEXT'] ?>
-                <?php if ($arResult['CAR']['ACTIVE_DEALS_COUNT'] > 0): ?>
+                <?php /* if ($arResult['CAR']['ACTIVE_DEALS_COUNT'] > 0): ?>
                     <span style="margin-left: 10px; background: rgba(255,255,255,0.2); padding: 2px 8px; border-radius: 10px; font-size: 14px;">
-                        <?= $arResult['CAR']['ACTIVE_DEALS_COUNT'] ?> активн.
+                        <?= $arResult['CAR']['ACTIVE_DEALS_COUNT'] ?> всего.
                     </span>
-                <?php endif; ?>
+                <?php endif; */ ?>
             </div>
             
             <!-- Характеристики авто -->
