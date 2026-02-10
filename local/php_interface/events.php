@@ -120,16 +120,16 @@ AddEventHandler('main', 'OnEndBufferContent', function(&$content) {
     }
 });
 
-// Обработчик для подключения фильтра автомобилей
+// Обработчик для подключения фильтра автомобилей в сделках
 AddEventHandler('main', 'OnBeforeProlog', function() {
     // Только для страниц сделок
     if (preg_match('#/crm/deal/(edit|details)/#', $_SERVER['REQUEST_URI'])) {
-      
-        $asset = Bitrix\Main\Page\Asset::getInstance();
+        
+        // Подключаем скрипт фильтрации
+        $asset = \Bitrix\Main\Page\Asset::getInstance();
         $asset->addJs('/local/js/deal_car_filter.js');
     }
 });
-
 
 /*
 AddEventHandler('main', 'OnEndBufferContent', function(&$content) {
