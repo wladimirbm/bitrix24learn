@@ -132,6 +132,26 @@ AddEventHandler('main', 'OnEndBufferContent', function(&$content) {
     }
 });
 
+// Обработчик для подключения фильтра автомобилей
+AddEventHandler('main', 'OnBeforeProlog', function() {
+    // Только для страниц сделок
+    if (preg_match('#/crm/deal/(edit|details)/#', $_SERVER['REQUEST_URI'])) {
+        
+        // 1. Подключаем компонент (он добавит JS)
+        global $APPLICATION;
+        $APPLICATION->IncludeComponent(
+            'custom:deal.car.filter',
+            '',
+            array(),
+            false
+        );
+        
+        // 2. ИЛИ напрямую подключаем JS файл (если не хотите использовать компонент)
+        // $asset = Bitrix\Main\Page\Asset::getInstance();
+        // $asset->addJs('/local/js/deal_car_filter.js');
+    }
+});
+
 
 /*
 AddEventHandler('main', 'OnEndBufferContent', function(&$content) {
