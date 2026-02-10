@@ -121,18 +121,18 @@ AddEventHandler('main', 'OnEndBufferContent', function (&$content) {
 });
 
 // Обработчик для подключения фильтра автомобилей в сделках
-AddEventHandler('main', 'OnBeforeProlog', function () {
-    // Только для страниц сделок
-    if (preg_match('#/crm/deal/(edit|details)/#', $_SERVER['REQUEST_URI'])) {
+// AddEventHandler('main', 'OnBeforeProlog', function () {
+//     // Только для страниц сделок
+//     if (preg_match('#/crm/deal/(edit|details)/#', $_SERVER['REQUEST_URI'])) {
 
-        // Подключаем скрипт фильтрации
-        $asset = \Bitrix\Main\Page\Asset::getInstance();
-        $asset->addJs('/local/js/deal_car_filter.js');
+//         // Подключаем скрипт фильтрации
+//         $asset = \Bitrix\Main\Page\Asset::getInstance();
+//         $asset->addJs('/local/js/deal_car_filter.js');
 
-        // ПОДКЛЮЧАЕМ ТЕСТОВЫЙ СКРИПТ (временно)
-        $asset->addJs('/local/js/test_tile_selector.js');
-    }
-});
+//         // ПОДКЛЮЧАЕМ ТЕСТОВЫЙ СКРИПТ (временно)
+//         $asset->addJs('/local/js/test_tile_selector.js');
+//     }
+// });
 
 /*
 AddEventHandler('main', 'OnEndBufferContent', function(&$content) {
