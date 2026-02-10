@@ -82,89 +82,26 @@
       return;
     }
 
-    // Формируем данные ТОЧНО как в оригинальном запросе
+    // Формируем данные как в стандартном запросе
     const formData = new FormData();
     formData.append("mode", "ajax");
     formData.append("c", "bitrix:main.ui.selector");
     formData.append("action", "getData");
     formData.append("sessid", csrfToken);
 
-    // ============ ВСЕ ОРИГИНАЛЬНЫЕ ПАРАМЕТРЫ ============
+    // Базовые параметры (из твоего Network)
     formData.append("data[options][useNewCallback]", "Y");
-    formData.append(
-      "data[options][eventInit]",
-      "BX.Main.User.SelectorController::init",
-    );
-    formData.append(
-      "data[options][eventOpen]",
-      "BX.Main.User.SelectorController::open",
-    );
-    formData.append("data[options][lazyLoad]", "Y");
     formData.append("data[options][context]", "crmEntityCreate");
-    formData.append("data[options][contextCode]", "");
-    formData.append("data[options][enableSonetgroups]", "N");
-    formData.append("data[options][enableUsers]", "N");
-    formData.append("data[options][useClientDatabase]", "N");
-    formData.append("data[options][enableAll]", "N");
-    formData.append("data[options][enableDepartments]", "N");
     formData.append("data[options][enableCrm]", "Y");
     formData.append("data[options][crmPrefixType]", "SHORT");
     formData.append("data[options][enableCrmDynamics][1054]", "Y");
-    formData.append("data[options][addTabCrmDynamics][1054]", "N");
-    formData.append("data[options][addTabCrmContacts]", "N");
-    formData.append("data[options][addTabCrmCompanies]", "N");
-    formData.append("data[options][addTabCrmLeads]", "N");
-    formData.append("data[options][addTabCrmDeals]", "N");
-    formData.append("data[options][addTabCrmOrders]", "N");
-    formData.append("data[options][addTabCrmQuotes]", "N");
-    formData.append("data[options][addTabCrmSmartInvoices]", "N");
-    formData.append(
-      "data[options][crmDynamicTitles][DYNAMICS_1040]",
-      "Марка автомобиля",
-    );
-    formData.append(
-      "data[options][crmDynamicTitles][DYNAMICS_1046]",
-      "Модель автомобиля",
-    );
-    formData.append("data[options][crmDynamicTitles][DYNAMICS_1054]", "Гараж");
-    formData.append(
-      "data[options][crmDynamicTitles][DYNAMICS_1058]",
-      "Заявка на закупку",
-    );
     formData.append("data[options][multiple]", "N");
-    formData.append("data[options][extranetContext]", "false");
-    formData.append("data[options][useSearch]", "N");
-    formData.append("data[options][userNameTemplate]", "#NAME# #LAST_NAME#");
-    formData.append("data[options][allowEmailInvitation]", "N");
-    formData.append("data[options][departmentSelectDisable]", "Y");
-    formData.append("data[options][allowAddUser]", "N");
-    formData.append("data[options][allowAddCrmContact]", "N");
-    formData.append("data[options][allowAddSocNetGroup]", "N");
-    formData.append("data[options][allowSearchEmailUsers]", "N");
-    formData.append("data[options][allowSearchCrmEmailUsers]", "N");
-    formData.append("data[options][allowSearchNetworkUsers]", "N");
 
     // Entity Types
     formData.append(
-      "data[entityTypes][GROUPS][options][context]",
-      "crmEntityCreate",
+      "data[entityTypes][DYNAMICS_1054][options][typeId]",
+      "1054",
     );
-    formData.append("data[entityTypes][GROUPS][options][enableAll]", "N");
-    formData.append("data[entityTypes][GROUPS][options][enableEmpty]", "N");
-    formData.append(
-      "data[entityTypes][GROUPS][options][enableUserManager]",
-      "N",
-    );
-    formData.append("data[entityTypes][EMAILUSERS][options][allowAdd]", "N");
-    formData.append(
-      "data[entityTypes][EMAILUSERS][options][allowAddCrmContact]",
-      "N",
-    );
-    formData.append(
-      "data[entityTypes][EMAILUSERS][options][allowSearchCrmEmailUsers]",
-      "N",
-    );
-    formData.append("data[entityTypes][EMAILUSERS][options][addTab]", "N");
     formData.append(
       "data[entityTypes][DYNAMICS_1054][options][enableSearch]",
       "Y",
@@ -172,15 +109,6 @@
     formData.append(
       "data[entityTypes][DYNAMICS_1054][options][searchById]",
       "Y",
-    );
-    formData.append("data[entityTypes][DYNAMICS_1054][options][addTab]", "N");
-    formData.append(
-      "data[entityTypes][DYNAMICS_1054][options][typeId]",
-      "1054",
-    );
-    formData.append(
-      "data[entityTypes][DYNAMICS_1054][options][onlyWithEmail]",
-      "N",
     );
     formData.append(
       "data[entityTypes][DYNAMICS_1054][options][prefixType]",
@@ -195,11 +123,9 @@
       "Гараж",
     );
 
-    // ============ ФИЛЬТР ПО КОНТАКТУ ============
-    // Пробуем разные варианты имени поля
-    const filterKey = `data[FILTER][${ENTITY_CODE}][=CONTACT_ID]`;
-    formData.append(filterKey, contactId);
-    console.log("DealCarFilter: Фильтр добавлен:", filterKey, "=", contactId);
+    // КЛЮЧЕВОЕ: Добавляем фильтр
+    formData.append(`data[FILTER][${ENTITY_CODE}][=CONTACT_ID]`, contactId);
+    console.log("DealCarFilter: Фильтр добавлен");
 
     // Отправляем запрос
     fetch("/bitrix/services/main/ajax.php", {
@@ -214,45 +140,14 @@
         console.log("DealCarFilter: Ответ сервера:", data);
 
         if (data.status === "success") {
-          // Проверяем, есть ли автомобили в ответе
-          const cars = data.data?.ENTITIES?.[ENTITY_CODE]?.ITEMS || {};
-          console.log(
-            "DealCarFilter: Найдено автомобилей:",
-            Object.keys(cars).length,
-          );
-
-          if (Object.keys(cars).length === 0) {
-            console.warn(
-              "DealCarFilter: Для контакта нет автомобилей или фильтр не работает",
-            );
-            // Пробуем без фильтра
-            loadAllCars();
-          } else {
-            showCarSelection(data.data);
-          }
+          showCarSelection(data.data);
         } else {
           console.error("DealCarFilter: Ошибка:", data.errors);
-          // Пробуем без фильтра
-          loadAllCars();
         }
       })
       .catch((error) => {
         console.error("DealCarFilter: Ошибка запроса:", error);
-        loadAllCars();
       });
-  }
-
-  /**
-   * Загрузка всех автомобилей (без фильтра)
-   */
-  function loadAllCars() {
-    console.log("DealCarFilter: Загружаем все автомобили");
-
-    // Создаем стандартный попап Битрикс
-    const button = document.querySelector('[data-role="tile-select"]');
-    if (button) {
-      button.click(); // Инициируем стандартное поведение
-    }
   }
 
   /**
