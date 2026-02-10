@@ -1,31 +1,38 @@
 /**
  * Фильтрация автомобилей по выбранному контакту в сделке
- * ПРОСТАЯ РАБОЧАЯ ВЕРСИЯ
+ * УПРОЩЕННАЯ РАБОЧАЯ ВЕРСИЯ
  */
 
 (function() {
     'use strict';
     
+    // Конфигурация
     const SMART_PROCESS_TYPE_ID = 1054;
     const ENTITY_CODE = 'DYNAMICS_' + SMART_PROCESS_TYPE_ID;
+    const CAR_FIELD_ID = 'UF_CRM_1770588718';
     
+    // Состояние
     let currentContactId = null;
+    let isInitialized = false;
     
-    console.log('DealCarFilter: Простая версия загружена');
+    console.log('DealCarFilter: Загрузка упрощенной версии');
+    
+    // ==================== ОСНОВНЫЕ ФУНКЦИИ ====================
     
     /**
-     * 1. НАЙТИ ID КОНТАКТА ИЗ data-cid
+     * Найти ID контакта в DOM
      */
-    function findContactId() {
-        // Ищем секцию контакта: data-cid="CONTACT_7_client_editor_SECTION"
-        const contactSection = document.querySelector('[data-cid^="CONTACT_"]');
+    function findContactIdInDOM() {
+        // Ищем секцию контакта по data-cid
+        const contactElements = document.querySelectorAll('[data-cid]');
         
-        if (contactSection) {
-            const dataCid = contactSection.getAttribute('data-cid');
-            const match = dataCid.match(/CONTACT_(\d+)_/);
-            
-            if (match && match[1]) {
-                return match[1]; // Возвращаем ID (например, "7")
+        for (let element of contactElements) {
+            const dataCid = element.getAttribute('data-cid');
+            if (dataCid && dataCid.startsWith('CONTACT_')) {
+                const match = dataCid.match(/CONTACT_(\d+)_/);
+                if (match && match[1]) {
+                    return match[1];
+                }
             }
         }
         
@@ -33,96 +40,276 @@
     }
     
     /**
-     * 2. ОТСЛЕЖИВАТЬ ПОЯВЛЕНИЕ СЕКЦИИ КОНТАКТА
+     * Получить текущий контакт (из памяти или DOM)
      */
-    function watchForContactSelection() {
-        // Наблюдаем за всем документом
-        const observer = new MutationObserver(function(mutations) {
-            for (let mutation of mutations) {
-                // Проверяем добавленные узлы
-                if (mutation.type === 'childList' && mutation.addedNodes.length > 0) {
-                    for (let node of mutation.addedNodes) {
-                        if (node.nodeType === 1) { // Element node
-                            // Проверяем сам элемент или его детей
-                            const contactSection = node.querySelector ? 
-                                node.querySelector('[data-cid^="CONTACT_"]') : null;
-                            
-                            if ((node.matches && node.matches('[data-cid^="CONTACT_"]')) || 
-                                contactSection) {
-                                
-                                // Даем время для полной загрузки
-                                setTimeout(() => {
-                                    const newContactId = findContactId();
-                                    
-                                    if (newContactId && newContactId !== currentContactId) {
-                                        currentContactId = newContactId;
-                                        console.log('DealCarFilter: Контакт выбран! ID:', currentContactId);
-                                        
-                                        // СБРАСЫВАЕМ КЕШ СЕЛЕКТОРА АВТОМОБИЛЕЙ
-                                        resetCarSelector();
-                                    }
-                                }, 100);
-                                break;
-                            }
-                        }
-                    }
-                }
-                
-                // Проверяем изменения атрибутов
-                if (mutation.type === 'attributes' && 
-                    mutation.attributeName === 'data-cid' &&
-                    mutation.target.getAttribute('data-cid').startsWith('CONTACT_')) {
-                    
-                    setTimeout(() => {
-                        const newContactId = findContactId();
-                        if (newContactId && newContactId !== currentContactId) {
-                            currentContactId = newContactId;
-                            console.log('DealCarFilter: Контакт изменен! ID:', currentContactId);
-                            resetCarSelector();
-                        }
-                    }, 100);
-                }
-            }
-        });
-        
-        // Начинаем наблюдение
-        observer.observe(document.body, {
-            childList: true,
-            subtree: true,
-            attributes: true,
-            attributeFilter: ['data-cid']
-        });
-        
-        console.log('DealCarFilter: Наблюдение за выбором контакта включено');
+    function getCurrentContact() {
+        return currentContactId;
     }
     
     /**
-     * 3. СБРОСИТЬ СЕЛЕКТОР АВТОМОБИЛЕЙ
+     * Сбросить селектор автомобилей
      */
     function resetCarSelector() {
-        console.log('DealCarFilter: Сброс селектора автомобилей');
+        console.log('DealCarFilter: Сброс селектора');
         
-        // Находим поле "Автомобиль"
-        const carField = document.getElementById('UF_CRM_1770588718');
-        if (!carField) {
-            console.warn('DealCarFilter: Поле автомобиля не найдено');
-            return;
+        // 1. Очистить скрытое поле
+        const carField = document.getElementById(CAR_FIELD_ID);
+        if (carField) {
+            carField.value = '';
         }
         
-        // Очищаем значение
-        carField.value = '';
-        
-        // Очищаем UI плитки
+        // 2. Очистить видимые плитки
         const tileContainer = document.querySelector('.ui-tile-selector-selector-wrap');
         if (tileContainer) {
             const tiles = tileContainer.querySelectorAll('[data-role="tile-item"]');
             tiles.forEach(tile => tile.remove());
         }
         
-        // Очищаем кеш в глобальном хранилище (если есть)
+        // 3. Найти и пересоздать кнопку "выбрать"
+        recreateSelectButton();
+        
+        // 4. Очистить кеш селектора
+        clearSelectorCache();
+        
+        console.log('DealCarFilter: Селектор сброшен');
+    }
+    
+    /**
+     * Пересоздать кнопку "выбрать" с новым обработчиком
+     */
+    function recreateSelectButton() {
+        const selectButton = document.querySelector('[data-role="tile-select"]');
+        if (!selectButton) {
+            console.log('DealCarFilter: Кнопка выбора не найдена');
+            return;
+        }
+        
+        // Клонируем кнопку
+        const newButton = selectButton.cloneNode(true);
+        const parent = selectButton.parentNode;
+        
+        // Заменяем старую кнопку
+        parent.replaceChild(newButton, selectButton);
+        
+        // Вешаем новый обработчик
+        newButton.addEventListener('click', function(event) {
+            console.log('DealCarFilter: Клик на кнопку "выбрать"');
+            console.log('DealCarFilter: Текущий контакт:', currentContactId);
+            
+            // Предотвращаем стандартное поведение
+            event.preventDefault();
+            event.stopPropagation();
+            
+            // Запускаем загрузку данных
+            loadCarData();
+        });
+        
+        console.log('DealCarFilter: Кнопка пересоздана');
+    }
+    
+    /**
+     * Загрузить данные автомобилей
+     */
+    function loadCarData() {
+        console.log('DealCarFilter: Загрузка данных автомобилей');
+        
+        // Создаем параметры запроса
+        const params = new URLSearchParams();
+        
+        // Базовые параметры
+        params.append('mode', 'ajax');
+        params.append('c', 'bitrix:main.ui.selector');
+        params.append('action', 'getData');
+        
+        // Опции
+        params.append('data[options][useNewCallback]', 'Y');
+        params.append('data[options][context]', 'crmEntityCreate');
+        params.append('data[options][enableCrm]', 'Y');
+        params.append('data[options][crmPrefixType]', 'SHORT');
+        params.append('data[options][enableCrmDynamics][1054]', 'Y');
+        params.append('data[options][multiple]', 'N');
+        
+        // Entity Types
+        params.append('data[entityTypes][DYNAMICS_1054][options][typeId]', '1054');
+        params.append('data[entityTypes][DYNAMICS_1054][options][enableSearch]', 'Y');
+        params.append('data[entityTypes][DYNAMICS_1054][options][searchById]', 'Y');
+        params.append('data[entityTypes][DYNAMICS_1054][options][prefixType]', 'SHORT');
+        params.append('data[entityTypes][DYNAMICS_1054][options][returnItemUrl]', 'Y');
+        params.append('data[entityTypes][DYNAMICS_1054][options][title]', 'Гараж');
+        
+        // ДОБАВЛЯЕМ ФИЛЬТР ПО КОНТАКТУ
+        if (currentContactId) {
+            params.append(`data[FILTER][${ENTITY_CODE}][=CONTACT_ID]`, currentContactId);
+            console.log('DealCarFilter: Добавлен фильтр для контакта', currentContactId);
+        }
+        
+        // Отправляем запрос
+        sendSelectorRequest(params);
+    }
+    
+    /**
+     * Отправить запрос к селектору
+     */
+    function sendSelectorRequest(params) {
+        const url = '/bitrix/services/main/ajax.php?' + params.toString();
+        console.log('DealCarFilter: Отправка запроса:', url.substring(0, 150) + '...');
+        
+        // Используем fetch для отправки
+        fetch(url, {
+            method: 'GET',
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest'
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            console.log('DealCarFilter: Получен ответ от сервера');
+            
+            // Обрабатываем данные
+            if (data && data.data && data.data.ENTITIES && data.data.ENTITIES[ENTITY_CODE]) {
+                processCarData(data.data.ENTITIES[ENTITY_CODE]);
+            } else {
+                console.warn('DealCarFilter: Нет данных об автомобилях в ответе');
+            }
+        })
+        .catch(error => {
+            console.error('DealCarFilter: Ошибка при запросе:', error);
+        });
+    }
+    
+    /**
+     * Обработать полученные данные об автомобилях
+     */
+    function processCarData(carData) {
+        console.log('DealCarFilter: Обработка данных автомобилей');
+        console.log('DealCarFilter: Найдено автомобилей:', Object.keys(carData.ITEMS || {}).length);
+        
+        // Здесь можно отобразить данные в попапе
+        // Пока просто логируем
+        if (carData.ITEMS) {
+            Object.values(carData.ITEMS).forEach(car => {
+                console.log('Автомобиль:', car.id, '-', car.name);
+            });
+        }
+        
+        // Открываем попап с данными
+        openCarSelectorPopup(carData);
+    }
+    
+    /**
+     * Открыть попап выбора автомобилей
+     */
+    function openCarSelectorPopup(carData) {
+        console.log('DealCarFilter: Открытие попапа выбора');
+        
+        // Создаем простой попап для выбора
+        const popupHtml = `
+            <div id="deal-car-filter-popup" style="
+                position: fixed;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                background: white;
+                border: 1px solid #ccc;
+                padding: 20px;
+                z-index: 10000;
+                box-shadow: 0 0 10px rgba(0,0,0,0.3);
+                max-height: 400px;
+                overflow-y: auto;
+                min-width: 300px;
+            ">
+                <h3 style="margin-top: 0;">Выберите автомобиль</h3>
+                <div id="car-list"></div>
+                <button onclick="document.getElementById('deal-car-filter-popup').remove()" 
+                        style="margin-top: 10px; padding: 5px 10px;">
+                    Закрыть
+                </button>
+            </div>
+        `;
+        
+        // Добавляем попап на страницу
+        const popupContainer = document.createElement('div');
+        popupContainer.innerHTML = popupHtml;
+        document.body.appendChild(popupContainer.firstElementChild);
+        
+        // Заполняем список автомобилей
+        const carList = document.getElementById('car-list');
+        if (carData.ITEMS) {
+            Object.values(carData.ITEMS).forEach(car => {
+                const carItem = document.createElement('div');
+                carItem.style.padding = '5px';
+                carItem.style.borderBottom = '1px solid #eee';
+                carItem.innerHTML = `
+                    <input type="radio" name="selected-car" value="${car.entityId}" 
+                           id="car-${car.entityId}">
+                    <label for="car-${car.entityId}" style="margin-left: 5px; cursor: pointer;">
+                        ${car.name}
+                    </label>
+                `;
+                
+                // Обработчик выбора
+                carItem.querySelector('input').addEventListener('change', function() {
+                    if (this.checked) {
+                        selectCar(car.entityId, car.name);
+                    }
+                });
+                
+                carList.appendChild(carItem);
+            });
+        } else {
+            carList.innerHTML = '<p>Нет автомобилей для выбранного контакта</p>';
+        }
+    }
+    
+    /**
+     * Выбрать автомобиль
+     */
+    function selectCar(carId, carName) {
+        console.log('DealCarFilter: Выбран автомобиль:', carId, carName);
+        
+        // 1. Заполняем скрытое поле
+        const carField = document.getElementById(CAR_FIELD_ID);
+        if (carField) {
+            carField.value = carId;
+        }
+        
+        // 2. Обновляем видимое поле
+        const tileContainer = document.querySelector('[data-role="tile-container"]');
+        if (tileContainer) {
+            // Очищаем старые плитки
+            const oldTiles = tileContainer.querySelectorAll('[data-role="tile-item"]');
+            oldTiles.forEach(tile => tile.remove());
+            
+            // Добавляем новую плитку
+            const tileHtml = `
+                <span data-role="tile-item" data-bx-id="D${carId}" 
+                      class="ui-tile-selector-item ui-tile-selector-item-dynamic_1054">
+                    <span data-role="tile-item-name">${carName}</span>
+                    <span data-role="remove" class="ui-tile-selector-item-remove"></span>
+                </span>
+            `;
+            
+            const tempDiv = document.createElement('div');
+            tempDiv.innerHTML = tileHtml;
+            tileContainer.insertBefore(tempDiv.firstElementChild, tileContainer.firstChild);
+        }
+        
+        // 3. Закрываем попап
+        const popup = document.getElementById('deal-car-filter-popup');
+        if (popup) {
+            popup.remove();
+        }
+        
+        console.log('DealCarFilter: Автомобиль выбран и отображен');
+    }
+    
+    /**
+     * Очистить кеш селектора
+     */
+    function clearSelectorCache() {
         if (window.BX && BX.Main && BX.Main.SelectorManager && BX.Main.SelectorManager.DataStore) {
             Object.keys(BX.Main.SelectorManager.DataStore).forEach(key => {
-                if (key.includes('DYNAMICS_1054') || key.includes('UF_CRM_1770588718')) {
+                if (key.includes('DYNAMICS_1054') || key.includes(CAR_FIELD_ID)) {
                     delete BX.Main.SelectorManager.DataStore[key];
                 }
             });
@@ -130,128 +317,168 @@
     }
     
     /**
-     * 4. ПЕРЕХВАТИТЬ ЗАПРОСЫ СЕЛЕКТОРА
+     * Отслеживать выбор контакта
      */
-    function interceptSelectorRequests() {
-        // Перехватываем через XMLHttpRequest
-        const originalXHROpen = XMLHttpRequest.prototype.open;
-        const originalXHRSend = XMLHttpRequest.prototype.send;
-        
-        XMLHttpRequest.prototype.open = function(method, url) {
-            this._dealCarUrl = url;
-            return originalXHROpen.apply(this, arguments);
-        };
-        
-        XMLHttpRequest.prototype.send = function(body) {
-            const url = this._dealCarUrl;
-            
-            // Если это запрос к селектору автомобилей
-            if (url && url.includes('/bitrix/services/main/ajax.php') && 
-                url.includes('main.ui.selector')) {
+    function watchForContactSelection() {
+        const observer = new MutationObserver(function(mutations) {
+            for (let mutation of mutations) {
+                // Проверяем изменения в data-cid
+                if (mutation.type === 'attributes' && mutation.attributeName === 'data-cid') {
+                    const dataCid = mutation.target.getAttribute('data-cid');
+                    if (dataCid && dataCid.startsWith('CONTACT_')) {
+                        handleContactChange();
+                        break;
+                    }
+                }
                 
-                // Парсим тело запроса
-                if (body && typeof body === 'string') {
-                    const params = new URLSearchParams(body);
-                    const action = params.get('action');
-                    
-                    // Проверяем, что это запрос для DYNAMICS_1054
-                    const isCarRequest = params.has('data[entityTypes][DYNAMICS_1054][options][typeId]') ||
-                                        params.get('data[options][enableCrmDynamics][1054]') === 'Y';
-                    
-                    if ((action === 'getData' || action === 'doSearch') && isCarRequest) {
-                        
-                        console.log('DealCarFilter: Запрос селектора автомобилей', action);
-                        console.log('DealCarFilter: Текущий контакт:', currentContactId);
-                        
-                        // ЕСЛИ КОНТАКТ ВЫБРАН - ДОБАВЛЯЕМ ФИЛЬТР
-                        if (currentContactId) {
-                            console.log('DealCarFilter: Добавляем фильтр для контакта', currentContactId);
-                            
-                            // Добавляем параметр фильтра
-                            params.append(`data[FILTER][${ENTITY_CODE}][=CONTACT_ID]`, currentContactId);
-                            
-                            // Обновляем тело запроса
-                            body = params.toString();
+                // Проверяем добавление элементов
+                if (mutation.type === 'childList') {
+                    for (let node of mutation.addedNodes) {
+                        if (node.nodeType === 1 && node.hasAttribute && 
+                            node.getAttribute('data-cid') && node.getAttribute('data-cid').startsWith('CONTACT_')) {
+                            handleContactChange();
+                            break;
                         }
                     }
                 }
             }
-            
-            return originalXHRSend.call(this, body);
-        };
+        });
         
-        console.log('DealCarFilter: Перехват запросов настроен');
+        observer.observe(document.body, {
+            childList: true,
+            subtree: true,
+            attributes: true,
+            attributeFilter: ['data-cid']
+        });
+        
+        console.log('DealCarFilter: Наблюдение за контактом запущено');
     }
     
     /**
-     * 5. ПУБЛИЧНЫЕ МЕТОДЫ ДЛЯ ОТЛАДКИ
+     * Обработать изменение контакта
      */
-    window.DealCarFilter = {
-        // Получить текущий контакт
-        getContact: function() {
-            return currentContactId;
-        },
-        
-        // Найти контакт сейчас
-        findContactNow: function() {
-            return findContactId();
-        },
-        
-        // Принудительно сбросить селектор
-        reset: function() {
-            resetCarSelector();
-            console.log('DealCarFilter: Селектор сброшен вручную');
-        },
-        
-        // Отладка
-        debug: function() {
-            console.log('=== DealCarFilter Debug ===');
-            console.log('Текущий контакт (в памяти):', currentContactId);
-            console.log('Найденный контакт (в DOM):', findContactId());
+    function handleContactChange() {
+        setTimeout(() => {
+            const newContactId = findContactIdInDOM();
             
-            // Показать все data-cid
-            const allDataCids = document.querySelectorAll('[data-cid]');
-            console.log('Все data-cid на странице:', allDataCids.length);
-            allDataCids.forEach(el => {
-                console.log('  ', el.getAttribute('data-cid'), el);
-            });
-            
-            return {
-                memory: currentContactId,
-                dom: findContactId()
-            };
-        }
-    };
+            if (newContactId && newContactId !== currentContactId) {
+                currentContactId = newContactId;
+                console.log('DealCarFilter: Контакт изменен, ID:', currentContactId);
+                
+                // Сбрасываем селектор автомобилей
+                resetCarSelector();
+            }
+        }, 100);
+    }
     
     /**
-     * ИНИЦИАЛИЗАЦИЯ
+     * Инициализировать модуль
      */
-    function init() {
-        console.log('DealCarFilter: Инициализация');
+    function initialize() {
+        if (isInitialized) return;
+        
+        console.log('DealCarFilter: Инициализация модуля');
         
         // 1. Начинаем наблюдать за выбором контакта
         watchForContactSelection();
         
-        // 2. Настраиваем перехват запросов селектора
-        interceptSelectorRequests();
-        
-        // 3. Проверяем, может контакт уже выбран
+        // 2. Проверяем, может контакт уже выбран
         setTimeout(() => {
-            const existingContact = findContactId();
+            const existingContact = findContactIdInDOM();
             if (existingContact) {
                 currentContactId = existingContact;
                 console.log('DealCarFilter: Контакт уже выбран при загрузке:', currentContactId);
             }
         }, 1000);
         
-        console.log('DealCarFilter: Готов. Используй DealCarFilter.debug() для проверки');
+        // 3. Пересоздаем кнопку выбора
+        setTimeout(() => {
+            recreateSelectButton();
+        }, 1500);
+        
+        isInitialized = true;
+        console.log('DealCarFilter: Модуль инициализирован');
     }
     
-    // Запускаем
+    // ==================== ПУБЛИЧНЫЕ МЕТОДЫ ====================
+    
+    window.DealCarFilter = {
+        /**
+         * Получить текущий контакт
+         */
+        getContact: function() {
+            return getCurrentContact();
+        },
+        
+        /**
+         * Принудительно сбросить селектор
+         */
+        reset: function() {
+            resetCarSelector();
+            console.log('DealCarFilter: Принудительный сброс');
+        },
+        
+        /**
+         * Загрузить автомобили вручную
+         */
+        loadCars: function() {
+            if (!currentContactId) {
+                console.warn('DealCarFilter: Контакт не выбран');
+                return;
+            }
+            loadCarData();
+        },
+        
+        /**
+         * Отладочная информация
+         */
+        debug: function() {
+            console.log('=== DealCarFilter Debug ===');
+            console.log('Текущий контакт:', currentContactId);
+            console.log('Контакт в DOM:', findContactIdInDOM());
+            console.log('Инициализирован:', isInitialized);
+            
+            const selectBtn = document.querySelector('[data-role="tile-select"]');
+            console.log('Кнопка выбора:', selectBtn ? 'найдена' : 'не найдена');
+            
+            const carField = document.getElementById(CAR_FIELD_ID);
+            console.log('Поле автомобиля:', carField ? 'найдено' : 'не найдено');
+            console.log('Значение поля:', carField ? carField.value : 'N/A');
+            
+            return {
+                contact: currentContactId,
+                contactInDOM: findContactIdInDOM(),
+                initialized: isInitialized,
+                hasButton: !!selectBtn
+            };
+        },
+        
+        /**
+         * Тестовый запрос
+         */
+        testRequest: function() {
+            console.log('DealCarFilter: Тестовый запрос');
+            loadCarData();
+        }
+    };
+    
+    // ==================== ЗАПУСК ====================
+    
+    // Ждем загрузки DOM
     if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', init);
+        document.addEventListener('DOMContentLoaded', function() {
+            setTimeout(initialize, 500);
+        });
     } else {
-        init();
+        setTimeout(initialize, 500);
     }
+    
+    // Дополнительный запуск через 3 секунды
+    setTimeout(() => {
+        if (!isInitialized) {
+            console.log('DealCarFilter: Дополнительный запуск');
+            initialize();
+        }
+    }, 3000);
     
 })();

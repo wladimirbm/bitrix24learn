@@ -121,27 +121,21 @@ AddEventHandler('main', 'OnEndBufferContent', function (&$content) {
 });
 
 
-// Подключаем только на страницах сделок CRM
 AddEventHandler('main', 'OnEpilog', function() {
     $currentPage = $GLOBALS['APPLICATION']->GetCurPage();
     
-    // Проверяем, что находимся на странице сделки (создание или редактирование)
     if (strpos($currentPage, '/crm/deal/details/') !== false || 
         strpos($currentPage, '/crm/deal/edit/') !== false ||
         strpos($currentPage, '/crm/deal/show/') !== false) {
         
-        // Регистрируем наш JavaScript модуль с зависимостью от UI и Core
         CJSCore::RegisterExt('deal_car_filter', [
             'js' => '/local/js/deal_car_filter.js',
-            'rel' => ['ui', 'core']  // Обязательные зависимости для работы с селектором
+            'rel' => ['ui', 'core']
         ]);
         
-        // Инициализируем модуль
         CJSCore::Init(['deal_car_filter']);
     }
 });
-
-
 
 
 /*
