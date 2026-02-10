@@ -1,15 +1,13 @@
 (function () {
-  "use strict";
+  if (window.DealCarFilterLoaded) return;
+  window.DealCarFilterLoaded = true;
 
   const SMART_PROCESS_TYPE_ID = 1054;
   const ENTITY_CODE = "DYNAMICS_" + SMART_PROCESS_TYPE_ID;
   const CAR_FIELD_ID = "UF_CRM_1770588718";
 
   let currentContactId = null;
-  let isInitialized = false;
   let isProcessing = false;
-
-  console.log("DealCarFilter: Загружен");
 
   function findContactId() {
     const elements = document.querySelectorAll("[data-cid]");
@@ -23,13 +21,11 @@
         }
       }
     }
-
     return null;
   }
 
   function handleCarSelectClick(event) {
     if (isProcessing) return;
-    
     isProcessing = true;
 
     const contactId = findContactId();
@@ -53,11 +49,11 @@
   }
 
   function loadFilteredCars(contactId) {
-    const csrfToken =
-      document.querySelector('meta[name="csrf-token"]')?.content ||
-      document.querySelector('input[name="sessid"]')?.value;
-
-    if (!csrfToken) return;
+    const csrfToken = document.querySelector('input[name="sessid"]')?.value;
+    if (!csrfToken) {
+      fallbackToStandard();
+      return;
+    }
 
     const params = new URLSearchParams();
     params.append("mode", "ajax");
@@ -77,30 +73,9 @@
       "options[multiple]": "N",
       "options[extranetContext]": "false",
       "options[useSearch]": "N",
-      "options[userNameTemplate]": "#NAME# #LAST_NAME#",
-      "options[allowEmailInvitation]": "N",
-      "options[departmentSelectDisable]": "Y",
-      "options[allowAddUser]": "N",
-      "options[allowAddCrmContact]": "N",
-      "options[allowAddSocNetGroup]": "N",
-      "options[allowSearchEmailUsers]": "N",
-      "options[allowSearchCrmEmailUsers]": "N",
-      "options[allowSearchNetworkUsers]": "N",
-      "entityTypes[GROUPS][options][context]": "crmEntityCreate",
-      "entityTypes[GROUPS][options][enableAll]": "N",
-      "entityTypes[GROUPS][options][enableEmpty]": "N",
-      "entityTypes[GROUPS][options][enableUserManager]": "N",
-      "entityTypes[EMAILUSERS][options][allowAdd]": "N",
-      "entityTypes[EMAILUSERS][options][allowAddCrmContact]": "N",
-      "entityTypes[EMAILUSERS][options][allowSearchCrmEmailUsers]": "N",
-      "entityTypes[EMAILUSERS][options][addTab]": "N",
-      "entityTypes[DYNAMICS_1054][options][enableSearch]": "Y",
-      "entityTypes[DYNAMICS_1054][options][searchById]": "Y",
-      "entityTypes[DYNAMICS_1054][options][addTab]": "N",
       "entityTypes[DYNAMICS_1054][options][typeId]": "1054",
-      "entityTypes[DYNAMICS_1054][options][onlyWithEmail]": "N",
+      "entityTypes[DYNAMICS_1054][options][enableSearch]": "Y",
       "entityTypes[DYNAMICS_1054][options][prefixType]": "SHORT",
-      "entityTypes[DYNAMICS_1054][options][returnItemUrl]": "Y",
       "entityTypes[DYNAMICS_1054][options][title]": "Гараж",
       [`FILTER[${ENTITY_CODE}][=CONTACT_ID]`]: contactId,
     };
@@ -119,19 +94,23 @@
     })
       .then((response) => response.json())
       .then((data) => {
-        if (data.status === "success") {
-          const cars = data.data?.ENTITIES?.[ENTITY_CODE]?.ITEMS || {};
-          if (Object.keys(cars).length === 0) {
-            fallbackToStandard();
-          } else {
+        console.log("Запрос отправлен, ответ:", data);
+        
+        if (data.status === "success" && data.data?.ENTITIES?.[ENTITY_CODE]?.ITEMS) {
+          const cars = data.data.ENTITIES[ENTITY_CODE].ITEMS;
+          if (Object.keys(cars).length > 0) {
             showCarSelection(data.data);
+          } else {
+            alert("Для этого контакта нет автомобилей");
+            fallbackToStandard();
           }
         } else {
+          console.error("Ошибка или нет данных:", data.errors);
           fallbackToStandard();
         }
       })
       .catch((error) => {
-        console.error("DealCarFilter: Ошибка:", error);
+        console.error("Ошибка сети:", error);
         fallbackToStandard();
       });
   }
@@ -140,31 +119,17 @@
     const button = document.querySelector('[data-role="tile-select"]');
     if (button) {
       button.removeEventListener("click", handleCarSelectClick, true);
-      setTimeout(() => button.click(), 50);
+      button.click();
       setTimeout(() => {
         button.addEventListener("click", handleCarSelectClick, true);
-      }, 100);
+      }, 500);
     }
   }
 
   function showCarSelection(responseData) {
-    if (
-      !responseData ||
-      !responseData.ENTITIES ||
-      !responseData.ENTITIES[ENTITY_CODE]
-    ) {
-      alert("Для выбранного контакта нет автомобилей");
-      return;
-    }
+    if (!responseData?.ENTITIES?.[ENTITY_CODE]?.ITEMS) return;
 
-    const carData = responseData.ENTITIES[ENTITY_CODE];
-    const cars = carData.ITEMS || {};
-
-    if (Object.keys(cars).length === 0) {
-      alert("Для выбранного контакта нет автомобилей");
-      return;
-    }
-
+    const cars = responseData.ENTITIES[ENTITY_CODE].ITEMS;
     const popup = document.createElement("div");
     popup.id = "deal-car-popup";
     popup.style.cssText = `
@@ -184,8 +149,7 @@
     `;
 
     let html = `<h3 style="margin-top:0;color:#2a72cc;">Выберите автомобиль</h3>`;
-    html += `<div style="margin-bottom:15px;color:#666;">Для контакта ID: ${currentContactId}</div>`;
-    html += `<div id="car-list" style="margin-bottom:15px;">`;
+    html += `<div id="car-list">`;
 
     Object.values(cars).forEach((car) => {
       html += `
@@ -196,11 +160,11 @@
       `;
     });
 
-    html += `</div>`;
-    html += `<button onclick="document.getElementById('deal-car-popup').remove()" 
-                     style="padding:8px 15px;background:#2a72cc;color:white;border:none;border-radius:3px;">
-              Закрыть
-             </button>`;
+    html += `</div>
+      <button onclick="document.getElementById('deal-car-popup').remove()" 
+              style="margin-top:15px;padding:8px 15px;background:#2a72cc;color:white;border:none;border-radius:3px;">
+        Закрыть
+      </button>`;
 
     popup.innerHTML = html;
     document.body.appendChild(popup);
@@ -210,25 +174,18 @@
     const field = document.getElementById(CAR_FIELD_ID);
     if (field) field.value = carId;
 
-    const tileContainer = document.querySelector(
-      '[data-role="tile-container"]'
-    );
+    const tileContainer = document.querySelector('[data-role="tile-container"]');
     if (tileContainer) {
-      const oldTiles = tileContainer.querySelectorAll(
-        '[data-role="tile-item"]'
-      );
-      oldTiles.forEach((tile) => tile.remove());
-
       const tile = document.createElement("span");
       tile.setAttribute("data-role", "tile-item");
       tile.setAttribute("data-bx-id", "D" + carId);
-      tile.className =
-        "ui-tile-selector-item ui-tile-selector-item-dynamic_1054";
+      tile.className = "ui-tile-selector-item ui-tile-selector-item-dynamic_1054";
       tile.innerHTML = `
         <span data-role="tile-item-name">${carName}</span>
         <span data-role="remove" class="ui-tile-selector-item-remove"></span>
       `;
-      tileContainer.insertBefore(tile, tileContainer.firstChild);
+      tileContainer.innerHTML = '';
+      tileContainer.appendChild(tile);
     }
 
     const popup = document.getElementById("deal-car-popup");
@@ -238,43 +195,36 @@
   function setupButtonHandler() {
     const button = document.querySelector('[data-role="tile-select"]');
     if (!button) {
-      setTimeout(setupButtonHandler, 1000);
+      setTimeout(setupButtonHandler, 500);
       return;
     }
 
-    const newButton = button.cloneNode(true);
-    button.parentNode.replaceChild(newButton, button);
-    newButton.addEventListener("click", handleCarSelectClick, true);
+    button.addEventListener("click", handleCarSelectClick, true);
   }
 
   function startContactChecker() {
     setInterval(() => {
       const contactId = findContactId();
-      if (contactId && contactId !== currentContactId) {
-        currentContactId = contactId;
-      }
+      if (contactId) currentContactId = contactId;
     }, 1000);
   }
 
+  window.DealCarFilter = {
+    getContact: () => currentContactId,
+    selectCar: function (carId, carName) {
+      selectCar(carId, carName);
+    },
+  };
+
   function init() {
-    if (isInitialized) return;
-
-    setTimeout(setupButtonHandler, 1500);
+    setTimeout(setupButtonHandler, 1000);
     startContactChecker();
-
-    window.DealCarFilter = {
-      getContact: () => currentContactId,
-      selectCar: function (carId, carName) {
-        selectCar(carId, carName);
-      },
-    };
-
-    isInitialized = true;
+    console.log("DealCarFilter инициализирован");
   }
 
   if (document.readyState === "loading") {
     document.addEventListener("DOMContentLoaded", init);
   } else {
-    init();
+    setTimeout(init, 500);
   }
 })();
