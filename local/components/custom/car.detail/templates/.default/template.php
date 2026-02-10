@@ -27,9 +27,13 @@ function getStageColor($stageId)
 ?>
 
 <style>
+.popup-window-content { overflow: hidden; }
 .popup-window-content > div {
     padding: 0 !important;
 }
+
+
+
 </style>
 
 <div style="width: 850px; font-family: 'Segoe UI', Arial, sans-serif; font-size: 18px;">
@@ -106,7 +110,7 @@ function getStageColor($stageId)
         </div>
         
         <!-- Правая колонка - все активные сделки -->
-        <div style="flex: 1; min-width: 450px;">
+        <div style="flex: 1; min-width: 450px; overflow-y: scroll; max-height: 450px;">
             <h3 style="margin: 0 0 20px 0; color: #0B66C3; font-size: 20px; font-weight: 600;">
                 Связанные сделки
                 <?php if (!empty($arResult['DEALS'])): ?>
