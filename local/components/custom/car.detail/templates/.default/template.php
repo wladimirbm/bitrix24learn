@@ -125,7 +125,7 @@ function getStageColor($stageId)
                     Нет активных сделок по этому автомобилю
                 </div>
             <?php else: ?>
-                <div style="max-height: 500px; /*overflow-y: auto;*/ padding-right: 5px;">
+                <div style="max-height: 500px; overflow-y: auto; padding-right: 5px;">
                     <?php
                     
                     foreach ($arResult['DEALS'] as $deal): 
