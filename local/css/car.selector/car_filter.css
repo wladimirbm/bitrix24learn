@@ -9,6 +9,11 @@
     background: #fff;
     min-width: 400px;
     max-width: 500px;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 10000;
 }
 
 /* Заголовок */
@@ -59,7 +64,7 @@
     border-bottom: none;
 }
 
-/* Иконка автомобиля (можно заменить на свою) */
+/* Иконка автомобиля */
 .car-item::before {
     content: '';
     display: inline-block;
@@ -142,4 +147,15 @@
     text-align: center;
     color: #959ca4;
     font-size: 14px;
+}
+
+/* Затемнение фона */
+#car-selector-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0,0,0,0.4);
+    z-index: 9999;
 }

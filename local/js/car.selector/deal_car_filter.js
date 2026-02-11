@@ -215,30 +215,39 @@ async function loadCarsByContact(contactId) {
 /**
  * Показывает попап с выбором автомобилей в стиле Битрикс24
  */
+/**
+ * Показывает попап с выбором автомобилей в стиле Битрикс24
+ */
 function showCarSelection(responseData) {
-    // Удаляем старый попап
+    // Удаляем старый попап и оверлей
     const oldPopup = document.getElementById('custom-car-popup');
+    const oldOverlay = document.getElementById('car-selector-overlay');
     if (oldPopup) oldPopup.remove();
+    if (oldOverlay) oldOverlay.remove();
 
     // Проверяем данные
     const carData = responseData?.ENTITIES?.[CONFIG.ENTITY_CODE];
     const cars = carData?.ITEMS || {};
     
-    // Создаем попап
+    // 1. Создаем затемнение фона
+    const overlay = document.createElement('div');
+    overlay.id = 'car-selector-overlay';
+    
+    // 2. Создаем попап
     const popup = document.createElement('div');
     popup.id = 'custom-car-popup';
     popup.className = 'custom-car-popup';
     
-    // Заголовок
+    // 3. Заголовок
     const title = document.createElement('h3');
     title.textContent = 'Выберите автомобиль';
     
-    // Подзаголовок с ID контакта
+    // 4. Подзаголовок с ID контакта
     const subtitle = document.createElement('div');
     subtitle.className = 'contact-subtitle';
     subtitle.textContent = `Для контакта ID: ${state.currentContactId}`;
 
-    // Список автомобилей
+    // 5. Список автомобилей
     const carList = document.createElement('div');
     carList.id = 'custom-car-list';
 
@@ -270,7 +279,7 @@ function showCarSelection(responseData) {
             
             // Обработчик клика
             carItem.addEventListener('click', () => {
-                // Добавляем визуальную обратную связь
+                // Визуальная обратная связь
                 carItem.style.backgroundColor = '#e5f0ff';
                 setTimeout(() => {
                     selectCar(car.entityId, car.name);
@@ -281,52 +290,38 @@ function showCarSelection(responseData) {
         });
     }
 
-    // Кнопка закрытия
+    // 6. Кнопка закрытия
     const closeButton = document.createElement('button');
     closeButton.textContent = 'Закрыть';
     closeButton.type = 'button';
     
     // Обработчики для кнопки
-    closeButton.addEventListener('click', () => popup.remove());
-    closeButton.addEventListener('keydown', (e) => {
-        if (e.key === 'Enter' || e.key === ' ') {
-            popup.remove();
-        }
+    closeButton.addEventListener('click', () => {
+        popup.remove();
+        overlay.remove();
     });
 
-    // Затемнение фона
-    const overlay = document.createElement('div');
-    overlay.style.cssText = `
-        position: fixed;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background: rgba(0,0,0,0.4);
-        z-index: 9999;
-    `;
-    overlay.id = 'car-selector-overlay';
-    
-    // Собираем попап
+    // 7. Собираем попап
     popup.appendChild(title);
     popup.appendChild(subtitle);
     popup.appendChild(carList);
     popup.appendChild(closeButton);
     
-    // Добавляем overlay и попап
+    // 8. ВАЖНО: сначала overlay, потом попап (порядок важен!)
     document.body.appendChild(overlay);
     document.body.appendChild(popup);
     
-    // Фокус на попапе для доступности
+    // 9. Фокус на попапе для доступности
     popup.setAttribute('tabindex', '-1');
     popup.focus();
     
-    // Закрытие по клику на overlay или клавише ESC
+    // 10. Закрытие по клику на overlay
     overlay.addEventListener('click', () => {
         popup.remove();
         overlay.remove();
     });
     
+    // 11. Закрытие по клавише ESC
     popup.addEventListener('keydown', (e) => {
         if (e.key === 'Escape') {
             popup.remove();
@@ -334,12 +329,11 @@ function showCarSelection(responseData) {
         }
     });
     
-    // Предотвращаем закрытие при клике внутри попапа
+    // 12. Предотвращаем закрытие при клике внутри попапа
     popup.addEventListener('click', (e) => {
         e.stopPropagation();
     });
 }
-
 
   /**
    * Выбирает автомобиль и заполняет поле
