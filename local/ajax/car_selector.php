@@ -92,18 +92,39 @@ try {
 
     $prefix = 'T' . strtolower(dechex($entityTypeId)) . '_';
 
+       // Получаем фабрики для связанных сущностей один раз
+    $brandFactory = \Bitrix\Crm\Service\Container::getInstance()->getFactory(1040);
+    $modelFactory = \Bitrix\Crm\Service\Container::getInstance()->getFactory(1046);
+    
     foreach ($cars as $car) {
         $carId = $car->getId();
         $itemKey = $prefix . $carId;
 
         // Форматируем название
-        $brand = $car->get('UF_CRM_6_BRAND');
-        $model = $car->get('UF_CRM_6_MODEL');
+        $brandName = '—';
+        $modelName = '—';
+        
+        $brandId = $car->get('UF_CRM_6_BRAND');
+        $modelId = $car->get('UF_CRM_6_MODEL');
         $year = $car->get('UF_CRM_6_YEAR');
+        
+        if ($brandId && $brandFactory) {
+            $brandItem = $brandFactory->getItem($brandId);
+            if ($brandItem) {
+                $brandName = $brandItem->getTitle();
+            }
+        }
+        
+        if ($modelId && $modelFactory) {
+            $modelItem = $modelFactory->getItem($modelId);
+            if ($modelItem) {
+                $modelName = $modelItem->getTitle();
+            }
+        }
 
         $nameParts = [];
-        if ($brand) $nameParts[] = $brand;
-        if ($model) $nameParts[] = $model;
+        if ($brandName !== '—') $nameParts[] = $brandName;
+        if ($modelName !== '—') $nameParts[] = $modelName;
         if ($year) $nameParts[] = "({$year})";
 
         $carName = $nameParts ? implode(' ', $nameParts) : $car->getTitle();
