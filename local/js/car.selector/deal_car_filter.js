@@ -52,10 +52,13 @@
   /**
    * Загружает автомобили для указанного контакта через наш API
    */
-  async function loadCarsByContact(contactId) {
+  /**
+ * Загружает автомобили для указанного контакта через наш API
+ */
+async function loadCarsByContact(contactId) {
     if (!CONFIG.CSRF_TOKEN) {
-      console.error('CarFilter: Нет CSRF токена');
-      throw new Error('Ошибка безопасности');
+        console.error('CarFilter: Нет CSRF токена');
+        throw new Error('Ошибка безопасности');
     }
 
     // Формируем данные для запроса
@@ -64,31 +67,32 @@
     formData.append('contactId', contactId);
 
     try {
-      console.log('CarFilter: Запрос автомобилей для контакта', contactId);
-      
-      const response = await fetch('/bitrix/services/main/ajax.php', {
-        method: 'POST',
-        body: formData,
-        headers: {
-          'X-Requested-With': 'XMLHttpRequest',
-        },
-      });
+        console.log('CarFilter: Запрос автомобилей для контакта', contactId);
+        
+        // ВАЖНО: Меняем URL на наш обработчик
+        const response = await fetch('/local/ajax/car_selector.php', {
+            method: 'POST',
+            body: formData,
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest',
+            },
+        });
 
-      const data = await response.json();
-      console.log('CarFilter: Ответ API:', data);
+        const data = await response.json();
+        console.log('CarFilter: Ответ API:', data);
 
-      if (data.status === 'success') {
-        return data.data;
-      } else {
-        const errorMsg = data.errors?.[0]?.message || 'Неизвестная ошибка сервера';
-        throw new Error(errorMsg);
-      }
-      
+        if (data.status === 'success') {
+            return data.data;
+        } else {
+            const errorMsg = data.errors?.[0]?.message || 'Неизвестная ошибка сервера';
+            throw new Error(errorMsg);
+        }
+        
     } catch (error) {
-      console.error('CarFilter: Ошибка запроса:', error);
-      throw error;
+        console.error('CarFilter: Ошибка запроса:', error);
+        throw error;
     }
-  }
+}
 
   // ==================== UI КОМПОНЕНТЫ ====================
 
