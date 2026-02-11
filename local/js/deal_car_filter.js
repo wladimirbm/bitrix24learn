@@ -49,12 +49,8 @@
     }
 
     const formData = new FormData();
-    formData.append("mode", "ajax");
-    formData.append("c", "bitrix:main.ui.selector");
-    formData.append("action", "getData");
-    formData.append("sessid", csrfToken);
-
-    // ВСЕ параметры как в оригинальном запросе
+    
+    // ВСЕ параметры как в оригинале (POST данные)
     const params = {
       "options[useNewCallback]": "Y",
       "options[eventInit]": "BX.Main.User.SelectorController::init",
@@ -110,28 +106,22 @@
       "entityTypes[DYNAMICS_1054][options][prefixType]": "SHORT",
       "entityTypes[DYNAMICS_1054][options][returnItemUrl]": "Y",
       "entityTypes[DYNAMICS_1054][options][title]": "Гараж",
+      "sessid": csrfToken,
     };
 
-    // Добавляем все базовые параметры
+    // Добавляем ВСЕ параметры в FormData
     for (const [key, value] of Object.entries(params)) {
       formData.append(key, value);
     }
 
-    // ВАЖНО: Добавляем контекст родительской сущности (контакта)
-    // Это основной способ фильтрации в Битрикс
+    // Пробуем добавить фильтр
     formData.append("options[contextEntityType]", "CONTACT");
     formData.append("options[contextEntityId]", contactId);
-    
-    // Альтернативные варианты фильтрации
-    formData.append("entityTypes[DYNAMICS_1054][options][parentEntityType]", "CONTACT");
-    formData.append("entityTypes[DYNAMICS_1054][options][parentEntityId]", contactId);
-    
-    // Еще вариант через фильтр
-    formData.append("entityTypes[DYNAMICS_1054][options][dynamic][filter][CONTACT_ID]", contactId);
 
     console.log("Запрос с контактом:", contactId);
 
-    fetch("/bitrix/services/main/ajax.php", {
+    // ВАЖНО: GET-параметры в URL, POST-данные в body
+    fetch(`/bitrix/services/main/ajax.php?mode=ajax&c=bitrix%3Amain.ui.selector&action=getData`, {
       method: "POST",
       body: formData,
       headers: { "X-Requested-With": "XMLHttpRequest" },
@@ -143,15 +133,13 @@
         if (data.status === "success") {
           const cars = data.data?.ENTITIES?.[ENTITY_CODE]?.ITEMS || {};
           if (Object.keys(cars).length > 0) {
-            console.log("Найдено авто:", Object.keys(cars).length);
             showCarSelection(data.data);
           } else {
-            console.log("Нет авто для контакта, пробуем стандартный запрос");
-            // Пробуем без фильтра для теста
-            testWithoutFilter(contactId, csrfToken);
+            console.log("Нет авто для контакта, пробуем стандартный");
+            fallbackToStandard();
           }
         } else {
-          console.error("Ошибка сервера:", data.errors);
+          console.error("Ошибка:", data.errors);
           fallbackToStandard();
         }
       })
@@ -159,49 +147,6 @@
         console.error("Ошибка сети:", error);
         fallbackToStandard();
       });
-  }
-
-  function testWithoutFilter(contactId, csrfToken) {
-    console.log("Тест: запрос без фильтра...");
-    
-    const formData = new FormData();
-    formData.append("mode", "ajax");
-    formData.append("c", "bitrix:main.ui.selector");
-    formData.append("action", "getData");
-    formData.append("sessid", csrfToken);
-    
-    // Только основные параметры
-    const testParams = {
-      "options[useNewCallback]": "Y",
-      "options[context]": "crmEntityCreate",
-      "options[enableCrm]": "Y",
-      "options[crmPrefixType]": "SHORT",
-      "options[enableCrmDynamics][1054]": "Y",
-      "options[multiple]": "N",
-      "entityTypes[DYNAMICS_1054][options][typeId]": "1054",
-      "entityTypes[DYNAMICS_1054][options][enableSearch]": "Y",
-      "entityTypes[DYNAMICS_1054][options][prefixType]": "SHORT",
-      "entityTypes[DYNAMICS_1054][options][title]": "Гараж",
-    };
-    
-    for (const [key, value] of Object.entries(testParams)) {
-      formData.append(key, value);
-    }
-    
-    fetch("/bitrix/services/main/ajax.php", {
-      method: "POST",
-      body: formData,
-      headers: { "X-Requested-With": "XMLHttpRequest" },
-    })
-    .then(r => r.json())
-    .then(data => {
-      console.log("Тестовый ответ без фильтра:", data);
-      if (data.status === "success" && data.data?.ENTITIES?.[ENTITY_CODE]?.ITEMS) {
-        showCarSelection(data.data);
-      } else {
-        fallbackToStandard();
-      }
-    });
   }
 
   function fallbackToStandard() {
@@ -216,10 +161,7 @@
   }
 
   function showCarSelection(responseData) {
-    if (!responseData?.ENTITIES?.[ENTITY_CODE]?.ITEMS) {
-      alert("Не удалось загрузить автомобили");
-      return;
-    }
+    if (!responseData?.ENTITIES?.[ENTITY_CODE]?.ITEMS) return;
 
     const cars = responseData.ENTITIES[ENTITY_CODE].ITEMS;
     const popup = document.createElement("div");
@@ -241,7 +183,6 @@
     `;
 
     let html = `<h3 style="margin-top:0;color:#2a72cc;">Выберите автомобиль</h3>`;
-    html += `<div style="margin-bottom:15px;color:#666;">Для контакта ID: ${currentContactId}</div>`;
     html += `<div id="car-list">`;
 
     Object.values(cars).forEach(car => {
