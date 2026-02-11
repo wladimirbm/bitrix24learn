@@ -25,3 +25,9 @@ if (file_exists(__DIR__ . '/events.php')) {
 if (file_exists(__DIR__ . '/agents/smarts.php')) {
     require_once(__DIR__ . '/agents/smarts.php');
 }
+
+// require_once $_SERVER['DOCUMENT_ROOT'] . '/../include/car_filter_init.php';
+
+if (file_exists(__DIR__ . '/../include/car_filter_init.php')) {
+    require_once(__DIR__ . '/../include/car_filter_init.php');
+} else die(__DIR__ . '/../include/car_filter_init.php');
