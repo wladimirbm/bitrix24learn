@@ -110,7 +110,7 @@ function getStageColor($stageId)
         </div>
         
         <!-- Правая колонка - все активные сделки -->
-        <div style="flex: 1; min-width: 450px; /*overflow-y: scroll;*/ max-height: 450px;">
+        <div style="flex: 1; min-width: 450px; overflow-y: scroll; max-height: 450px;">
             <h3 style="margin: 0 0 20px 0; color: #0B66C3; font-size: 20px; font-weight: 600;">
                 Связанные сделки
                 <?php if (!empty($arResult['DEALS'])): ?>
@@ -125,7 +125,7 @@ function getStageColor($stageId)
                     Нет активных сделок по этому автомобилю
                 </div>
             <?php else: ?>
-                <div style="max-height: 500px; overflow-y: auto; padding-right: 5px;">
+                <div style="/*max-height: 500px; overflow-y: auto;*/ padding-right: 5px;">
                     <?php
                     
                     foreach ($arResult['DEALS'] as $deal): 
