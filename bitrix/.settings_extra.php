@@ -23,4 +23,14 @@ return array(
         ),
         'readonly' => false,
     ),
+      'controllers' => [
+        'value' => [
+            'namespaces' => [
+                // Добавляем пространство имен для наших контроллеров
+                '\\Local\\Components\\CarSelector' => 'local/components/custom/car.selector',
+            ]
+        ],
+        'readonly' => true,
+    ],
 ); 
+

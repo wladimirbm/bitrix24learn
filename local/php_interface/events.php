@@ -121,21 +121,21 @@ AddEventHandler('main', 'OnEndBufferContent', function (&$content) {
 });
 
 
-AddEventHandler('main', 'OnEpilog', function() {
-    $currentPage = $GLOBALS['APPLICATION']->GetCurPage();
+// AddEventHandler('main', 'OnEpilog', function() {
+//     $currentPage = $GLOBALS['APPLICATION']->GetCurPage();
     
-    if (strpos($currentPage, '/crm/deal/details/') !== false || 
-        strpos($currentPage, '/crm/deal/edit/') !== false ||
-        strpos($currentPage, '/crm/deal/show/') !== false) {
+//     if (strpos($currentPage, '/crm/deal/details/') !== false || 
+//         strpos($currentPage, '/crm/deal/edit/') !== false ||
+//         strpos($currentPage, '/crm/deal/show/') !== false) {
         
-        CJSCore::RegisterExt('deal_car_filter', [
-            'js' => '/local/js/deal_car_filter.js',
-            'rel' => ['ui', 'core']
-        ]);
+//         CJSCore::RegisterExt('deal_car_filter', [
+//             'js' => '/local/js/deal.car.filter/deal_car_filter.js',
+//             'rel' => ['ui', 'core']
+//         ]);
         
-        CJSCore::Init(['deal_car_filter']);
-    }
-});
+//         CJSCore::Init(['deal_car_filter']);
+//     }
+// });
 
 
 /*

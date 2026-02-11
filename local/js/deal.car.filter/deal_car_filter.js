@@ -118,6 +118,7 @@
     formData.append("options[contextEntityType]", "CONTACT");
     formData.append("options[contextEntityId]", contactId);
     formData.append("FILTER[DYNAMICS_1054][CONTACT_ID]", contactId);
+    formData.append("FILTER[CONTACT_ID]", contactId);
     formData.append("FILTER[DYNAMICS_1054][=CONTACT_ID]", contactId);
     formData.append("entityTypes[DYNAMICS_1054][options][filter][CONTACT_ID]", contactId);
     formData.append("entityTypes[DYNAMICS_1054][options][CONTACT_ID]", contactId);
