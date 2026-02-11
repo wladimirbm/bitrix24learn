@@ -122,6 +122,10 @@
     formData.append("entityTypes[DYNAMICS_1054][options][filter][CONTACT_ID]", contactId);
     formData.append("entityTypes[DYNAMICS_1054][options][CONTACT_ID]", contactId);
     formData.append("entityTypes[DYNAMICS_1054][options][ParentID ]", contactId);
+    formData.append("options[CONTACT_ID]", contactId);
+    formData.append("options[ParentID ]", contactId);
+    formData.append("options[addTabCrmContacts]", "Y");
+    formData.append("entityTypes[DYNAMICS_1054][options][addTab]", "Y");
 
     console.log("Запрос с контактом:", contactId);
 
