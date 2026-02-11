@@ -6,7 +6,7 @@
     SMART_PROCESS_TYPE_ID: 1054,
     ENTITY_CODE: 'DYNAMICS_1054',
     CAR_FIELD_ID: 'UF_CRM_1770588718', // ID поля "Автомобиль" в сделке
-    API_ACTION: 'local.car.selector.getCars', // Наш кастомный экшн
+    API_ACTION: 'local.car.selector:getCars', // Наш кастомный экшн
     CSRF_TOKEN: document.querySelector('meta[name="csrf-token"]')?.content || 
                 document.querySelector('input[name="sessid"]')?.value
   };
