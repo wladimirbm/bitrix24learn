@@ -345,4 +345,78 @@ class Agents
             return false;
         }
     }
+
+    static public function badcode()
+    {
+        //$rootActivity = $this->GetRootActivity();
+        try {
+
+            $requestId = 195; //$document['ID'];
+            $ownerTypeAbbr = \CCrmOwnerTypeAbbr::ResolveByTypeID(1058);
+            $rows = \CCrmProductRow::LoadRows($ownerTypeAbbr, $requestId);
+
+            if (empty($rows)) {
+                return true;
+            }
+
+
+
+
+            foreach ($rows as $row) {
+                $updatedProducts = [];
+                $newQty = 0; //!!!!!!!!!!
+                print_r($row);
+
+                $productId = (int)$row['PRODUCT_ID'];
+                $quantity = (int)$row['QUANTITY'];
+
+                if ($productId <= 0 || $quantity <= 0) {
+                    continue;
+                }
+
+                $dbProduct = \Bitrix\Catalog\Model\Product::getList([
+                    'filter' => ['ID' => $productId],
+                    'select' => ['ID', 'QUANTITY']
+                ]);
+
+                if ($product = $dbProduct->fetch()) {
+
+                    print_r($product);
+
+                    $currentQty = (int)$product['QUANTITY'];
+                    $newQty = $currentQty + $quantity;
+                    //      $this->WriteToTrackingService("Товар с ID ".$row['PRODUCT_ID']." = ".$currentQty." + ".$quantity." = ".$newQty.");
+
+                    print_r($newQty);
+
+                    $updateResult = \Bitrix\Catalog\Model\Product::update($productId, [
+                        'QUANTITY' => $newQty
+                    ]);
+
+                    if ($updateResult->isSuccess()) {
+                        /* $updatedProducts[] = [
+                            'id' => $productId,
+                            'name' => $row['PRODUCT_NAME'],
+                            'added' => $quantity,
+                            'new_total' => $newQty
+                        ];
+*/
+                    } else {
+                        //      $this->WriteToTrackingService("Ошибка обновления товара {$productId}: " . implode(', ', $updateResult->getErrorMessages()));
+                    }
+                } else {
+                    //   $this->WriteToTrackingService("Товар с ID {$productId} не найден в каталоге");
+                }
+            }
+
+            if (!empty($updatedProducts)) {
+                // $this->WriteToTrackingService("Заявка #{$requestId}: обновлено " . count($updatedProducts) . " товаров");
+            }
+
+            return true;
+        } catch (Exception $e) {
+            //  $this->WriteToTrackingService("Ошибка в роботе закупки: " . $e->getMessage());
+            return false;
+        }
+    }
 }
