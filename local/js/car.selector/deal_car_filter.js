@@ -99,8 +99,124 @@ async function loadCarsByContact(contactId) {
   /**
    * Показывает попап с выбором автомобилей
    */
-  function showCarSelection(responseData) {
-    // Удаляем старый попап, если есть
+//   function showCarSelection(responseData) {
+//     // Удаляем старый попап, если есть
+//     const oldPopup = document.getElementById('custom-car-popup');
+//     if (oldPopup) oldPopup.remove();
+
+//     // Проверяем данные
+//     const carData = responseData?.ENTITIES?.[CONFIG.ENTITY_CODE];
+//     const cars = carData?.ITEMS || {};
+    
+//     if (Object.keys(cars).length === 0) {
+//       alert('Для выбранного контакта нет автомобилей');
+//       return;
+//     }
+
+//     // Создаем попап
+//     const popup = document.createElement('div');
+//     popup.id = 'custom-car-popup';
+//     popup.className = 'custom-car-popup';
+    
+//     // Стили через CSS-класс (добавь в свой CSS файл)
+//     Object.assign(popup.style, {
+//       position: 'fixed',
+//       top: '50%',
+//       left: '50%',
+//       transform: 'translate(-50%, -50%)',
+//       background: 'white',
+//       border: '2px solid #2a72cc',
+//       borderRadius: '5px',
+//       padding: '20px',
+//       zIndex: '10000',
+//       boxShadow: '0 0 20px rgba(0,0,0,0.3)',
+//       maxWidth: '500px',
+//       maxHeight: '400px',
+//       overflowY: 'auto',
+//       fontFamily: 'Arial, sans-serif'
+//     });
+
+//     // Заголовок
+//     const title = document.createElement('h3');
+//     title.textContent = 'Выберите автомобиль';
+//     title.style.marginTop = '0';
+//     title.style.color = '#2a72cc';
+    
+//     const subtitle = document.createElement('div');
+//     subtitle.textContent = `Для контакта ID: ${state.currentContactId}`;
+//     subtitle.style.marginBottom = '15px';
+//     subtitle.style.color = '#666';
+
+//     // Список автомобилей
+//     const carList = document.createElement('div');
+//     carList.id = 'custom-car-list';
+//     carList.style.marginBottom = '15px';
+
+//     Object.values(cars).forEach(car => {
+//       const carItem = document.createElement('div');
+//       carItem.className = 'car-item';
+//       Object.assign(carItem.style, {
+//         padding: '8px',
+//         borderBottom: '1px solid #eee',
+//         cursor: 'pointer',
+//         transition: 'background-color 0.2s'
+//       });
+      
+//       carItem.innerHTML = `<strong>${car.name}</strong>${car.desc ? `<br><small>${car.desc}</small>` : ''}`;
+      
+//       carItem.addEventListener('mouseenter', () => {
+//         carItem.style.backgroundColor = '#f5f5f5';
+//       });
+      
+//       carItem.addEventListener('mouseleave', () => {
+//         carItem.style.backgroundColor = 'transparent';
+//       });
+      
+//       carItem.addEventListener('click', () => {
+//         selectCar(car.entityId, car.name);
+//       });
+      
+//       carList.appendChild(carItem);
+//     });
+
+//     // Кнопка закрытия
+//     const closeButton = document.createElement('button');
+//     closeButton.textContent = 'Закрыть';
+//     Object.assign(closeButton.style, {
+//       padding: '8px 15px',
+//       background: '#2a72cc',
+//       color: 'white',
+//       border: 'none',
+//       borderRadius: '3px',
+//       cursor: 'pointer'
+//     });
+    
+//     closeButton.addEventListener('click', () => {
+//       popup.remove();
+//     });
+
+//     // Собираем попап
+//     popup.appendChild(title);
+//     popup.appendChild(subtitle);
+//     popup.appendChild(carList);
+//     popup.appendChild(closeButton);
+    
+//     // Закрытие по клику вне попапа
+//     popup.addEventListener('click', (e) => {
+//       if (e.target === popup) {
+//         popup.remove();
+//       }
+//     });
+
+//     document.body.appendChild(popup);
+//   }
+
+
+/**
+ * Показывает попап с выбором автомобилей в стиле Битрикс24
+ */
+function showCarSelection(responseData) {
+    // Удаляем старый попап
     const oldPopup = document.getElementById('custom-car-popup');
     if (oldPopup) oldPopup.remove();
 
@@ -108,108 +224,122 @@ async function loadCarsByContact(contactId) {
     const carData = responseData?.ENTITIES?.[CONFIG.ENTITY_CODE];
     const cars = carData?.ITEMS || {};
     
-    if (Object.keys(cars).length === 0) {
-      alert('Для выбранного контакта нет автомобилей');
-      return;
-    }
-
     // Создаем попап
     const popup = document.createElement('div');
     popup.id = 'custom-car-popup';
     popup.className = 'custom-car-popup';
     
-    // Стили через CSS-класс (добавь в свой CSS файл)
-    Object.assign(popup.style, {
-      position: 'fixed',
-      top: '50%',
-      left: '50%',
-      transform: 'translate(-50%, -50%)',
-      background: 'white',
-      border: '2px solid #2a72cc',
-      borderRadius: '5px',
-      padding: '20px',
-      zIndex: '10000',
-      boxShadow: '0 0 20px rgba(0,0,0,0.3)',
-      maxWidth: '500px',
-      maxHeight: '400px',
-      overflowY: 'auto',
-      fontFamily: 'Arial, sans-serif'
-    });
-
     // Заголовок
     const title = document.createElement('h3');
     title.textContent = 'Выберите автомобиль';
-    title.style.marginTop = '0';
-    title.style.color = '#2a72cc';
     
+    // Подзаголовок с ID контакта
     const subtitle = document.createElement('div');
+    subtitle.className = 'contact-subtitle';
     subtitle.textContent = `Для контакта ID: ${state.currentContactId}`;
-    subtitle.style.marginBottom = '15px';
-    subtitle.style.color = '#666';
 
     // Список автомобилей
     const carList = document.createElement('div');
     carList.id = 'custom-car-list';
-    carList.style.marginBottom = '15px';
 
-    Object.values(cars).forEach(car => {
-      const carItem = document.createElement('div');
-      carItem.className = 'car-item';
-      Object.assign(carItem.style, {
-        padding: '8px',
-        borderBottom: '1px solid #eee',
-        cursor: 'pointer',
-        transition: 'background-color 0.2s'
-      });
-      
-      carItem.innerHTML = `<strong>${car.name}</strong>${car.desc ? `<br><small>${car.desc}</small>` : ''}`;
-      
-      carItem.addEventListener('mouseenter', () => {
-        carItem.style.backgroundColor = '#f5f5f5';
-      });
-      
-      carItem.addEventListener('mouseleave', () => {
-        carItem.style.backgroundColor = 'transparent';
-      });
-      
-      carItem.addEventListener('click', () => {
-        selectCar(car.entityId, car.name);
-      });
-      
-      carList.appendChild(carItem);
-    });
+    if (Object.keys(cars).length === 0) {
+        // Сообщение "нет автомобилей"
+        const noCarsMsg = document.createElement('div');
+        noCarsMsg.className = 'no-cars-message';
+        noCarsMsg.textContent = 'Для выбранного контакта нет автомобилей';
+        carList.appendChild(noCarsMsg);
+    } else {
+        // Добавляем автомобили
+        Object.values(cars).forEach(car => {
+            const carItem = document.createElement('div');
+            carItem.className = 'car-item';
+            
+            // Основное название
+            const nameSpan = document.createElement('strong');
+            nameSpan.textContent = car.name;
+            
+            // Дополнительное описание (если есть)
+            if (car.desc) {
+                const descSpan = document.createElement('small');
+                descSpan.textContent = car.desc;
+                carItem.appendChild(nameSpan);
+                carItem.appendChild(descSpan);
+            } else {
+                carItem.appendChild(nameSpan);
+            }
+            
+            // Обработчик клика
+            carItem.addEventListener('click', () => {
+                // Добавляем визуальную обратную связь
+                carItem.style.backgroundColor = '#e5f0ff';
+                setTimeout(() => {
+                    selectCar(car.entityId, car.name);
+                }, 150);
+            });
+            
+            carList.appendChild(carItem);
+        });
+    }
 
     // Кнопка закрытия
     const closeButton = document.createElement('button');
     closeButton.textContent = 'Закрыть';
-    Object.assign(closeButton.style, {
-      padding: '8px 15px',
-      background: '#2a72cc',
-      color: 'white',
-      border: 'none',
-      borderRadius: '3px',
-      cursor: 'pointer'
-    });
+    closeButton.type = 'button';
     
-    closeButton.addEventListener('click', () => {
-      popup.remove();
+    // Обработчики для кнопки
+    closeButton.addEventListener('click', () => popup.remove());
+    closeButton.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+            popup.remove();
+        }
     });
 
+    // Затемнение фона
+    const overlay = document.createElement('div');
+    overlay.style.cssText = `
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0,0,0,0.4);
+        z-index: 9999;
+    `;
+    overlay.id = 'car-selector-overlay';
+    
     // Собираем попап
     popup.appendChild(title);
     popup.appendChild(subtitle);
     popup.appendChild(carList);
     popup.appendChild(closeButton);
     
-    // Закрытие по клику вне попапа
-    popup.addEventListener('click', (e) => {
-      if (e.target === popup) {
-        popup.remove();
-      }
-    });
-
+    // Добавляем overlay и попап
+    document.body.appendChild(overlay);
     document.body.appendChild(popup);
-  }
+    
+    // Фокус на попапе для доступности
+    popup.setAttribute('tabindex', '-1');
+    popup.focus();
+    
+    // Закрытие по клику на overlay или клавише ESC
+    overlay.addEventListener('click', () => {
+        popup.remove();
+        overlay.remove();
+    });
+    
+    popup.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+            popup.remove();
+            overlay.remove();
+        }
+    });
+    
+    // Предотвращаем закрытие при клике внутри попапа
+    popup.addEventListener('click', (e) => {
+        e.stopPropagation();
+    });
+}
+
 
   /**
    * Выбирает автомобиль и заполняет поле
