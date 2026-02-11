@@ -1,9 +1,8 @@
 <?php
-require_once $_SERVER['DOCUMENT_ROOT'].'/bitrix/modules/main/include/prolog_before.php';
+require_once $_SERVER['DOCUMENT_ROOT'] . '/bitrix/modules/main/include/prolog_before.php';
 
 // 1. Проверка CSRF токена
-if (!check_bitrix_sessid())
-{
+if (!check_bitrix_sessid()) {
     echo json_encode([
         'status' => 'error',
         'errors' => [['message' => 'Invalid sessid', 'code' => 'SESSION_ERROR']]
@@ -13,8 +12,7 @@ if (!check_bitrix_sessid())
 
 // 2. Получаем ID контакта
 $contactId = (int)($_REQUEST['contactId'] ?? 0);
-if ($contactId <= 0)
-{
+if ($contactId <= 0) {
     echo json_encode([
         'status' => 'error',
         'errors' => [['message' => 'Invalid contact ID', 'code' => 'INPUT_ERROR']]
@@ -23,8 +21,7 @@ if ($contactId <= 0)
 }
 
 // 3. Подключаем модуль CRM
-if (!\Bitrix\Main\Loader::includeModule('crm'))
-{
+if (!\Bitrix\Main\Loader::includeModule('crm')) {
     echo json_encode([
         'status' => 'error',
         'errors' => [['message' => 'CRM module not available', 'code' => 'MODULE_ERROR']]
@@ -32,15 +29,13 @@ if (!\Bitrix\Main\Loader::includeModule('crm'))
     die();
 }
 
-try
-{
+try {
     // 4. ID смарт-процесса "Гараж"
     $entityTypeId = 1054;
-    
+
     // 5. Получаем фабрику
     $factory = \Bitrix\Crm\Service\Container::getInstance()->getFactory($entityTypeId);
-    if (!$factory)
-    {
+    if (!$factory) {
         echo json_encode([
             'status' => 'error',
             'errors' => [['message' => 'Smart process not found', 'code' => 'FACTORY_ERROR']]
@@ -54,14 +49,14 @@ try
         '=CONTACT_ID' => $contactId, // ← Измени на правильное имя поля
     ];
 
-// // Вариант 1 (скорее всего этот):
-// $filter = ['=CONTACT_ID' => $contactId];
+    // // Вариант 1 (скорее всего этот):
+    // $filter = ['=CONTACT_ID' => $contactId];
 
-// // Вариант 2 (если есть пользовательское поле):
-// $filter = ['=UF_CRM_6_CONTACT' => $contactId];
+    // // Вариант 2 (если есть пользовательское поле):
+    // $filter = ['=UF_CRM_6_CONTACT' => $contactId];
 
-// // Вариант 3 (если поле называется иначе):
-// $filter = ['=UF_CRM_1770588718_CONTACT' => $contactId]; // Пример
+    // // Вариант 3 (если поле называется иначе):
+    // $filter = ['=UF_CRM_1770588718_CONTACT' => $contactId]; // Пример
 
     // 7. Выполняем запрос
     $cars = $factory->getItems([
@@ -96,22 +91,21 @@ try
     ];
 
     $prefix = 'T' . strtolower(dechex($entityTypeId)) . '_';
-    
-    foreach ($cars as $car)
-    {
+
+    foreach ($cars as $car) {
         $carId = $car->getId();
         $itemKey = $prefix . $carId;
-        
+
         // Форматируем название
         $brand = $car->get('UF_CRM_6_BRAND');
         $model = $car->get('UF_CRM_6_MODEL');
         $year = $car->get('UF_CRM_6_YEAR');
-        
+
         $nameParts = [];
         if ($brand) $nameParts[] = $brand;
         if ($model) $nameParts[] = $model;
         if ($year) $nameParts[] = "({$year})";
-        
+
         $carName = $nameParts ? implode(' ', $nameParts) : $car->getTitle();
 
         $result['data']['ENTITIES']['DYNAMICS_1054']['ITEMS'][$itemKey] = [
@@ -120,27 +114,24 @@ try
             'entityId' => $carId,
             'name' => $carName,
             'desc' => '',
-            'date' => $car->getCreatedTime()->getTimestamp(),
+            'date' => $car->getCreatedTime() ? $car->getCreatedTime()->getTimestamp() : time(), // ← ИСПРАВЛЕНО
             'url' => \Bitrix\Crm\Service\Container::getInstance()->getRouter()
                 ->getItemDetailUrl($entityTypeId, $carId)->getUri(),
             'urlUseSlider' => 'Y'
         ];
-        
+
         $result['data']['ENTITIES']['DYNAMICS_1054']['ITEMS_LAST'][] = $itemKey;
     }
 
     echo json_encode($result);
-
-}
-catch (\Exception $e)
-{
+} catch (\Exception $e) {
     // Логируем ошибку
     AddMessage2Log('Car selector error: ' . $e->getMessage(), 'crm');
-    
+
     echo json_encode([
         'status' => 'error',
         'errors' => [['message' => 'Server error', 'code' => 'SERVER_ERROR']]
     ]);
 }
 
-require_once $_SERVER['DOCUMENT_ROOT'].'/bitrix/modules/main/include/epilog_after.php';
+require_once $_SERVER['DOCUMENT_ROOT'] . '/bitrix/modules/main/include/epilog_after.php';
