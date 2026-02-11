@@ -349,6 +349,7 @@ class Agents
     static public function badcode()
     {
         //$rootActivity = $this->GetRootActivity();
+          Loader::includeModule('crm');
         try {
 
             $requestId = 195; //$document['ID'];
