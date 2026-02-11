@@ -113,8 +113,8 @@ AddEventHandler('crm', 'OnBeforeCrmDealUpdate', function (&$arFields) {
 
 AddEventHandler('main', 'OnEndBufferContent', function (&$content) {
     if (strpos($_SERVER['REQUEST_URI'], '/crm/contact/details/') !== false) {
-        if (strpos($content, 'local/js/car_detail.js') === false) {
-            $script = '<script src="/local/js/car_detail.js"></script>';
+        if (strpos($content, 'local/js/deal.car.filter/car_detail.js') === false) {
+            $script = '<script src="/local/js/deal.car.filter/car_detail.js"></script>';
             $content = str_replace('</body>', $script . '</body>', $content);
         }
     }
