@@ -24,7 +24,7 @@
                 if (this.originalButtons.has(originalButton)) return;
                 
                 const buttonText = originalButton.querySelector('.ui-btn-text-inner')?.textContent;
-                if (buttonText === 'Начать рабочий день' || buttonText === 'Возобновить') {
+                if (buttonText === 'Начать рабочий день' || buttonText === 'Продолжить') {
                     const clonedButton = originalButton.cloneNode(true);
                     this.setupCustomButton(clonedButton, originalButton, dayData, buttonText);
                     
